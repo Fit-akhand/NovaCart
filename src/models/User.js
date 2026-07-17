@@ -20,15 +20,27 @@ const addressSchema = new mongoose.Schema(
       required: true,
     },
 
-    state: String,
+    state:{
+    type:String,
+    required:true,
+    trim:true
+    },
 
-    city: String,
+    city:{
+    type:String,
+    required:true,
+    trim:true
+    },
 
     landmark: String,
 
     addressLine: {
       type: String,
       required: true,
+    },
+    country: {
+        type: String,
+        default: "India",
     },
 
     isDefault: {
@@ -51,9 +63,12 @@ const userSchema = new mongoose.Schema(
 
     username: {
       type: String,
-      unique: true,
+      required: true,
       lowercase: true,
       trim: true,
+      unique: true,
+      minlength: 3,
+      maxlength: 20,
     },
 
     email: {
@@ -62,24 +77,33 @@ const userSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
       trim: true,
+      match: [/^\S+@\S+\.\S+$/, "Invalid email"],
     },
 
     password: {
       type: String,
       required: true,
-      minlength: 6,
+      minlength: 8,
       select: false,
     },
 
     phone: {
-      type: String,
-      default: "",
+    type: String,
+    required: true,
+    match: [/^[6-9]\d{9}$/, "Invalid phone number"],
+    default: "",
     },
 
     avatar: {
-      type: String,
-      default: "",
-    },
+  url: {
+    type: String,
+    default: "",
+  },
+  public_id: {
+    type: String,
+    default: "",
+  },
+},
 
     role: {
       type: String,
@@ -92,11 +116,28 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
 
-    refreshToken: {
-      type: String,
-      default: "",
-      select: false,
+    lastLogin: {
+     type: Date,
     },
+
+    provider: {
+        type: String,
+         enum: ["local", "google"],
+        default: "local",
+    },
+
+    refreshToken: {
+     type: String,
+     default: "",
+     select: false,
+    },
+    resetPasswordToken: String,
+
+    resetPasswordExpiry: Date,
+
+    verificationToken: String,
+
+    verificationExpiry: Date,
 
     wishlist: [
       {
@@ -109,8 +150,13 @@ const userSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+    versionKey: false,
+  },
+  
 );
+
+userSchema.index({ email: 1 });
+userSchema.index({ username: 1 });
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
@@ -129,7 +175,7 @@ userSchema.methods.comparePassword = async function (password) {
 userSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     {
-      id: this._id,
+      sub: this._id,
       email: this.email,
       role: this.role,
     },
@@ -151,6 +197,29 @@ userSchema.methods.generateRefreshToken = function () {
     }
   );
 };
+
+userSchema.methods.getPublicProfile = function () {
+  return {
+    id: this._id,
+    fullName: this.fullName,
+    username: this.username,
+    email: this.email,
+    avatar: this.avatar,
+    role: this.role,
+  };
+};
+
+userSchema.set("toJSON", {
+  transform(doc, ret) {
+    delete ret.password;
+    delete ret.refreshToken;
+    return ret;
+  },
+});
+
+userSchema.virtual("addressCount").get(function(){
+   return this.addresses.length;
+});
 
 const User =
   mongoose.models.User ||
