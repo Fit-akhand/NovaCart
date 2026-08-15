@@ -1,6 +1,6 @@
-import connectDB from '../../../../utils/connectDB'
-import Orders from '../../../../models/orderModel'
-import auth from '../../../../middleware/auth'
+import connectDB from '../../../../../utils/connectDB'
+import Orders from '../../../../../models/orderModel'
+import auth from '../../../../../middleware/auth'
 
 connectDB()
 
@@ -9,12 +9,15 @@ export default async (req, res) => {
         case "PATCH":
             await deliveredOrder(req, res)
             break;
+        default:
+            return res.status(405).json({ err: 'Method not allowed.' })
     }
 }
 
 const deliveredOrder = async(req, res) => {
     try {
         const result = await auth(req, res)
+        if (!result) return
         if(result.role !== 'admin')
         return res.status(400).json({err: 'Authentication is not valid.'})
         const {id} = req.query
@@ -51,6 +54,6 @@ const deliveredOrder = async(req, res) => {
         }
         
     } catch (err) {
-        return res.status(500).json({err: err.message})
+        return res.status(500).json({err: 'Something went wrong.'})
     }
 }

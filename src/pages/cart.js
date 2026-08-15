@@ -1,10 +1,9 @@
-```jsx
 import Head from 'next/head'
 import { useContext, useState, useEffect } from 'react'
-import { DataContext } from '../store/GlobalState'
-import CartItem from '../components/CartItem'
+import { DataContext } from '../../store/GlobalState'
+import CartItem from '../../components/CartItem'
 import Link from 'next/link'
-import { getData, postData } from '../utils/fetchData'
+import { getData, postData } from '../../utils/fetchData'
 import { useRouter } from 'next/router'
 import {
   ArrowRight,
@@ -171,11 +170,9 @@ const Cart = () => {
               Looks like you haven't added anything to your cart yet.
             </p>
 
-            <Link href="/">
-              <a className="mt-7 inline-flex items-center gap-2 rounded-full bg-black px-7 py-3.5 text-sm font-medium text-white transition hover:bg-gray-800">
+            <Link href="/" className="mt-7 inline-flex items-center gap-2 rounded-full bg-black px-7 py-3.5 text-sm font-medium text-white transition hover:bg-gray-800">
                 Continue Shopping
                 <ArrowRight size={17} />
-              </a>
             </Link>
           </div>
         </div>
@@ -400,14 +397,12 @@ const Cart = () => {
                       />
                     </button>
                   ) : (
-                    <Link href="/signin">
-                      <a className="group flex w-full items-center justify-center gap-2 rounded-xl bg-black px-5 py-4 text-sm font-semibold text-white transition hover:bg-gray-800">
+                    <Link href="/signin" className="group flex w-full items-center justify-center gap-2 rounded-xl bg-black px-5 py-4 text-sm font-semibold text-white transition hover:bg-gray-800">
                         Sign in to Checkout
                         <ArrowRight
                           size={17}
                           className="transition-transform group-hover:translate-x-1"
                         />
-                      </a>
                     </Link>
                   )}
 
@@ -426,4 +421,3 @@ const Cart = () => {
 }
 
 export default Cart
-```

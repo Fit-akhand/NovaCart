@@ -1,9 +1,8 @@
-```jsx
 import Head from 'next/head'
 import { useState, useContext } from 'react'
-import { getData } from '../../utils/fetchData'
-import { DataContext } from '../../store/GlobalState'
-import { addToCart } from '../../store/Actions'
+import { getData } from '../../../utils/fetchData'
+import { DataContext } from '../../../store/GlobalState'
+import { addToCart } from '../../../store/Actions'
 import {
   ArrowRight,
   Check,
@@ -573,4 +572,3 @@ export async function getServerSideProps({
 
 
 export default DetailProduct
-```

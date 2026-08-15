@@ -82,9 +82,7 @@ const OrderDetail = ({orderDetail, state, dispatch}) => {
                                         style={{width: '50px', height: '45px', objectFit: 'cover'}} />
 
                                         <h5 className="flex-fill text-secondary px-3 m-0">
-                                            <Link href={`/product/${item._id}`}>
-                                                <a>{item.title}</a>
-                                            </Link>
+                                            <Link href={`/product/${item._id}`}>{item.title}</Link>
                                         </h5>
 
                                         <span className="text-info m-0">

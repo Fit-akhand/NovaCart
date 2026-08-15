@@ -1,9 +1,8 @@
-```jsx
 import Head from 'next/head'
 import { useContext, useEffect, useState } from 'react'
-import { DataContext } from '../../store/GlobalState'
+import { DataContext } from '../../../store/GlobalState'
 import { useRouter } from 'next/router'
-import OrderDetail from '../../components/OrderDetail'
+import OrderDetail from '../../../components/OrderDetail'
 import {
   ArrowLeft,
   CheckCircle2,
@@ -267,4 +266,3 @@ const DetailOrder = () => {
 }
 
 export default DetailOrder
-```

@@ -1,7 +1,7 @@
-import connectDB from '../../../utils/connectDB'
-import Orders from '../../../models/orderModel'
-import Products from '../../../models/productModel'
-import auth from '../../../middleware/auth'
+import connectDB from '../../../../utils/connectDB'
+import Orders from '../../../../models/orderModel'
+import Products from '../../../../models/productModel'
+import auth from '../../../../middleware/auth'
 
 connectDB()
 
@@ -19,6 +19,7 @@ export default async (req, res) => {
 const getOrders = async (req, res) => {
     try {
         const result = await auth(req, res)
+        if (!result) return
 
         let orders;
         if(result.role !== 'admin'){
@@ -36,6 +37,7 @@ const getOrders = async (req, res) => {
 const createOrder = async (req, res) => {
     try {
         const result = await auth(req, res)
+        if (!result) return
         const { address, mobile, cart, total } = req.body
 
         const newOrder = new Orders({

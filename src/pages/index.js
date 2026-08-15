@@ -1,12 +1,11 @@
-```jsx
 import Head from 'next/head'
 import { useState, useContext, useEffect } from 'react'
-import { DataContext } from '../store/GlobalState'
-import { getData } from '../utils/fetchData'
-import ProductItem from '../components/product/ProductItem'
-import filterSearch from '../utils/filterSearch'
+import { DataContext } from '../../store/GlobalState'
+import { getData } from '../../utils/fetchData'
+import ProductItem from '../../components/product/ProductItem'
+import filterSearch from '../../utils/filterSearch'
 import { useRouter } from 'next/router'
-import Filter from '../components/Filter'
+import Filter from '../../components/Filter'
 import {
   Check,
   Package,
@@ -16,7 +15,7 @@ import {
 } from 'lucide-react'
 
 const Home = (props) => {
-  const [products, setProducts] = useState(props.products)
+  const [products, setProducts] = useState(props.products || [])
   const [isCheck, setIsCheck] = useState(false)
   const [page, setPage] = useState(1)
 
@@ -26,7 +25,7 @@ const Home = (props) => {
   const { auth } = state
 
   useEffect(() => {
-    setProducts(props.products)
+    setProducts(props.products || [])
   }, [props.products])
 
   useEffect(() => {
@@ -118,36 +117,39 @@ const Home = (props) => {
         />
       </Head>
 
-      <main className="min-h-screen bg-[#fafafa]">
+      <main className="min-h-screen w-full bg-slate-50">
 
-        {/* =====================================================
-            HERO / PAGE INTRO
-        ====================================================== */}
+        <section className="relative w-full overflow-hidden border-b border-slate-200 bg-white">
+          <div
+            className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full opacity-60 blur-3xl"
+            style={{ backgroundColor: 'var(--nova-blue-soft)' }}
+          />
 
-        <section className="relative overflow-hidden border-b border-gray-200 bg-white">
-
-          {/* Decorative background */}
-          <div className="pointer-events-none absolute -right-32 -top-32 h-72 w-72 rounded-full bg-gray-100 blur-3xl" />
-
-          <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+          <div className="relative w-full px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
 
             <div className="max-w-3xl">
 
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-medium text-gray-600">
+              <div
+                className="mb-5 inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium"
+                style={{
+                  borderColor: 'var(--nova-border)',
+                  backgroundColor: 'var(--nova-blue-soft)',
+                  color: 'var(--nova-navy-light)',
+                }}
+              >
                 <Sparkles size={13} />
                 Curated for you
               </div>
 
-              <h1 className="text-4xl font-semibold tracking-[-0.04em] text-gray-950 sm:text-5xl lg:text-6xl">
+              <h1 className="text-4xl font-semibold tracking-[-0.04em] text-[var(--nova-navy)] sm:text-5xl lg:text-6xl">
                 Discover products
                 <br />
-
-                <span className="text-gray-400">
+                <span className="text-slate-400">
                   worth adding to your life.
                 </span>
               </h1>
 
-              <p className="mt-5 max-w-2xl text-sm leading-6 text-gray-500 sm:text-base">
+              <p className="mt-5 max-w-2xl text-sm leading-6 text-slate-500 sm:text-base">
                 Explore our latest collection of thoughtfully
                 selected products, trending essentials and
                 everyday favorites.
@@ -155,74 +157,65 @@ const Home = (props) => {
 
             </div>
 
-            {/* Stats */}
             <div className="mt-9 flex flex-wrap items-center gap-6 text-sm">
-
-              <div className="flex items-center gap-2 text-gray-600">
+              <div className="flex items-center gap-2 text-slate-600">
                 <Package size={17} />
                 <span>
-                  <strong className="text-gray-900">
-                    {props.result}
+                  <strong className="text-[var(--nova-navy)]">
+                    {props.result || 0}
                   </strong>{' '}
                   products
                 </span>
               </div>
-
-              <div className="hidden h-4 w-px bg-gray-200 sm:block" />
-
-              <div className="flex items-center gap-2 text-gray-500">
+              <div className="hidden h-4 w-px bg-slate-200 sm:block" />
+              <div className="flex items-center gap-2 text-slate-500">
                 <Check size={16} />
                 Quality products
               </div>
-
-              <div className="hidden h-4 w-px bg-gray-200 sm:block" />
-
-              <div className="flex items-center gap-2 text-gray-500">
+              <div className="hidden h-4 w-px bg-slate-200 sm:block" />
+              <div className="flex items-center gap-2 text-slate-500">
                 <Sparkles size={16} />
                 New arrivals
               </div>
-
             </div>
 
+            <div className="mt-8">
+              <button
+                type="button"
+                onClick={() => {
+                  const el = document.getElementById('browse-products')
+                  if (el) el.scrollIntoView({ behavior: 'smooth' })
+                }}
+                className="rounded-lg px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90"
+                style={{ backgroundColor: 'var(--nova-blue)' }}
+              >
+                Browse Products
+              </button>
+            </div>
           </div>
         </section>
 
-
-        {/* =====================================================
-            FILTER
-        ====================================================== */}
-
-        <section className="mx-auto max-w-7xl px-4 pt-7 sm:px-6 lg:px-8">
-
-          <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-
-            <div className="flex items-center gap-2 border-b border-gray-100 px-5 py-4">
-
-              <Search
-                size={17}
-                className="text-gray-400"
-              />
-
+        <section
+          id="browse-products"
+          className="w-full px-4 pt-7 sm:px-6 lg:px-8"
+        >
+          <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
+            <div className="flex items-center gap-2 border-b border-slate-100 px-5 py-4">
+              <Search size={17} className="text-[var(--nova-blue)]" />
               <div>
-                <p className="text-sm font-semibold text-gray-900">
+                <p className="text-sm font-semibold text-[var(--nova-navy)]">
                   Browse Products
                 </p>
-
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-slate-400">
                   Filter and sort the collection
                 </p>
               </div>
-
             </div>
-
             <div className="p-4 sm:p-5">
               <Filter state={state} />
             </div>
-
           </div>
-
         </section>
-
 
         {/* =====================================================
             ADMIN BULK ACTION
@@ -231,9 +224,8 @@ const Home = (props) => {
         {auth.user &&
           auth.user.role === 'admin' && (
 
-            <section className="mx-auto max-w-7xl px-4 pt-5 sm:px-6 lg:px-8">
-
-              <div className="flex flex-col gap-4 rounded-2xl border border-red-100 bg-red-50/50 p-4 sm:flex-row sm:items-center sm:justify-between">
+            <section className="w-full px-4 pt-5 sm:px-6 lg:px-8">
+              <div className="flex flex-col gap-4 rounded-lg border border-red-100 bg-red-50/60 p-4 sm:flex-row sm:items-center sm:justify-between">
 
                 <div className="flex items-center gap-3">
 
@@ -249,18 +241,13 @@ const Home = (props) => {
 
                     <p className="text-xs text-gray-500">
                       {selectedCount > 0
-                        ? `${selectedCount} product${
-                            selectedCount > 1
-                              ? 's'
-                              : ''
-                          } selected`
+                        ? `${selectedCount} product${selectedCount === 1 ? '' : 's'} selected`
                         : 'Select products to perform bulk actions'}
                     </p>
 
                   </div>
 
                 </div>
-
 
                 <div className="flex items-center gap-3">
 
@@ -276,7 +263,6 @@ const Home = (props) => {
                     Select all
 
                   </label>
-
 
                   <button
                     type="button"
@@ -298,21 +284,19 @@ const Home = (props) => {
               </div>
 
             </section>
-
           )}
-
 
         {/* =====================================================
             PRODUCT GRID
         ====================================================== */}
 
-        <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <section className="w-full px-4 py-8 sm:px-6 lg:px-8">
 
           {products.length === 0 ? (
 
             /* EMPTY STATE */
 
-            <div className="flex min-h-[400px] flex-col items-center justify-center rounded-2xl border border-gray-200 bg-white px-6 text-center">
+            <div className="flex min-h-[400px] flex-col items-center justify-center rounded-lg border border-slate-200 bg-white px-6 text-center">
 
               <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-100">
 
@@ -334,10 +318,9 @@ const Home = (props) => {
               </p>
 
               <button
-                onClick={() =>
-                  router.push('/')
-                }
-                className="mt-6 rounded-xl bg-black px-5 py-3 text-xs font-semibold text-white transition hover:bg-gray-800"
+                onClick={() => router.push('/')}
+                className="mt-6 rounded-lg px-5 py-3 text-xs font-semibold text-white transition hover:opacity-90"
+                style={{ backgroundColor: 'var(--nova-blue)' }}
               >
                 View all products
               </button>
@@ -366,11 +349,10 @@ const Home = (props) => {
 
                 <p className="hidden text-xs text-gray-400 sm:block">
                   Showing {products.length} of{' '}
-                  {props.result}
+                  {props.result || 0}
                 </p>
 
               </div>
-
 
               {/* Grid */}
 
@@ -394,7 +376,6 @@ const Home = (props) => {
 
         </section>
 
-
         {/* =====================================================
             LOAD MORE
         ====================================================== */}
@@ -407,7 +388,7 @@ const Home = (props) => {
               <button
                 type="button"
                 onClick={handleLoadmore}
-                className="group inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-7 py-3.5 text-sm font-medium text-gray-900 shadow-sm transition hover:border-gray-900 hover:bg-black hover:text-white"
+                className="group inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-7 py-3.5 text-sm font-medium text-[var(--nova-navy)] transition hover:border-[var(--nova-blue)] hover:text-[var(--nova-blue)]"
               >
 
                 Load more
@@ -419,7 +400,6 @@ const Home = (props) => {
               </button>
 
             </div>
-
           )}
 
       </main>
@@ -427,26 +407,33 @@ const Home = (props) => {
   )
 }
 
-
 export async function getServerSideProps({ query }) {
-
   const page = query.page || 1
   const category = query.category || 'all'
   const sort = query.sort || ''
   const search = query.search || 'all'
 
-  const res = await getData(
-    `product?limit=${page * 6}&category=${category}&sort=${sort}&title=${search}`
-  )
+  try {
+    const res = await getData(
+      `product?limit=${page * 6}&category=${category}&sort=${sort}&title=${search}`
+    )
 
-  return {
-    props: {
-      products: res.products,
-      result: res.result,
-    },
+    return {
+      props: {
+        products: res?.products || [],
+        result: res?.result || 0,
+      },
+    }
+  } catch (error) {
+    console.error('Home page product fetch error:', error)
+
+    return {
+      props: {
+        products: [],
+        result: 0,
+      },
+    }
   }
 }
 
-
 export default Home
-```

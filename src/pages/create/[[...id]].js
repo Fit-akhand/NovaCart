@@ -1,13 +1,12 @@
-```jsx
 import Head from 'next/head'
 import { useState, useContext, useEffect } from 'react'
-import { DataContext } from '../../store/GlobalState'
-import { imageUpload } from '../../utils/imageUpload'
+import { DataContext } from '../../../store/GlobalState'
+import { imageUpload } from '../../../utils/imageUpload'
 import {
   postData,
   getData,
   putData,
-} from '../../utils/fetchData'
+} from '../../../utils/fetchData'
 import { useRouter } from 'next/router'
 import {
   ArrowLeft,
@@ -896,4 +895,3 @@ const ProductsManager = () => {
 }
 
 export default ProductsManager
-```

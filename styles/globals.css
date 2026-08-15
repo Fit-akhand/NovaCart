@@ -1,9 +1,63 @@
-html,
+@import url("./loading.css");
+@import url("./product.css");
+@import url("./profile.css");
+@import url("./products_manager.css");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --nova-navy: #0f2744;
+  --nova-navy-light: #1e3a5f;
+  --nova-blue: #2563eb;
+  --nova-blue-bright: #3b82f6;
+  --nova-blue-soft: #eff6ff;
+  --nova-border: #e2e8f0;
+  --navbar-height: 72px;
+  --notify-top: calc(var(--navbar-height) + 10px);
+  --radius: 0.5rem;
+  --background: 0 0% 100%;
+  --foreground: 222 47% 11%;
+  --primary: 221 83% 53%;
+  --primary-foreground: 0 0% 100%;
+  --border: 214 32% 91%;
+}
+
+html {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
 body {
+  width: 100%;
+  max-width: 100%;
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  overflow-x: hidden;
+  background-color: #f8fafc;
+  color: var(--nova-navy);
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  box-sizing: border-box;
+}
+
+#__next {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 a {
@@ -11,23 +65,18 @@ a {
   text-decoration: none;
 }
 
-* {
-  box-sizing: border-box;
-}
-
-img{
+img {
   object-fit: cover;
-  object-position: 0 30%;
+  object-position: center;
+  max-width: 100%;
 }
 
-/* ----------- Loading ------------- */
-@import url("./loading.css");
-
-/* ----------- Products ------------- */
-@import url("./product.css");
-
-/* ----------- Profile ------------- */
-@import url("./profile.css");
-
-/* ----------- Products Manager ------------- */
-@import url("./products_manager.css");
+/* Prevent bootstrap container from constraining full-width layouts */
+.layout-full-width .container {
+  max-width: 100%;
+  width: 100%;
+  padding-left: 0;
+  padding-right: 0;
+  margin-left: 0;
+  margin-right: 0;
+}

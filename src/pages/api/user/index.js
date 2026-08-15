@@ -1,6 +1,6 @@
-import connectDB from '../../../utils/connectDB'
-import Users from '../../../models/userModel'
-import auth from '../../../middleware/auth'
+import connectDB from '../../../../utils/connectDB'
+import Users from '../../../../models/userModel'
+import auth from '../../../../middleware/auth'
 
 connectDB()
 
@@ -18,6 +18,7 @@ export default async (req, res) => {
 const getUsers = async (req, res) => {
     try {
        const result = await auth(req, res)
+       if (!result) return
        if(result.role !== 'admin') 
        return res.status(400).json({err: "Authentication is not valid"})
 
@@ -33,6 +34,7 @@ const getUsers = async (req, res) => {
 const uploadInfor = async (req, res) => {
     try {
         const result = await auth(req, res)
+        if (!result) return
         const {name, avatar} = req.body
 
         const newUser = await Users.findOneAndUpdate({_id: result.id}, {name, avatar})

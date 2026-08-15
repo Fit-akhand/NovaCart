@@ -1,7 +1,6 @@
-```jsx
 import Head from 'next/head'
 import { useContext, useMemo, useState } from 'react'
-import { DataContext } from '../store/GlobalState'
+import { DataContext } from '../../store/GlobalState'
 import Link from 'next/link'
 import {
   Check,
@@ -377,13 +376,10 @@ const Users = () => {
 
                                 <Link
                                   href={`/edit_user/${user._id}`}
+                                  title="Edit user"
+                                  className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-gray-900"
                                 >
-                                  <a
-                                    title="Edit user"
-                                    className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-gray-900"
-                                  >
-                                    <Edit3 size={16} />
-                                  </a>
+                                  <Edit3 size={16} />
                                 </Link>
 
 
@@ -544,10 +540,9 @@ const Users = () => {
 
                             <Link
                               href={`/edit_user/${user._id}`}
+                              className="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-50 text-gray-500"
                             >
-                              <a className="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-50 text-gray-500">
-                                <Edit3 size={16} />
-                              </a>
+                              <Edit3 size={16} />
                             </Link>
 
                             <button
@@ -655,4 +650,3 @@ const Users = () => {
 }
 
 export default Users
-```

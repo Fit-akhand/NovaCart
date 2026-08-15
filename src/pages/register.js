@@ -1,4 +1,3 @@
-```jsx
 import Head from 'next/head'
 import Link from 'next/link'
 import { useState, useContext, useEffect } from 'react'
@@ -15,9 +14,9 @@ import {
   User,
 } from 'lucide-react'
 
-import valid from '../utils/valid'
-import { DataContext } from '../store/GlobalState'
-import { postData } from '../utils/fetchData'
+import valid from '../../utils/valid'
+import { DataContext } from '../../store/GlobalState'
+import { postData } from '../../utils/fetchData'
 
 const Register = () => {
   const initialState = {
@@ -146,8 +145,7 @@ const Register = () => {
 
               {/* Logo */}
 
-              <Link href="/">
-                <a className="flex items-center gap-3 text-white">
+              <Link href="/" className="flex items-center gap-3 text-white">
 
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-black">
                     <Sparkles size={19} />
@@ -157,7 +155,6 @@ const Register = () => {
                     NovaCart
                   </span>
 
-                </a>
               </Link>
 
 
@@ -265,8 +262,7 @@ const Register = () => {
 
               <div className="mb-10 flex items-center justify-center lg:hidden">
 
-                <Link href="/">
-                  <a className="flex items-center gap-2">
+                <Link href="/" className="flex items-center gap-2">
 
                     <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-black text-white">
                       <Sparkles size={17} />
@@ -276,7 +272,6 @@ const Register = () => {
                       NovaCart
                     </span>
 
-                  </a>
                 </Link>
 
               </div>
@@ -545,10 +540,8 @@ const Register = () => {
 
                   Already have an account?{' '}
 
-                  <Link href="/signin">
-                    <a className="font-semibold text-gray-900 underline decoration-gray-300 underline-offset-4 transition hover:decoration-gray-900">
+                  <Link href="/signin" className="font-semibold text-gray-900 underline decoration-gray-300 underline-offset-4 transition hover:decoration-gray-900">
                       Sign in
-                    </a>
                   </Link>
 
                 </p>
@@ -578,4 +571,3 @@ const Register = () => {
 }
 
 export default Register
-```

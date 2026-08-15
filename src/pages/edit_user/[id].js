@@ -1,11 +1,10 @@
-```jsx
 import Head from 'next/head'
 import { useContext, useState, useEffect } from 'react'
-import { DataContext } from '../../store/GlobalState'
-import { updateItem } from '../../store/Actions'
+import { DataContext } from '../../../store/GlobalState'
+import { updateItem } from '../../../store/Actions'
 
 import { useRouter } from 'next/router'
-import { patchData } from '../../utils/fetchData'
+import { patchData } from '../../../utils/fetchData'
 
 import {
   ArrowLeft,
@@ -517,4 +516,3 @@ const EditUser = () => {
 }
 
 export default EditUser
-```

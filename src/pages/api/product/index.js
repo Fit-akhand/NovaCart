@@ -1,6 +1,6 @@
-import connectDB from '../../../utils/connectDB'
-import Products from '../../../models/productModel'
-import auth from '../../../middleware/auth'
+import connectDB from '../../../../utils/connectDB'
+import Products from '../../../../models/productModel'
+import auth from '../../../../middleware/auth'
 
 connectDB()
 
@@ -75,6 +75,7 @@ const getProducts = async (req, res) => {
 const createProduct = async (req, res) => {
     try {
         const result = await auth(req, res)
+        if (!result) return
         if(result.role !== 'admin') return res.status(400).json({err: 'Authentication is not valid.'})
 
         const {title, price, inStock, description, content, category, images} = req.body

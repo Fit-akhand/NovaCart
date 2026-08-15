@@ -1,12 +1,11 @@
-```jsx
 import Head from 'next/head'
 import { useState, useContext, useEffect } from 'react'
-import { DataContext } from '../store/GlobalState'
+import { DataContext } from '../../store/GlobalState'
 import Link from 'next/link'
 
-import valid from '../utils/valid'
-import { patchData } from '../utils/fetchData'
-import { imageUpload } from '../utils/imageUpload'
+import valid from '../../utils/valid'
+import { patchData } from '../../utils/fetchData'
+import { imageUpload } from '../../utils/imageUpload'
 
 import {
   Camera,
@@ -563,11 +562,9 @@ const Profile = () => {
                     you place your first order.
                   </p>
 
-                  <Link href="/">
-                    <a className="mt-6 inline-flex items-center gap-2 rounded-xl bg-black px-5 py-3 text-xs font-semibold text-white transition hover:bg-gray-800">
+                  <Link href="/" className="mt-6 inline-flex items-center gap-2 rounded-xl bg-black px-5 py-3 text-xs font-semibold text-white transition hover:bg-gray-800">
                       Start Shopping
                       <ChevronRight size={15} />
-                    </a>
                   </Link>
 
                 </div>
@@ -581,8 +578,8 @@ const Profile = () => {
                     <Link
                       href={`/order/${order._id}`}
                       key={order._id}
+                      className="group block px-5 py-5 transition hover:bg-gray-50 sm:px-6"
                     >
-                      <a className="group block px-5 py-5 transition hover:bg-gray-50 sm:px-6">
 
                         <div className="flex items-center justify-between gap-4">
 
@@ -724,7 +721,6 @@ const Profile = () => {
 
                         </div>
 
-                      </a>
                     </Link>
 
                   ))}
@@ -745,4 +741,3 @@ const Profile = () => {
 }
 
 export default Profile
-```

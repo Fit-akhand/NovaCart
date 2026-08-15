@@ -1,6 +1,6 @@
-import connectDB from '../../../utils/connectDB'
-import Products from '../../../models/productModel'
-import auth from '../../../middleware/auth'
+import connectDB from '../../../../utils/connectDB'
+import Products from '../../../../models/productModel'
+import auth from '../../../../middleware/auth'
 
 connectDB()
 
@@ -15,6 +15,8 @@ export default async (req, res) => {
         case "DELETE":
             await deleteProduct(req, res)
             break;
+        default:
+            return res.status(405).json({ err: 'Method not allowed.' })
     }
 }
 
@@ -28,13 +30,14 @@ const getProduct = async (req, res) => {
         res.json({ product })
 
     } catch (err) {
-        return res.status(500).json({err: err.message})
+        return res.status(500).json({err: 'Something went wrong.'})
     }
 }
 
 const updateProduct = async (req, res) => {
     try {
         const result = await auth(req, res)
+        if (!result) return
         if(result.role !== 'admin') 
         return res.status(400).json({err: 'Authentication is not valid.'})
 
@@ -50,13 +53,14 @@ const updateProduct = async (req, res) => {
 
         res.json({msg: 'Success! Updated a product'})
     } catch (err) {
-        return res.status(500).json({err: err.message})
+        return res.status(500).json({err: 'Something went wrong.'})
     }
 }
 
 const deleteProduct = async(req, res) => {
     try {
         const result = await auth(req, res)
+        if (!result) return
         
         if(result.role !== 'admin') 
         return res.status(400).json({err: 'Authentication is not valid.'})
@@ -67,6 +71,6 @@ const deleteProduct = async(req, res) => {
         res.json({msg: 'Deleted a product.'})
 
     } catch (err) {
-        return res.status(500).json({err: err.message})
+        return res.status(500).json({err: 'Something went wrong.'})
     }
 }

@@ -1,9 +1,8 @@
-```jsx
 import Head from 'next/head'
 import { useContext, useMemo, useState } from 'react'
-import { DataContext } from '../store/GlobalState'
-import { updateItem } from '../store/Actions'
-import { postData, putData } from '../utils/fetchData'
+import { DataContext } from '../../store/GlobalState'
+import { updateItem } from '../../store/Actions'
+import { postData, putData } from '../../utils/fetchData'
 import {
   Check,
   Edit3,
@@ -396,4 +395,3 @@ const Categories = () => {
 }
 
 export default Categories
-```

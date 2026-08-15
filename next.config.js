@@ -1,12 +1,22 @@
-module.exports = {
-    env: {
-        "BASE_URL": "http://localhost:3000",
-        "MONGODB_URL": "YOUR_MONGODB_URL",
-        "ACCESS_TOKEN_SECRET": "YOUR_ACCESS_TOKEN_SECRET",
-        "REFRESH_TOKEN_SECRET": "YOUR_REFRESH_TOKEN_SECRET",
-        "PAYPAL_CLIENT_ID": "YOUR_PAYPAL_CLIENT_ID",
-        "CLOUD_UPDATE_PRESET": "YOUR_CLOUD_UPDATE_PRESET",
-        "CLOUD_NAME": "YOUR_CLOUD_NAME",
-        "CLOUD_API": "YOUR_CLOUD_API"
-    }
-}
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  // Legacy Pages Router code reads these via process.env on client and server.
+  // Values come from .env / .env.local — never hardcode secrets here.
+  env: {
+    BASE_URL: process.env.BASE_URL,
+    PAYPAL_CLIENT_ID: process.env.PAYPAL_CLIENT_ID,
+    CLOUD_UPDATE_PRESET: process.env.CLOUD_UPDATE_PRESET,
+    CLOUD_NAME: process.env.CLOUD_NAME,
+    CLOUD_API: process.env.CLOUD_API,
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
+    ],
+  },
+};
+
+module.exports = nextConfig;

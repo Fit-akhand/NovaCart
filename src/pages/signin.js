@@ -1,9 +1,7 @@
-```jsx
 import Head from 'next/head'
 import Link from 'next/link'
 import { useState, useContext, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import Cookie from 'js-cookie'
 import {
   ArrowRight,
   Eye,
@@ -15,8 +13,8 @@ import {
   Check,
 } from 'lucide-react'
 
-import { DataContext } from '../store/GlobalState'
-import { postData } from '../utils/fetchData'
+import { DataContext } from '../../store/GlobalState'
+import { postData } from '../../utils/fetchData'
 
 const Signin = () => {
   const initialState = {
@@ -96,15 +94,6 @@ const Signin = () => {
       },
     })
 
-    Cookie.set(
-      'refreshtoken',
-      res.refresh_token,
-      {
-        path: 'api/auth/accessToken',
-        expires: 7,
-      }
-    )
-
     localStorage.setItem(
       'firstLogin',
       true
@@ -150,8 +139,7 @@ const Signin = () => {
 
               {/* Logo */}
 
-              <Link href="/">
-                <a className="flex items-center gap-3 text-white">
+              <Link href="/" className="flex items-center gap-3 text-white">
 
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-black">
                     <Sparkles size={19} />
@@ -161,7 +149,6 @@ const Signin = () => {
                     NovaCart
                   </span>
 
-                </a>
               </Link>
 
 
@@ -265,8 +252,7 @@ const Signin = () => {
 
               <div className="mb-10 flex items-center justify-center lg:hidden">
 
-                <Link href="/">
-                  <a className="flex items-center gap-2">
+                <Link href="/" className="flex items-center gap-2">
 
                     <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-black text-white">
                       <Sparkles size={17} />
@@ -276,7 +262,6 @@ const Signin = () => {
                       NovaCart
                     </span>
 
-                  </a>
                 </Link>
 
               </div>
@@ -364,10 +349,8 @@ const Signin = () => {
                       Password
                     </label>
 
-                    <Link href="/forgot-password">
-                      <a className="text-xs font-medium text-gray-500 transition hover:text-black">
+                    <Link href="/forgot-password" className="text-xs font-medium text-gray-500 transition hover:text-black">
                         Forgot password?
-                      </a>
                     </Link>
 
                   </div>
@@ -467,10 +450,8 @@ const Signin = () => {
 
                   Don't have an account?{' '}
 
-                  <Link href="/register">
-                    <a className="font-semibold text-gray-900 underline decoration-gray-300 underline-offset-4 transition hover:decoration-gray-900">
+                  <Link href="/register" className="font-semibold text-gray-900 underline decoration-gray-300 underline-offset-4 transition hover:decoration-gray-900">
                       Create an account
-                    </a>
                   </Link>
 
                 </p>
@@ -500,4 +481,3 @@ const Signin = () => {
 }
 
 export default Signin
-```
