@@ -1,6 +1,6 @@
 import connectDB from '../../../../utils/connectDB'
 import Users from '../../../../models/userModel'
-import valid from '../../../../utils/valid'
+import valid from '@/validators/auth'
 import bcrypt from 'bcrypt'
 
 connectDB()

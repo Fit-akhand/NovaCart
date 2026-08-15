@@ -14,7 +14,7 @@ import {
   User,
 } from 'lucide-react'
 
-import valid from '../../utils/valid'
+import valid from '@/validators/auth'
 import { DataContext } from '../../store/GlobalState'
 import { postData } from '@/lib/api-client'
 

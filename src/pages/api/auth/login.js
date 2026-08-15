@@ -3,7 +3,7 @@ import Users from '../../../../models/userModel'
 import bcrypt from 'bcrypt'
 import { createAccessToken, createRefreshToken } from '../../../../utils/generateToken'
 import { setRefreshTokenCookie } from '../../../../utils/authCookies'
-import { validLogin } from '../../../../utils/valid'
+import { validLogin } from '@/validators/auth'
 
 connectDB()
 

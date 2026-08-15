@@ -3,7 +3,7 @@ import { useState, useContext, useEffect } from 'react'
 import { DataContext } from '../../store/GlobalState'
 import Link from 'next/link'
 
-import valid from '../../utils/valid'
+import valid from '@/validators/auth'
 import { patchData } from '@/lib/api-client'
 import { imageUpload } from '../../utils/imageUpload'
 
