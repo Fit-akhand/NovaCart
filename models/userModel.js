@@ -26,6 +26,26 @@ const userSchema = new mongoose.Schema({
     avatar: {
         type: String,
         default: 'https://res.cloudinary.com/devatchannel/image/upload/v1602752402/avatar/avatar_cugq40.png'
+    },
+    address: {
+        type: String,
+        default: ''
+    },
+    city: {
+        type: String,
+        default: ''
+    },
+    state: {
+        type: String,
+        default: ''
+    },
+    pincode: {
+        type: String,
+        default: ''
+    },
+    phone: {
+        type: String,
+        default: ''
     }
 }, {
     timestamps: true

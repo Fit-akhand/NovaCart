@@ -7,14 +7,21 @@ import {
   Check,
   Eye,
   EyeOff,
+  KeyRound,
   Lock,
   Mail,
+  MapPin,
+  Phone,
   ShieldCheck,
   Sparkles,
   User,
 } from 'lucide-react'
 
-import valid from '@/validators/auth'
+import valid, {
+  validAccountType,
+  validAdminCodePresent,
+  validCustomerDetails,
+} from '@/validators/auth'
 import { DataContext } from '../../store/GlobalState'
 import { postData } from '@/lib/api-client'
 
@@ -24,6 +31,13 @@ const Register = () => {
     email: '',
     password: '',
     cf_password: '',
+    accountType: 'customer',
+    adminCode: '',
+    address: '',
+    city: '',
+    state: '',
+    pincode: '',
+    phone: '',
   }
 
   const [userData, setUserData] = useState(initialState)
@@ -33,6 +47,13 @@ const Register = () => {
     email,
     password,
     cf_password,
+    accountType,
+    adminCode,
+    address,
+    city,
+    state: deliveryState,
+    pincode,
+    phone,
   } = userData
 
   const [showPassword, setShowPassword] = useState(false)
@@ -77,6 +98,48 @@ const Register = () => {
       })
     }
 
+    const accountTypeErr = validAccountType(accountType)
+    if (accountTypeErr) {
+      return dispatch({
+        type: 'NOTIFY',
+        payload: {
+          error: accountTypeErr,
+        },
+      })
+    }
+
+    if (accountType === 'customer') {
+      const customerErr = validCustomerDetails(
+        address,
+        city,
+        deliveryState,
+        pincode,
+        phone
+      )
+
+      if (customerErr) {
+        return dispatch({
+          type: 'NOTIFY',
+          payload: {
+            error: customerErr,
+          },
+        })
+      }
+    }
+
+    if (accountType === 'admin') {
+      const adminCodeErr = validAdminCodePresent(adminCode)
+
+      if (adminCodeErr) {
+        return dispatch({
+          type: 'NOTIFY',
+          payload: {
+            error: adminCodeErr,
+          },
+        })
+      }
+    }
+
     dispatch({
       type: 'NOTIFY',
       payload: {
@@ -84,9 +147,32 @@ const Register = () => {
       },
     })
 
+    const payload =
+      accountType === 'admin'
+        ? {
+            name,
+            email,
+            password,
+            cf_password,
+            accountType,
+            adminCode,
+          }
+        : {
+            name,
+            email,
+            password,
+            cf_password,
+            accountType,
+            address,
+            city,
+            state: deliveryState,
+            pincode,
+            phone,
+          }
+
     const res = await postData(
       'auth/register',
-      userData
+      payload
     )
 
     if (res.err) {
@@ -310,6 +396,48 @@ const Register = () => {
                 className="space-y-5"
               >
 
+                <div>
+                  <p className="mb-2 block text-xs font-semibold text-gray-700">
+                    Account type
+                  </p>
+
+                  <div className="grid grid-cols-2 gap-1 rounded-xl border border-gray-200 bg-white p-1">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setUserData((prev) => ({
+                          ...prev,
+                          accountType: 'customer',
+                        }))
+                      }
+                      className={`h-10 rounded-lg text-sm font-semibold transition ${
+                        accountType === 'customer'
+                          ? 'bg-black text-white'
+                          : 'text-gray-600 hover:bg-gray-50'
+                      }`}
+                    >
+                      Customer
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setUserData((prev) => ({
+                          ...prev,
+                          accountType: 'admin',
+                        }))
+                      }
+                      className={`h-10 rounded-lg text-sm font-semibold transition ${
+                        accountType === 'admin'
+                          ? 'bg-black text-white'
+                          : 'text-gray-600 hover:bg-gray-50'
+                      }`}
+                    >
+                      Admin
+                    </button>
+                  </div>
+                </div>
+
                 {/* Name */}
 
                 <div>
@@ -508,6 +636,161 @@ const Register = () => {
                 </div>
 
 
+                {accountType === 'customer' && (
+                  <>
+                    <div>
+                      <label
+                        htmlFor="address"
+                        className="mb-2 block text-xs font-semibold text-gray-700"
+                      >
+                        Address
+                      </label>
+
+                      <div className="relative">
+                        <MapPin
+                          size={17}
+                          className="absolute left-4 top-4 text-gray-400"
+                        />
+
+                        <textarea
+                          id="address"
+                          name="address"
+                          rows="3"
+                          value={address}
+                          onChange={handleChangeInput}
+                          placeholder="Enter your delivery address"
+                          autoComplete="street-address"
+                          className="w-full resize-none rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-black focus:ring-4 focus:ring-black/5"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                      <div>
+                        <label
+                          htmlFor="city"
+                          className="mb-2 block text-xs font-semibold text-gray-700"
+                        >
+                          City
+                        </label>
+
+                        <input
+                          type="text"
+                          id="city"
+                          name="city"
+                          value={city}
+                          onChange={handleChangeInput}
+                          placeholder="City"
+                          autoComplete="address-level2"
+                          className="h-12 w-full rounded-xl border border-gray-200 bg-white px-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-black focus:ring-4 focus:ring-black/5"
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="state"
+                          className="mb-2 block text-xs font-semibold text-gray-700"
+                        >
+                          State
+                        </label>
+
+                        <input
+                          type="text"
+                          id="state"
+                          name="state"
+                          value={deliveryState}
+                          onChange={handleChangeInput}
+                          placeholder="State"
+                          autoComplete="address-level1"
+                          className="h-12 w-full rounded-xl border border-gray-200 bg-white px-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-black focus:ring-4 focus:ring-black/5"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                      <div>
+                        <label
+                          htmlFor="pincode"
+                          className="mb-2 block text-xs font-semibold text-gray-700"
+                        >
+                          Pincode
+                        </label>
+
+                        <input
+                          type="text"
+                          id="pincode"
+                          name="pincode"
+                          inputMode="numeric"
+                          value={pincode}
+                          onChange={handleChangeInput}
+                          placeholder="6-digit pincode"
+                          autoComplete="postal-code"
+                          className="h-12 w-full rounded-xl border border-gray-200 bg-white px-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-black focus:ring-4 focus:ring-black/5"
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="phone"
+                          className="mb-2 block text-xs font-semibold text-gray-700"
+                        >
+                          Phone
+                        </label>
+
+                        <div className="relative">
+                          <Phone
+                            size={17}
+                            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                          />
+
+                          <input
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            inputMode="numeric"
+                            value={phone}
+                            onChange={handleChangeInput}
+                            placeholder="10-digit phone"
+                            autoComplete="tel"
+                            className="h-12 w-full rounded-xl border border-gray-200 bg-white pl-11 pr-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-black focus:ring-4 focus:ring-black/5"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+
+                {accountType === 'admin' && (
+                  <div>
+                    <label
+                      htmlFor="adminCode"
+                      className="mb-2 block text-xs font-semibold text-gray-700"
+                    >
+                      Admin Registration Code
+                    </label>
+
+                    <div className="relative">
+                      <KeyRound
+                        size={17}
+                        className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                      />
+
+                      <input
+                        type="password"
+                        id="adminCode"
+                        name="adminCode"
+                        value={adminCode}
+                        onChange={handleChangeInput}
+                        placeholder="Enter admin registration code"
+                        autoComplete="off"
+                        className="h-12 w-full rounded-xl border border-gray-200 bg-white pl-11 pr-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-black focus:ring-4 focus:ring-black/5"
+                      />
+                    </div>
+                  </div>
+                )}
+
+
                 {/* Submit */}
 
                 <button
@@ -518,7 +801,9 @@ const Register = () => {
 
                   {notify?.loading
                     ? 'Creating account...'
-                    : 'Create account'}
+                    : accountType === 'admin'
+                      ? 'Create Admin Account'
+                      : 'Create Customer Account'}
 
                   {!notify?.loading && (
                     <ArrowRight
