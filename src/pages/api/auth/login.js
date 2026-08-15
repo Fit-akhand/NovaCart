@@ -3,6 +3,7 @@ import Users from '../../../../models/userModel'
 import bcrypt from 'bcrypt'
 import { createAccessToken, createRefreshToken } from '../../../../utils/generateToken'
 import { setRefreshTokenCookie } from '../../../../utils/authCookies'
+import { toSafeUser } from '../../../../utils/safeUser'
 import { validLogin } from '@/validators/auth'
 
 connectDB()
@@ -41,13 +42,7 @@ const login = async (req, res) => {
             msg: "Login Success!",
             refresh_token,
             access_token,
-            user: {
-                name: user.name,
-                email: user.email,
-                role: user.role,
-                avatar: user.avatar,
-                root: user.root
-            }
+            user: toSafeUser(user)
         })
 
     }catch(err){

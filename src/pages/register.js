@@ -2,21 +2,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useState, useContext, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import {
-  ArrowRight,
-  Check,
-  Eye,
-  EyeOff,
-  KeyRound,
-  Lock,
-  Mail,
-  MapPin,
-  Phone,
-  ShieldCheck,
-  Sparkles,
-  User,
-} from 'lucide-react'
-
+import { Eye, EyeOff, KeyRound, Lock, Mail, Phone, User } from 'lucide-react'
 import valid, {
   validAccountType,
   validAdminCodePresent,
@@ -24,7 +10,12 @@ import valid, {
 } from '@/validators/auth'
 import { DataContext } from '../../store/GlobalState'
 import { postData } from '@/lib/api-client'
+import BrandLogo from '../../components/common/BrandLogo'
+import Button from '../../components/common/Button'
+import ThemeToggle from '../../components/common/ThemeToggle'
 
+const fieldClass =
+  'h-12 w-full rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface)] px-4 !pl-12 text-sm text-[var(--nova-text)] outline-none placeholder:text-[var(--nova-muted)] focus:border-[var(--nova-blue)]'
 const Register = () => {
   const initialState = {
     name: '',
@@ -41,7 +32,6 @@ const Register = () => {
   }
 
   const [userData, setUserData] = useState(initialState)
-
   const {
     name,
     email,
@@ -55,108 +45,42 @@ const Register = () => {
     pincode,
     phone,
   } = userData
-
   const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] =
-    useState(false)
-
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const { state, dispatch } = useContext(DataContext)
   const { auth, notify } = state
-
   const router = useRouter()
 
   const handleChangeInput = (e) => {
-    const { name, value } = e.target
-
-    setUserData((prev) => ({
-      ...prev,
-      [name]: value,
-    }))
-
-    dispatch({
-      type: 'NOTIFY',
-      payload: {},
-    })
+    const { name: field, value } = e.target
+    setUserData((prev) => ({ ...prev, [field]: value }))
+    dispatch({ type: 'NOTIFY', payload: {} })
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    const errMsg = valid(
-      name,
-      email,
-      password,
-      cf_password
-    )
-
-    if (errMsg) {
-      return dispatch({
-        type: 'NOTIFY',
-        payload: {
-          error: errMsg,
-        },
-      })
-    }
+    const errMsg = valid(name, email, password, cf_password)
+    if (errMsg) return dispatch({ type: 'NOTIFY', payload: { error: errMsg } })
 
     const accountTypeErr = validAccountType(accountType)
-    if (accountTypeErr) {
-      return dispatch({
-        type: 'NOTIFY',
-        payload: {
-          error: accountTypeErr,
-        },
-      })
-    }
+    if (accountTypeErr) return dispatch({ type: 'NOTIFY', payload: { error: accountTypeErr } })
 
     if (accountType === 'customer') {
-      const customerErr = validCustomerDetails(
-        address,
-        city,
-        deliveryState,
-        pincode,
-        phone
-      )
-
-      if (customerErr) {
-        return dispatch({
-          type: 'NOTIFY',
-          payload: {
-            error: customerErr,
-          },
-        })
-      }
+      const customerErr = validCustomerDetails(address, city, deliveryState, pincode, phone)
+      if (customerErr) return dispatch({ type: 'NOTIFY', payload: { error: customerErr } })
     }
 
     if (accountType === 'admin') {
       const adminCodeErr = validAdminCodePresent(adminCode)
-
-      if (adminCodeErr) {
-        return dispatch({
-          type: 'NOTIFY',
-          payload: {
-            error: adminCodeErr,
-          },
-        })
-      }
+      if (adminCodeErr) return dispatch({ type: 'NOTIFY', payload: { error: adminCodeErr } })
     }
 
-    dispatch({
-      type: 'NOTIFY',
-      payload: {
-        loading: true,
-      },
-    })
+    dispatch({ type: 'NOTIFY', payload: { loading: true } })
 
     const payload =
       accountType === 'admin'
-        ? {
-            name,
-            email,
-            password,
-            cf_password,
-            accountType,
-            adminCode,
-          }
+        ? { name, email, password, cf_password, accountType, adminCode }
         : {
             name,
             email,
@@ -170,686 +94,170 @@ const Register = () => {
             phone,
           }
 
-    const res = await postData(
-      'auth/register',
-      payload
-    )
-
-    if (res.err) {
-      return dispatch({
-        type: 'NOTIFY',
-        payload: {
-          error: res.err,
-        },
-      })
-    }
-
-    return dispatch({
-      type: 'NOTIFY',
-      payload: {
-        success: res.msg,
-      },
-    })
+    const res = await postData('auth/register', payload)
+    if (res.err) return dispatch({ type: 'NOTIFY', payload: { error: res.err } })
+    return dispatch({ type: 'NOTIFY', payload: { success: res.msg } })
   }
 
   useEffect(() => {
-    if (Object.keys(auth).length !== 0) {
-      router.push('/')
-    }
+    if (Object.keys(auth).length !== 0) router.push('/')
   }, [auth, router])
 
   return (
     <>
       <Head>
         <title>Create Account | NovaCart</title>
-
-        <meta
-          name="description"
-          content="Create your NovaCart account and start shopping."
-        />
       </Head>
 
-      <main className="min-h-screen bg-[#f7f7f7]">
-
+      <main className="min-h-screen bg-[var(--nova-bg)]">
         <div className="mx-auto flex min-h-screen max-w-[1500px]">
-
-          {/* =================================================
-              LEFT — BRAND EXPERIENCE
-          ================================================== */}
-
-          <section className="relative hidden overflow-hidden bg-black lg:flex lg:w-[48%]">
-
-            {/* Decorative circles */}
-
-            <div className="absolute -right-32 -top-32 h-[500px] w-[500px] rounded-full border border-white/10" />
-
-            <div className="absolute -bottom-48 -left-40 h-[600px] w-[600px] rounded-full border border-white/10" />
-
-            <div className="absolute right-20 top-1/3 h-40 w-40 rounded-full bg-white/5 blur-3xl" />
-
-            <div className="relative z-10 flex w-full flex-col justify-between p-12 xl:p-16">
-
-              {/* Logo */}
-
-              <Link href="/" className="flex items-center gap-3 text-white">
-
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-black">
-                    <Sparkles size={19} />
-                  </div>
-
-                  <span className="text-xl font-semibold tracking-tight">
-                    NovaCart
-                  </span>
-
-              </Link>
-
-
-              {/* Main message */}
-
-              <div className="max-w-lg">
-
-                <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/70">
-
-                  <Sparkles size={13} />
-
-                  Welcome to something better
-
-                </div>
-
-                <h1 className="text-5xl font-semibold leading-[1.05] tracking-[-0.04em] text-white xl:text-6xl">
-
-                  Your next
+          <section className="relative hidden overflow-hidden bg-[var(--nova-navy)] lg:flex lg:w-[44%]">
+            <div className="relative z-10 flex w-full flex-col justify-between p-12 text-white xl:p-16">
+              <BrandLogo variant="light" />
+              <div>
+                <h1 className="text-5xl font-semibold leading-tight">
+                  Create your
                   <br />
-
-                  <span className="text-white/40">
-                    favorite thing
-                  </span>
-
-                  <br />
-
-                  starts here.
-
+                  NovaCart account
                 </h1>
-
-                <p className="mt-6 max-w-md text-sm leading-6 text-white/50">
-
-                  Create your NovaCart account and discover
-                  a smarter, simpler way to shop your favorite
-                  products.
-
+                <p className="mt-6 max-w-md text-sm leading-6 text-white/70">
+                  Customers can save a delivery address. Admin accounts require a registration code validated on the server.
                 </p>
-
-
-                {/* Benefits */}
-
-                <div className="mt-9 space-y-4">
-
-                  <div className="flex items-center gap-3 text-sm text-white/70">
-
-                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/10">
-
-                      <Check size={14} />
-
-                    </div>
-
-                    Curated products
-
-                  </div>
-
-                  <div className="flex items-center gap-3 text-sm text-white/70">
-
-                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/10">
-
-                      <Check size={14} />
-
-                    </div>
-
-                    Secure & reliable checkout
-
-                  </div>
-
-                  <div className="flex items-center gap-3 text-sm text-white/70">
-
-                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/10">
-
-                      <Check size={14} />
-
-                    </div>
-
-                    Track every order
-
-                  </div>
-
-                </div>
-
               </div>
-
-
-              {/* Footer */}
-
-              <p className="text-xs text-white/30">
-                © {new Date().getFullYear()} NovaCart. All rights reserved.
-              </p>
-
+              <p className="text-xs text-white/40">© {new Date().getFullYear()} NovaCart</p>
             </div>
-
           </section>
 
-
-          {/* =================================================
-              RIGHT — REGISTER FORM
-          ================================================== */}
-
-          <section className="flex w-full items-center justify-center px-5 py-10 sm:px-8 lg:w-[52%]">
-
+          <section className="flex w-full items-start justify-center px-5 py-10 sm:px-8 lg:w-[56%]">
             <div className="w-full max-w-md">
-
-              {/* Mobile logo */}
-
-              <div className="mb-10 flex items-center justify-center lg:hidden">
-
-                <Link href="/" className="flex items-center gap-2">
-
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-black text-white">
-                      <Sparkles size={17} />
-                    </div>
-
-                    <span className="text-lg font-semibold">
-                      NovaCart
-                    </span>
-
-                </Link>
-
+              <div className="mb-8 flex items-center justify-between">
+                <div className="lg:hidden">
+                  <BrandLogo compact />
+                </div>
+                <ThemeToggle />
               </div>
 
+              <h2 className="text-3xl font-semibold">Create your NovaCart account</h2>
+              <p className="mt-2 text-sm text-[var(--nova-muted)]">
+                Choose Customer or Admin. Admin access is verified with a secret code.
+              </p>
 
-              {/* Heading */}
-
-              <div className="mb-8">
-
-                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-black text-white">
-
-                  <User size={20} />
-
+              <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+                <div>
+                  <p className="mb-2 text-sm font-medium">Account type</p>
+                  <div className="grid grid-cols-2 gap-1 rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface)] p-1">
+                    {['customer', 'admin'].map((type) => (
+                      <button
+                        key={type}
+                        type="button"
+                        onClick={() => setUserData((prev) => ({ ...prev, accountType: type }))}
+                        className={`h-10 rounded-md text-sm font-semibold capitalize ${
+                          accountType === type
+                            ? 'bg-[var(--nova-blue)] text-white'
+                            : 'text-[var(--nova-muted)] hover:bg-[var(--nova-surface-soft)]'
+                        }`}
+                      >
+                        {type === 'customer' ? 'Customer' : 'Admin'}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
-                <h2 className="text-3xl font-semibold tracking-tight text-gray-950">
-
-                  Create your account
-
-                </h2>
-
-                <p className="mt-2 text-sm leading-6 text-gray-500">
-
-                  Join NovaCart and start discovering products
-                  you'll love.
-
-                </p>
-
-              </div>
-
-
-              {/* Form */}
-
-              <form
-                onSubmit={handleSubmit}
-                className="space-y-5"
-              >
+                <div>
+                  <label htmlFor="name" className="mb-2 block text-sm font-medium">Full name</label>
+                  <div className="relative">
+                    <User size={17} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--nova-muted)]" />
+                    <input id="name" name="name" value={name} onChange={handleChangeInput} placeholder="Enter your full name" className={`${fieldClass} pl-11`} />
+                  </div>
+                </div>
 
                 <div>
-                  <p className="mb-2 block text-xs font-semibold text-gray-700">
-                    Account type
-                  </p>
+                  <label htmlFor="email" className="mb-2 block text-sm font-medium">Email</label>
+                  <div className="relative">
+                    <Mail size={17} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--nova-muted)]" />
+                    <input type="email" id="email" name="email" value={email} onChange={handleChangeInput} placeholder="you@example.com" className={`${fieldClass} pl-11`} />
+                  </div>
+                </div>
 
-                  <div className="grid grid-cols-2 gap-1 rounded-xl border border-gray-200 bg-white p-1">
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setUserData((prev) => ({
-                          ...prev,
-                          accountType: 'customer',
-                        }))
-                      }
-                      className={`h-10 rounded-lg text-sm font-semibold transition ${
-                        accountType === 'customer'
-                          ? 'bg-black text-white'
-                          : 'text-gray-600 hover:bg-gray-50'
-                      }`}
-                    >
-                      Customer
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setUserData((prev) => ({
-                          ...prev,
-                          accountType: 'admin',
-                        }))
-                      }
-                      className={`h-10 rounded-lg text-sm font-semibold transition ${
-                        accountType === 'admin'
-                          ? 'bg-black text-white'
-                          : 'text-gray-600 hover:bg-gray-50'
-                      }`}
-                    >
-                      Admin
+                <div>
+                  <label htmlFor="password" className="mb-2 block text-sm font-medium">Password</label>
+                  <div className="relative">
+                    <Lock size={17} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--nova-muted)]" />
+                    <input type={showPassword ? 'text' : 'password'} id="password" name="password" value={password} onChange={handleChangeInput} placeholder="Create a password" className={`${fieldClass} pl-11 pr-12`} />
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--nova-muted)]" aria-label={showPassword ? 'Hide password' : 'Show password'}>
+                      {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
                     </button>
                   </div>
                 </div>
 
-                {/* Name */}
-
                 <div>
-
-                  <label
-                    htmlFor="name"
-                    className="mb-2 block text-xs font-semibold text-gray-700"
-                  >
-                    Full name
-                  </label>
-
+                  <label htmlFor="cf_password" className="mb-2 block text-sm font-medium">Confirm password</label>
                   <div className="relative">
-
-                    <User
-                      size={17}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                    />
-
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={name}
-                      onChange={handleChangeInput}
-                      placeholder="Enter your full name"
-                      autoComplete="name"
-                      className="h-12 w-full rounded-xl border border-gray-200 bg-white pl-11 pr-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-black focus:ring-4 focus:ring-black/5"
-                    />
-
-                  </div>
-
-                </div>
-
-
-                {/* Email */}
-
-                <div>
-
-                  <label
-                    htmlFor="email"
-                    className="mb-2 block text-xs font-semibold text-gray-700"
-                  >
-                    Email address
-                  </label>
-
-                  <div className="relative">
-
-                    <Mail
-                      size={17}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                    />
-
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={email}
-                      onChange={handleChangeInput}
-                      placeholder="you@example.com"
-                      autoComplete="email"
-                      className="h-12 w-full rounded-xl border border-gray-200 bg-white pl-11 pr-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-black focus:ring-4 focus:ring-black/5"
-                    />
-
-                  </div>
-
-                  <p className="mt-2 flex items-center gap-1.5 text-[11px] text-gray-400">
-
-                    <ShieldCheck size={12} />
-
-                    Your email is safe with us.
-
-                  </p>
-
-                </div>
-
-
-                {/* Password */}
-
-                <div>
-
-                  <label
-                    htmlFor="password"
-                    className="mb-2 block text-xs font-semibold text-gray-700"
-                  >
-                    Password
-                  </label>
-
-                  <div className="relative">
-
-                    <Lock
-                      size={17}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                    />
-
-                    <input
-                      type={
-                        showPassword
-                          ? 'text'
-                          : 'password'
-                      }
-                      id="password"
-                      name="password"
-                      value={password}
-                      onChange={handleChangeInput}
-                      placeholder="Create a password"
-                      autoComplete="new-password"
-                      className="h-12 w-full rounded-xl border border-gray-200 bg-white pl-11 pr-12 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-black focus:ring-4 focus:ring-black/5"
-                    />
-
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setShowPassword(
-                          !showPassword
-                        )
-                      }
-                      className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-gray-900"
-                      aria-label={
-                        showPassword
-                          ? 'Hide password'
-                          : 'Show password'
-                      }
-                    >
-
-                      {showPassword ? (
-                        <EyeOff size={17} />
-                      ) : (
-                        <Eye size={17} />
-                      )}
-
+                    <Lock size={17} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--nova-muted)]" />
+                    <input type={showConfirmPassword ? 'text' : 'password'} id="cf_password" name="cf_password" value={cf_password} onChange={handleChangeInput} placeholder="Confirm your password" className={`${fieldClass} pl-11 pr-12`} />
+                    <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--nova-muted)]" aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}>
+                      {showConfirmPassword ? <EyeOff size={17} /> : <Eye size={17} />}
                     </button>
-
                   </div>
-
                 </div>
-
-
-                {/* Confirm Password */}
-
-                <div>
-
-                  <label
-                    htmlFor="cf_password"
-                    className="mb-2 block text-xs font-semibold text-gray-700"
-                  >
-                    Confirm password
-                  </label>
-
-                  <div className="relative">
-
-                    <Lock
-                      size={17}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                    />
-
-                    <input
-                      type={
-                        showConfirmPassword
-                          ? 'text'
-                          : 'password'
-                      }
-                      id="cf_password"
-                      name="cf_password"
-                      value={cf_password}
-                      onChange={handleChangeInput}
-                      placeholder="Confirm your password"
-                      autoComplete="new-password"
-                      className="h-12 w-full rounded-xl border border-gray-200 bg-white pl-11 pr-12 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-black focus:ring-4 focus:ring-black/5"
-                    />
-
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setShowConfirmPassword(
-                          !showConfirmPassword
-                        )
-                      }
-                      className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-gray-900"
-                      aria-label={
-                        showConfirmPassword
-                          ? 'Hide password'
-                          : 'Show password'
-                      }
-                    >
-
-                      {showConfirmPassword ? (
-                        <EyeOff size={17} />
-                      ) : (
-                        <Eye size={17} />
-                      )}
-
-                    </button>
-
-                  </div>
-
-                </div>
-
 
                 {accountType === 'customer' && (
                   <>
                     <div>
-                      <label
-                        htmlFor="address"
-                        className="mb-2 block text-xs font-semibold text-gray-700"
-                      >
-                        Address
-                      </label>
-
-                      <div className="relative">
-                        <MapPin
-                          size={17}
-                          className="absolute left-4 top-4 text-gray-400"
-                        />
-
-                        <textarea
-                          id="address"
-                          name="address"
-                          rows="3"
-                          value={address}
-                          onChange={handleChangeInput}
-                          placeholder="Enter your delivery address"
-                          autoComplete="street-address"
-                          className="w-full resize-none rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-black focus:ring-4 focus:ring-black/5"
-                        />
-                      </div>
+                      <label htmlFor="address" className="mb-2 block text-sm font-medium">Address</label>
+                      <textarea id="address" name="address" rows="3" value={address} onChange={handleChangeInput} placeholder="Enter your delivery address" className="w-full resize-none rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface)] px-4 py-3 text-sm outline-none focus:border-[var(--nova-blue)]" />
                     </div>
-
                     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                       <div>
-                        <label
-                          htmlFor="city"
-                          className="mb-2 block text-xs font-semibold text-gray-700"
-                        >
-                          City
-                        </label>
-
-                        <input
-                          type="text"
-                          id="city"
-                          name="city"
-                          value={city}
-                          onChange={handleChangeInput}
-                          placeholder="City"
-                          autoComplete="address-level2"
-                          className="h-12 w-full rounded-xl border border-gray-200 bg-white px-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-black focus:ring-4 focus:ring-black/5"
-                        />
+                        <label htmlFor="city" className="mb-2 block text-sm font-medium">City</label>
+                        <input id="city" name="city" value={city} onChange={handleChangeInput} placeholder="City" className={fieldClass} />
                       </div>
-
                       <div>
-                        <label
-                          htmlFor="state"
-                          className="mb-2 block text-xs font-semibold text-gray-700"
-                        >
-                          State
-                        </label>
-
-                        <input
-                          type="text"
-                          id="state"
-                          name="state"
-                          value={deliveryState}
-                          onChange={handleChangeInput}
-                          placeholder="State"
-                          autoComplete="address-level1"
-                          className="h-12 w-full rounded-xl border border-gray-200 bg-white px-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-black focus:ring-4 focus:ring-black/5"
-                        />
+                        <label htmlFor="state" className="mb-2 block text-sm font-medium">State</label>
+                        <input id="state" name="state" value={deliveryState} onChange={handleChangeInput} placeholder="State" className={fieldClass} />
                       </div>
                     </div>
-
                     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                       <div>
-                        <label
-                          htmlFor="pincode"
-                          className="mb-2 block text-xs font-semibold text-gray-700"
-                        >
-                          Pincode
-                        </label>
-
-                        <input
-                          type="text"
-                          id="pincode"
-                          name="pincode"
-                          inputMode="numeric"
-                          value={pincode}
-                          onChange={handleChangeInput}
-                          placeholder="6-digit pincode"
-                          autoComplete="postal-code"
-                          className="h-12 w-full rounded-xl border border-gray-200 bg-white px-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-black focus:ring-4 focus:ring-black/5"
-                        />
+                        <label htmlFor="pincode" className="mb-2 block text-sm font-medium">Pincode</label>
+                        <input id="pincode" name="pincode" inputMode="numeric" value={pincode} onChange={handleChangeInput} placeholder="6-digit pincode" className={fieldClass} />
                       </div>
-
                       <div>
-                        <label
-                          htmlFor="phone"
-                          className="mb-2 block text-xs font-semibold text-gray-700"
-                        >
-                          Phone
-                        </label>
-
+                        <label htmlFor="phone" className="mb-2 block text-sm font-medium">Phone</label>
                         <div className="relative">
-                          <Phone
-                            size={17}
-                            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                          />
-
-                          <input
-                            type="tel"
-                            id="phone"
-                            name="phone"
-                            inputMode="numeric"
-                            value={phone}
-                            onChange={handleChangeInput}
-                            placeholder="10-digit phone"
-                            autoComplete="tel"
-                            className="h-12 w-full rounded-xl border border-gray-200 bg-white pl-11 pr-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-black focus:ring-4 focus:ring-black/5"
-                          />
+                          <Phone size={17} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--nova-muted)]" />
+                          <input type="tel" id="phone" name="phone" inputMode="numeric" value={phone} onChange={handleChangeInput} placeholder="10-digit phone" className={`${fieldClass} pl-11`} />
                         </div>
                       </div>
                     </div>
                   </>
                 )}
 
-
                 {accountType === 'admin' && (
                   <div>
-                    <label
-                      htmlFor="adminCode"
-                      className="mb-2 block text-xs font-semibold text-gray-700"
-                    >
-                      Admin Registration Code
-                    </label>
-
+                    <label htmlFor="adminCode" className="mb-2 block text-sm font-medium">Admin registration code</label>
                     <div className="relative">
-                      <KeyRound
-                        size={17}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                      />
-
-                      <input
-                        type="password"
-                        id="adminCode"
-                        name="adminCode"
-                        value={adminCode}
-                        onChange={handleChangeInput}
-                        placeholder="Enter admin registration code"
-                        autoComplete="off"
-                        className="h-12 w-full rounded-xl border border-gray-200 bg-white pl-11 pr-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-black focus:ring-4 focus:ring-black/5"
-                      />
+                      <KeyRound size={17} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--nova-muted)]" />
+                      <input type="password" id="adminCode" name="adminCode" value={adminCode} onChange={handleChangeInput} placeholder="Enter admin registration code" autoComplete="off" className={`${fieldClass} pl-11`} />
                     </div>
+                    <p className="mt-2 text-xs text-[var(--nova-warning)]">
+                      Admin registration is restricted. The code is validated on the server and is never stored on your profile.
+                    </p>
                   </div>
                 )}
 
-
-                {/* Submit */}
-
-                <button
-                  type="submit"
-                  disabled={notify?.loading}
-                  className="group flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-black px-5 text-sm font-semibold text-white transition hover:bg-gray-800 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
-                >
-
-                  {notify?.loading
-                    ? 'Creating account...'
-                    : accountType === 'admin'
-                      ? 'Create Admin Account'
-                      : 'Create Customer Account'}
-
-                  {!notify?.loading && (
-                    <ArrowRight
-                      size={17}
-                      className="transition-transform group-hover:translate-x-1"
-                    />
-                  )}
-
-                </button>
-
+                <Button type="submit" loading={notify?.loading} className="w-full">
+                  {accountType === 'admin' ? 'Create Admin Account' : 'Create Customer Account'}
+                </Button>
               </form>
 
-
-              {/* Login */}
-
-              <div className="mt-7 text-center">
-
-                <p className="text-sm text-gray-500">
-
-                  Already have an account?{' '}
-
-                  <Link href="/signin" className="font-semibold text-gray-900 underline decoration-gray-300 underline-offset-4 transition hover:decoration-gray-900">
-                      Sign in
-                  </Link>
-
-                </p>
-
-              </div>
-
-
-              {/* Security */}
-
-              <div className="mt-8 flex items-center justify-center gap-2 text-[11px] text-gray-400">
-
-                <ShieldCheck size={13} />
-
-                Your information is protected and encrypted.
-
-              </div>
-
+              <p className="mt-7 text-center text-sm text-[var(--nova-muted)]">
+                Already have an account?{' '}
+                <Link href="/signin" className="font-semibold text-[var(--nova-text)] underline">Sign in</Link>
+              </p>
             </div>
-
           </section>
-
         </div>
-
       </main>
     </>
   )

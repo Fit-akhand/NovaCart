@@ -18,7 +18,8 @@ export const addToCart = (product, cart) => {
 
     if(!check) return ({ type: 'NOTIFY', payload: {error: 'The product has been added to cart.'} }) 
 
-    return ({ type: 'ADD_CART', payload: [...cart, {...product, quantity: 1}] }) 
+    const quantity = Number(product.quantity) > 0 ? Number(product.quantity) : 1
+    return ({ type: 'ADD_CART', payload: [...cart, {...product, quantity}] }) 
 }
 
 export const decrease = (data, id) => {

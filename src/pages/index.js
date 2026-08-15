@@ -1,69 +1,59 @@
 import Head from 'next/head'
+import Link from 'next/link'
 import { useState, useContext, useEffect } from 'react'
 import { DataContext } from '../../store/GlobalState'
-import { getData } from '@/lib/api-client'
-import ProductItem from '../../components/product/ProductItem'
-import filterSearch from '../../utils/filterSearch'
 import { useRouter } from 'next/router'
-import Filter from '../../components/Filter'
+import filterSearch from '../../utils/filterSearch'
+import { fetchCatalogProps } from '../../utils/fetchCatalogProps'
+import ProductGrid from '../../components/product/ProductGrid'
+import ProductFilters from '../../components/product/ProductFilters'
+import Pagination from '../../components/common/Pagination'
+import EmptyState from '../../components/common/EmptyState'
+import Container from '../../components/common/Container'
+import Button from '../../components/common/Button'
 import {
   Check,
+  Lock,
   Package,
-  Search,
-  Sparkles,
+  ShieldCheck,
+  ShoppingBag,
   Trash2,
+  Truck,
 } from 'lucide-react'
 
 const Home = (props) => {
   const [products, setProducts] = useState(props.products || [])
   const [isCheck, setIsCheck] = useState(false)
   const [page, setPage] = useState(1)
-
   const router = useRouter()
-
   const { state, dispatch } = useContext(DataContext)
-  const { auth } = state
+  const { auth, categories } = state
 
   useEffect(() => {
     setProducts(props.products || [])
   }, [props.products])
 
   useEffect(() => {
-    if (Object.keys(router.query).length === 0) {
-      setPage(1)
-    }
+    if (Object.keys(router.query).length === 0) setPage(1)
   }, [router.query])
 
-  // Select / unselect product
   const handleCheck = (id) => {
     setProducts((prevProducts) =>
       prevProducts.map((product) =>
-        product._id === id
-          ? {
-              ...product,
-              checked: !product.checked,
-            }
-          : product
+        product._id === id ? { ...product, checked: !product.checked } : product
       )
     )
   }
 
-  // Select / unselect all
   const handleCheckALL = () => {
     setProducts((prevProducts) =>
-      prevProducts.map((product) => ({
-        ...product,
-        checked: !isCheck,
-      }))
+      prevProducts.map((product) => ({ ...product, checked: !isCheck }))
     )
-
     setIsCheck(!isCheck)
   }
 
-  // Delete selected products
   const handleDeleteAll = () => {
     const deleteArr = []
-
     products.forEach((product) => {
       if (product.checked) {
         deleteArr.push({
@@ -78,362 +68,211 @@ const Home = (props) => {
     if (deleteArr.length === 0) {
       return dispatch({
         type: 'NOTIFY',
-        payload: {
-          error: 'Please select at least one product.',
-        },
+        payload: { error: 'Please select at least one product.' },
       })
     }
 
-    dispatch({
-      type: 'ADD_MODAL',
-      payload: deleteArr,
-    })
+    dispatch({ type: 'ADD_MODAL', payload: deleteArr })
   }
 
-  // Load more products
   const handleLoadmore = () => {
     const nextPage = page + 1
-
     setPage(nextPage)
-
-    filterSearch({
-      router,
-      page: nextPage,
-    })
+    filterSearch({ router, page: nextPage })
   }
 
-  const selectedCount = products.filter(
-    (product) => product.checked
-  ).length
+  const selectedCount = products.filter((product) => product.checked).length
+  const bestSellers = products.filter((product) => Number(product.sold) > 0).slice(0, 4)
 
   return (
     <>
       <Head>
-        <title>NovaCart — Discover Something Better</title>
-
+        <title>NovaCart — Shop smarter. Live better.</title>
         <meta
           name="description"
-          content="Discover the latest products, trending collections and exclusive deals on NovaCart."
+          content="Discover products selected for everyday life on NovaCart."
         />
       </Head>
 
-      <main className="min-h-screen w-full bg-slate-50">
-
-        <section className="relative w-full overflow-hidden border-b border-slate-200 bg-white">
-          <div
-            className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full opacity-60 blur-3xl"
-            style={{ backgroundColor: 'var(--nova-blue-soft)' }}
-          />
-
-          <div className="relative w-full px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
-
-            <div className="max-w-3xl">
-
-              <div
-                className="mb-5 inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium"
-                style={{
-                  borderColor: 'var(--nova-border)',
-                  backgroundColor: 'var(--nova-blue-soft)',
-                  color: 'var(--nova-navy-light)',
-                }}
-              >
-                <Sparkles size={13} />
-                Curated for you
-              </div>
-
-              <h1 className="text-4xl font-semibold tracking-[-0.04em] text-[var(--nova-navy)] sm:text-5xl lg:text-6xl">
-                Discover products
-                <br />
-                <span className="text-slate-400">
-                  worth adding to your life.
-                </span>
-              </h1>
-
-              <p className="mt-5 max-w-2xl text-sm leading-6 text-slate-500 sm:text-base">
-                Explore our latest collection of thoughtfully
-                selected products, trending essentials and
-                everyday favorites.
+      <main>
+        <section className="border-b border-[var(--nova-border)] bg-[var(--nova-surface)]">
+          <Container className="grid items-center gap-10 py-14 lg:grid-cols-2 lg:py-20">
+            <div>
+              <p className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--nova-muted)]">
+                NovaCart
               </p>
-
-            </div>
-
-            <div className="mt-9 flex flex-wrap items-center gap-6 text-sm">
-              <div className="flex items-center gap-2 text-slate-600">
-                <Package size={17} />
-                <span>
-                  <strong className="text-[var(--nova-navy)]">
-                    {props.result || 0}
-                  </strong>{' '}
-                  products
-                </span>
-              </div>
-              <div className="hidden h-4 w-px bg-slate-200 sm:block" />
-              <div className="flex items-center gap-2 text-slate-500">
-                <Check size={16} />
-                Quality products
-              </div>
-              <div className="hidden h-4 w-px bg-slate-200 sm:block" />
-              <div className="flex items-center gap-2 text-slate-500">
-                <Sparkles size={16} />
-                New arrivals
-              </div>
-            </div>
-
-            <div className="mt-8">
-              <button
-                type="button"
-                onClick={() => {
-                  const el = document.getElementById('browse-products')
-                  if (el) el.scrollIntoView({ behavior: 'smooth' })
-                }}
-                className="rounded-lg px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90"
-                style={{ backgroundColor: 'var(--nova-blue)' }}
-              >
-                Browse Products
-              </button>
-            </div>
-          </div>
-        </section>
-
-        <section
-          id="browse-products"
-          className="w-full px-4 pt-7 sm:px-6 lg:px-8"
-        >
-          <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
-            <div className="flex items-center gap-2 border-b border-slate-100 px-5 py-4">
-              <Search size={17} className="text-[var(--nova-blue)]" />
-              <div>
-                <p className="text-sm font-semibold text-[var(--nova-navy)]">
-                  Browse Products
-                </p>
-                <p className="text-xs text-slate-400">
-                  Filter and sort the collection
-                </p>
+              <h1 className="text-4xl font-semibold tracking-tight text-[var(--nova-text)] sm:text-5xl lg:text-6xl">
+                Shop smarter.
+                <br />
+                Live better.
+              </h1>
+              <p className="mt-5 max-w-xl text-base leading-7 text-[var(--nova-muted)]">
+                Discover products selected for everyday life. Browse the catalog, track orders, and check out securely.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link
+                  href="/products"
+                  className="inline-flex min-h-11 items-center justify-center rounded-lg bg-[var(--nova-blue)] px-5 py-3 text-sm font-semibold text-white hover:opacity-90"
+                >
+                  Shop now
+                </Link>
+                <Link
+                  href="/categories"
+                  className="inline-flex min-h-11 items-center justify-center rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface)] px-5 py-3 text-sm font-semibold hover:bg-[var(--nova-surface-soft)]"
+                >
+                  Explore categories
+                </Link>
               </div>
             </div>
-            <div className="p-4 sm:p-5">
-              <Filter state={state} />
-            </div>
-          </div>
-        </section>
-
-        {/* =====================================================
-            ADMIN BULK ACTION
-        ====================================================== */}
-
-        {auth.user &&
-          auth.user.role === 'admin' && (
-
-            <section className="w-full px-4 pt-5 sm:px-6 lg:px-8">
-              <div className="flex flex-col gap-4 rounded-lg border border-red-100 bg-red-50/60 p-4 sm:flex-row sm:items-center sm:justify-between">
-
-                <div className="flex items-center gap-3">
-
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-100 text-red-500">
-                    <Trash2 size={17} />
-                  </div>
-
-                  <div>
-
-                    <p className="text-sm font-semibold text-gray-900">
-                      Product management
-                    </p>
-
-                    <p className="text-xs text-gray-500">
-                      {selectedCount > 0
-                        ? `${selectedCount} product${selectedCount === 1 ? '' : 's'} selected`
-                        : 'Select products to perform bulk actions'}
-                    </p>
-
-                  </div>
-
+            <div className="rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] p-8">
+              <p className="text-sm font-semibold">{props.result || 0} products in catalog</p>
+              <p className="mt-2 text-sm text-[var(--nova-muted)]">
+                Search, filter by category, and sort by price or popularity.
+              </p>
+              <div className="mt-6 grid grid-cols-2 gap-4 text-sm">
+                <div className="rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface)] p-4">
+                  <ShieldCheck size={18} className="mb-2 text-[var(--nova-blue)]" />
+                  Secure checkout
                 </div>
+                <div className="rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface)] p-4">
+                  <Package size={18} className="mb-2 text-[var(--nova-blue)]" />
+                  Order tracking
+                </div>
+              </div>
+            </div>
+          </Container>
+        </section>
 
+        {categories?.length > 0 && (
+          <section className="py-12">
+            <Container>
+              <div className="mb-6 flex items-end justify-between">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--nova-muted)]">Browse</p>
+                  <h2 className="mt-1 text-2xl font-semibold">Featured categories</h2>
+                </div>
+                <Link href="/categories" className="text-sm font-semibold text-[var(--nova-blue)]">
+                  View all
+                </Link>
+              </div>
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+                {categories.slice(0, 8).map((category) => (
+                  <Link
+                    key={category._id}
+                    href={`/products?category=${category._id}`}
+                    className="rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-5 transition hover:border-[var(--nova-blue)]"
+                  >
+                    <p className="font-semibold capitalize">{category.name}</p>
+                    <p className="mt-1 text-xs text-[var(--nova-muted)]">Shop this category</p>
+                  </Link>
+                ))}
+              </div>
+            </Container>
+          </section>
+        )}
+
+        <section id="browse-products" className="pb-8">
+          <Container>
+            <div className="mb-5 rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-4 sm:p-5">
+              <ProductFilters state={state} />
+            </div>
+
+            {auth.user && auth.user.role === 'admin' && (
+              <div className="mb-5 flex flex-col gap-4 rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-sm font-semibold">Product management</p>
+                  <p className="text-xs text-[var(--nova-muted)]">
+                    {selectedCount > 0
+                      ? `${selectedCount} product${selectedCount === 1 ? '' : 's'} selected`
+                      : 'Select products to perform bulk actions'}
+                  </p>
+                </div>
                 <div className="flex items-center gap-3">
-
-                  <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-gray-600">
-
-                    <input
-                      type="checkbox"
-                      checked={isCheck}
-                      onChange={handleCheckALL}
-                      className="h-4 w-4 rounded border-gray-300 accent-black"
-                    />
-
+                  <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-[var(--nova-border)] px-3 py-2 text-xs font-medium">
+                    <input type="checkbox" checked={isCheck} onChange={handleCheckALL} />
                     Select all
-
                   </label>
-
                   <button
                     type="button"
-                    data-toggle="modal"
-                    data-target="#exampleModal"
                     onClick={handleDeleteAll}
                     disabled={selectedCount === 0}
-                    className="flex items-center gap-2 rounded-xl bg-red-500 px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-40"
+                    className="flex min-h-11 items-center gap-2 rounded-lg bg-[var(--nova-danger)] px-4 py-2 text-xs font-semibold text-white disabled:opacity-40"
                   >
-
                     <Trash2 size={14} />
-
                     Delete selected
-
                   </button>
-
                 </div>
-
               </div>
+            )}
 
-            </section>
-          )}
-
-        {/* =====================================================
-            PRODUCT GRID
-        ====================================================== */}
-
-        <section className="w-full px-4 py-8 sm:px-6 lg:px-8">
-
-          {products.length === 0 ? (
-
-            /* EMPTY STATE */
-
-            <div className="flex min-h-[400px] flex-col items-center justify-center rounded-lg border border-slate-200 bg-white px-6 text-center">
-
-              <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-100">
-
-                <Package
-                  size={28}
-                  className="text-gray-400"
-                />
-
-              </div>
-
-              <h2 className="text-xl font-semibold text-gray-900">
-                No products found
-              </h2>
-
-              <p className="mt-2 max-w-md text-sm leading-6 text-gray-400">
-                We couldn't find any products matching
-                your current filters. Try changing your
-                search or category.
-              </p>
-
-              <button
-                onClick={() => router.push('/')}
-                className="mt-6 rounded-lg px-5 py-3 text-xs font-semibold text-white transition hover:opacity-90"
-                style={{ backgroundColor: 'var(--nova-blue)' }}
-              >
-                View all products
-              </button>
-
-            </div>
-
-          ) : (
-
-            <>
-
-              {/* Product heading */}
-
-              <div className="mb-5 flex items-end justify-between">
-
-                <div>
-
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gray-400">
-                    Collection
+            {products.length === 0 ? (
+              <EmptyState
+                title="No products found"
+                description="Try changing your search or category."
+                action={
+                  <Button variant="secondary" onClick={() => router.push('/')}>
+                    View all products
+                  </Button>
+                }
+              />
+            ) : (
+              <>
+                <div className="mb-5 flex items-end justify-between">
+                  <h2 className="text-2xl font-semibold">Featured products</h2>
+                  <p className="hidden text-xs text-[var(--nova-muted)] sm:block">
+                    Showing {products.length} of {props.result || 0}
                   </p>
-
-                  <h2 className="mt-1 text-xl font-semibold tracking-tight text-gray-900">
-                    Explore our products
-                  </h2>
-
                 </div>
+                <ProductGrid products={products} handleCheck={handleCheck} />
+              </>
+            )}
 
-                <p className="hidden text-xs text-gray-400 sm:block">
-                  Showing {products.length} of{' '}
-                  {props.result || 0}
-                </p>
-
-              </div>
-
-              {/* Grid */}
-
-              <div className="grid grid-cols-1 gap-x-5 gap-y-7 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-
-                {products.map((product) => (
-
-                  <ProductItem
-                    key={product._id}
-                    product={product}
-                    handleCheck={handleCheck}
-                  />
-
-                ))}
-
-              </div>
-
-            </>
-
-          )}
-
+            <Pagination
+              hasMore={props.result >= page * 6 && products.length > 0}
+              onLoadMore={handleLoadmore}
+            />
+          </Container>
         </section>
 
-        {/* =====================================================
-            LOAD MORE
-        ====================================================== */}
+        {bestSellers.length > 0 && (
+          <section className="border-t border-[var(--nova-border)] py-12">
+            <Container>
+              <h2 className="mb-2 text-2xl font-semibold">Best sellers</h2>
+              <p className="mb-6 text-sm text-[var(--nova-muted)]">
+                Products from the current catalog with recorded sales. Prices are unchanged.
+              </p>
+              <ProductGrid products={bestSellers} />
+            </Container>
+          </section>
+        )}
 
-        {props.result >= page * 6 &&
-          products.length > 0 && (
-
-            <div className="pb-12 text-center">
-
-              <button
-                type="button"
-                onClick={handleLoadmore}
-                className="group inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-7 py-3.5 text-sm font-medium text-[var(--nova-navy)] transition hover:border-[var(--nova-blue)] hover:text-[var(--nova-blue)]"
-              >
-
-                Load more
-
-                <span className="transition-transform group-hover:translate-y-0.5">
-                  ↓
-                </span>
-
-              </button>
-
+        <section className="border-t border-[var(--nova-border)] bg-[var(--nova-surface)] py-12">
+          <Container>
+            <h2 className="mb-8 text-2xl font-semibold">Why NovaCart</h2>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {[
+                { icon: Lock, title: 'Secure checkout', text: 'Pay with the existing checkout flow.' },
+                { icon: Truck, title: 'Order tracking', text: 'Follow payment and delivery status in your account.' },
+                { icon: ShoppingBag, title: 'Quality products', text: 'A curated catalog you can search and filter.' },
+                { icon: Check, title: 'Account management', text: 'Save profile details and review past orders.' },
+              ].map((item) => (
+                <div key={item.title} className="rounded-xl border border-[var(--nova-border)] p-5">
+                  <item.icon size={20} className="mb-3 text-[var(--nova-blue)]" />
+                  <p className="font-semibold">{item.title}</p>
+                  <p className="mt-1 text-sm text-[var(--nova-muted)]">{item.text}</p>
+                </div>
+              ))}
             </div>
-          )}
-
+          </Container>
+        </section>
       </main>
     </>
   )
 }
 
 export async function getServerSideProps({ query }) {
-  const page = query.page || 1
-  const category = query.category || 'all'
-  const sort = query.sort || ''
-  const search = query.search || 'all'
-
-  try {
-    const res = await getData(
-      `product?limit=${page * 6}&category=${category}&sort=${sort}&title=${search}`
-    )
-
-    return {
-      props: {
-        products: res?.products || [],
-        result: res?.result || 0,
-      },
-    }
-  } catch (error) {
-    console.error('Home page product fetch error:', error)
-
-    return {
-      props: {
-        products: [],
-        result: 0,
-      },
-    }
-  }
+  const props = await fetchCatalogProps(query)
+  return { props }
 }
 
 export default Home
