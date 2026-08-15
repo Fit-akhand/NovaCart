@@ -1,6 +1,6 @@
 import { createContext, useReducer, useEffect } from 'react'
 import reducers from './Reducers'
-import { getData } from '../utils/fetchData'
+import { getData } from '@/lib/api-client'
 
 
 export const DataContext = createContext()

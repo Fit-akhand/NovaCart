@@ -2,7 +2,7 @@ import Head from 'next/head'
 import { useContext, useMemo, useState } from 'react'
 import { DataContext } from '../../store/GlobalState'
 import { updateItem } from '../../store/Actions'
-import { postData, putData } from '../../utils/fetchData'
+import { postData, putData } from '@/lib/api-client'
 import {
   Check,
   Edit3,

@@ -14,7 +14,7 @@ import {
 } from 'lucide-react'
 
 import { DataContext } from '../../store/GlobalState'
-import { postData } from '../../utils/fetchData'
+import { postData } from '@/lib/api-client'
 
 const Signin = () => {
   const initialState = {

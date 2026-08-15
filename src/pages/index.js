@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import { useState, useContext, useEffect } from 'react'
 import { DataContext } from '../../store/GlobalState'
-import { getData } from '../../utils/fetchData'
+import { getData } from '@/lib/api-client'
 import ProductItem from '../../components/product/ProductItem'
 import filterSearch from '../../utils/filterSearch'
 import { useRouter } from 'next/router'

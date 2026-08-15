@@ -12,7 +12,7 @@ import {
   X,
 } from 'lucide-react'
 import { DataContext } from '../store/GlobalState'
-import { postData } from '../utils/fetchData'
+import { postData } from '@/lib/api-client'
 
 const NAV_LINKS = [
   { href: '/', label: 'Home', match: (path) => path === '/' },

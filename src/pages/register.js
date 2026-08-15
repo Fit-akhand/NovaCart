@@ -16,7 +16,7 @@ import {
 
 import valid from '../../utils/valid'
 import { DataContext } from '../../store/GlobalState'
-import { postData } from '../../utils/fetchData'
+import { postData } from '@/lib/api-client'
 
 const Register = () => {
   const initialState = {

@@ -3,7 +3,7 @@ import { useContext, useState, useEffect } from 'react'
 import { DataContext } from '../../store/GlobalState'
 import CartItem from '../../components/CartItem'
 import Link from 'next/link'
-import { getData, postData } from '../../utils/fetchData'
+import { getData, postData } from '@/lib/api-client'
 import { useRouter } from 'next/router'
 import {
   ArrowRight,

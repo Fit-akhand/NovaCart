@@ -4,7 +4,7 @@ import { DataContext } from '../../store/GlobalState'
 import Link from 'next/link'
 
 import valid from '../../utils/valid'
-import { patchData } from '../../utils/fetchData'
+import { patchData } from '@/lib/api-client'
 import { imageUpload } from '../../utils/imageUpload'
 
 import {

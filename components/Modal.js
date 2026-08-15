@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import { DataContext } from '../store/GlobalState'
 import { deleteItem } from '../store/Actions'
-import { deleteData } from '../utils/fetchData'
+import { deleteData } from '@/lib/api-client'
 import {useRouter} from 'next/router'
 
 

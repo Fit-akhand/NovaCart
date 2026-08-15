@@ -6,7 +6,7 @@ import {
   postData,
   getData,
   putData,
-} from '../../../utils/fetchData'
+} from '@/lib/api-client'
 import { useRouter } from 'next/router'
 import {
   ArrowLeft,

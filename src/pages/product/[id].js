@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import { useState, useContext } from 'react'
-import { getData } from '../../../utils/fetchData'
+import { getData } from '@/lib/api-client'
 import { DataContext } from '../../../store/GlobalState'
 import { addToCart } from '../../../store/Actions'
 import {

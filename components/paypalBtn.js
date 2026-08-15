@@ -1,5 +1,5 @@
 import { useEffect, useRef, useContext } from 'react'
-import { patchData } from '../utils/fetchData'
+import { patchData } from '@/lib/api-client'
 import {DataContext} from '../store/GlobalState'
 import {updateItem} from '../store/Actions'
 
