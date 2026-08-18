@@ -20,20 +20,29 @@ class APIfeatures {
         this.query = query;
         this.queryString = queryString;
     }
-    filtering(){
-        const queryObj = {...this.queryString}
+    filtering() {
+    const queryObj = { ...this.queryString }
 
-        const excludeFields = ['page', 'sort', 'limit']
-        excludeFields.forEach(el => delete(queryObj[el]))
+    const excludeFields = ['page', 'sort', 'limit']
+    excludeFields.forEach((el) => delete queryObj[el])
 
-        if(queryObj.category !== 'all')
-            this.query.find({category: queryObj.category})
-        if(queryObj.title !== 'all')
-            this.query.find({title: {$regex: queryObj.title}})
-
-        this.query.find()
-        return this;
+    if (queryObj.category && queryObj.category !== 'all') {
+        this.query.find({
+            category: queryObj.category,
+        })
     }
+
+    if (queryObj.title && queryObj.title !== 'all') {
+        this.query.find({
+            title: {
+                $regex: String(queryObj.title),
+                $options: 'i',
+            },
+        })
+    }
+
+    return this
+}
 
     sorting(){
         if(this.queryString.sort){
