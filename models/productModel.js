@@ -1,75 +1,76 @@
 import mongoose from 'mongoose'
 
-const productSchema = new mongoose.Schema({
+const productSchema = new mongoose.Schema(
+    {
+        title: {
+            type: String,
+            required: true
+        },
 
-    title: {
-        type: String,
-        required: true,
-        trim: true
+        price: {
+            type: Number,
+            required: true
+        },
+
+        inStock: {
+            type: Number,
+            required: true
+        },
+
+        sold: {
+            type: Number,
+            default: 0
+        },
+
+        description: {
+            type: String,
+            required: true
+        },
+
+        content: {
+            type: String,
+            required: true
+        },
+
+        category: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'categories',
+            required: true
+        },
+
+        subcategory: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'categories',
+            default: null
+        },
+
+        seller: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'user',
+            default: null
+        },
+
+        images: [
+            {
+                public_id: {
+                    type: String,
+                    required: true
+                },
+
+                url: {
+                    type: String,
+                    required: true
+                }
+            }
+        ]
     },
-
-    price: {
-        type: Number,
-        required: true
-    },
-
-    description: {
-        type: String,
-        required: true
-    },
-
-    content: {
-        type: String,
-        required: true
-    },
-
-    images: {
-        type: Array,
-        required: true
-    },
-
-    // Existing parent category
-    category: {
-        type: String,
-        required: true
-    },
-
-    // New subcategory
-    subcategory: {
-        type: String,
-        default: null
-    },
-
-    // Seller who owns this product
-    // OPTIONAL FOR NOW because existing products don't have this field.
-    seller: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'user',
-        default: null,
-        index: true
-    },
-
-    checked: {
-        type: Boolean,
-        default: false
-    },
-
-    inStock: {
-        type: Number,
-        default: 0
-    },
-
-    sold: {
-        type: Number,
-        default: 0
+    {
+        timestamps: true
     }
+)
 
-}, {
-    timestamps: true
-})
-
-let Dataset =
+const Product =
     mongoose.models.product ||
     mongoose.model('product', productSchema)
 
-export default Dataset
+export default Product
