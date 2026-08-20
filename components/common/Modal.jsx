@@ -43,7 +43,7 @@ const Modal = () => {
 
     for (const target of modal) {
       if (target.type === 'ADD_CART') {
-        dispatch(deleteItem(target.data, target.id, target.type))
+        dispatch(deleteItem(target.id, target.data))
       }
       if (target.type === 'ADD_USERS') deleteUser(target)
       if (target.type === 'ADD_CATEGORIES') deleteCategories(target)

@@ -55,7 +55,25 @@ const ProductCard = ({ product, handleCheck }) => {
         </Link>
 
         <div className="mt-2 flex items-center justify-between gap-2">
-          <ProductPrice price={product.price} />
+          <ProductPrice price={product.discountPercent > 0 ? (
+    <div className="flex flex-wrap items-center gap-2">
+        <span className="text-xl font-bold">
+            ₹{product.discountedPrice}
+        </span>
+
+        <span className="text-sm text-[var(--nova-muted)] line-through">
+            ₹{product.originalPrice}
+        </span>
+
+        <span className="text-sm font-semibold text-green-600">
+            {product.discountPercent}% OFF
+        </span>
+    </div>
+) : (
+    <span className="text-xl font-bold">
+        ₹{product.price}
+    </span>
+)} />
           {product.inStock > 0 ? (
             <Badge variant="success">In stock</Badge>
           ) : (

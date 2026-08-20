@@ -60,11 +60,21 @@ const ProductFilters = ({ state }) => {
           }}
         >
           <option value="all">All Categories</option>
-          {categories.map((item) => (
-            <option key={item._id} value={item._id}>
-              {item.name}
-            </option>
-          ))}
+          {categories
+  .filter(
+    (item) =>
+      item &&
+      item._id &&
+      typeof item.name === 'string'
+  )
+  .map((item) => (
+    <option
+      key={item._id}
+      value={item._id}
+    >
+      {item.name}
+    </option>
+  ))}
         </select>
       </div>
 
