@@ -1,5 +1,7 @@
 import Head from 'next/head'
-import { useState, useContext, useEffect } from 'react'
+import AuthGuard from '../../../components/common/AuthGuard'
+import { formatPrice } from '@/lib/formatPrice'
+import { useState, useContext, useEffect, useMemo } from 'react'
 import { DataContext } from '../../../store/GlobalState'
 import { imageUpload } from '../../../utils/imageUpload'
 import {
@@ -15,15 +17,17 @@ import {
   FileText,
   ImagePlus,
   Package,
-  Plus,
   Save,
   Tag,
-  Trash2,
   Upload,
   X,
 } from 'lucide-react'
 
 const ProductsManager = () => {
+  // =========================================================
+  // INITIAL PRODUCT STATE
+  // =========================================================
+
   const initialState = {
     title: '',
     price: 0,
@@ -31,6 +35,7 @@ const ProductsManager = () => {
     description: '',
     content: '',
     category: '',
+    subcategory: null,
   }
 
   const [product, setProduct] = useState(initialState)
@@ -42,35 +47,196 @@ const ProductsManager = () => {
     description,
     content,
     category,
+    subcategory,
   } = product
+
+  // =========================================================
+  // GLOBAL STATE
+  // =========================================================
 
   const [images, setImages] = useState([])
 
   const { state, dispatch } = useContext(DataContext)
-  const { categories, auth } = state
+
+  const {
+    categories = [],
+    auth,
+  } = state
+
+  // =========================================================
+  // ROUTER
+  // =========================================================
 
   const router = useRouter()
   const { id } = router.query
 
   const [onEdit, setOnEdit] = useState(false)
 
+  // =========================================================
+  // SAFE CATEGORY HELPERS
+  // =========================================================
+
+  const getParentCategoryId = (parentCategory) => {
+    if (!parentCategory) return ''
+
+    if (typeof parentCategory === 'object') {
+      return parentCategory._id?.toString() || ''
+    }
+
+    return parentCategory.toString()
+  }
+
+  const getCategoryId = (categoryValue) => {
+    if (!categoryValue) return ''
+
+    if (typeof categoryValue === 'object') {
+      return categoryValue._id?.toString() || ''
+    }
+
+    return categoryValue.toString()
+  }
+
+  // =========================================================
+  // PARENT CATEGORIES
+  // =========================================================
+
+  const parentCategories = useMemo(() => {
+    return categories.filter((item) => {
+      if (!item || !item._id) {
+        return false
+      }
+
+      return !item.parentCategory
+    })
+  }, [categories])
+
+  // =========================================================
+  // SUBCATEGORIES
+  // =========================================================
+
+  const subcategories = useMemo(() => {
+    if (!category) {
+      return []
+    }
+
+    const selectedCategoryId = getCategoryId(category)
+
+    return categories.filter((item) => {
+      if (!item || !item._id || !item.parentCategory) {
+        return false
+      }
+
+      const parentId = getParentCategoryId(
+        item.parentCategory
+      )
+
+      return parentId === selectedCategoryId
+    })
+  }, [categories, category])
+
+  // =========================================================
+  // GET PRODUCT WHEN EDITING
+  // =========================================================
+
   useEffect(() => {
+    if (!router.isReady) {
+      return
+    }
+
     if (id) {
       setOnEdit(true)
 
       getData(`product/${id}`).then((res) => {
-        setProduct(res.product)
-        setImages(res.product.images)
+        if (res?.err) {
+          return dispatch({
+            type: 'NOTIFY',
+            payload: {
+              error: res.err,
+            },
+          })
+        }
+
+        if (!res?.product) {
+          return
+        }
+
+        const productData = res.product
+
+        const productCategory =
+          getCategoryId(productData.category)
+
+        const productSubcategory =
+          getCategoryId(productData.subcategory)
+
+        setProduct({
+          ...productData,
+          category: productCategory,
+          subcategory: productSubcategory || null,
+        })
+
+        setImages(
+          Array.isArray(productData.images)
+            ? productData.images
+            : []
+        )
       })
     } else {
       setOnEdit(false)
       setProduct(initialState)
       setImages([])
     }
-  }, [id])
+  }, [id, router.isReady])
+
+  // =========================================================
+  // HANDLE INPUT
+  // =========================================================
 
   const handleChangeInput = (e) => {
-    const { name, value } = e.target
+    const {
+      name,
+      value,
+    } = e.target
+
+    // -------------------------------------------------------
+    // CATEGORY CHANGED
+    // -------------------------------------------------------
+
+    if (name === 'category') {
+      setProduct((prev) => ({
+        ...prev,
+        category: value,
+        subcategory: '',
+      }))
+
+      dispatch({
+        type: 'NOTIFY',
+        payload: {},
+      })
+
+      return
+    }
+
+    // -------------------------------------------------------
+    // SUBCATEGORY CHANGED
+    // -------------------------------------------------------
+
+    if (name === 'subcategory') {
+      setProduct((prev) => ({
+        ...prev,
+        subcategory: value || null,
+      }))
+
+      dispatch({
+        type: 'NOTIFY',
+        payload: {},
+      })
+
+      return
+    }
+
+    // -------------------------------------------------------
+    // NORMAL INPUT
+    // -------------------------------------------------------
 
     setProduct((prev) => ({
       ...prev,
@@ -82,6 +248,10 @@ const ProductsManager = () => {
       payload: {},
     })
   }
+
+  // =========================================================
+  // IMAGE UPLOAD
+  // =========================================================
 
   const handleUploadInput = (e) => {
     dispatch({
@@ -125,11 +295,15 @@ const ProductsManager = () => {
     if (err) {
       return dispatch({
         type: 'NOTIFY',
-        payload: { error: err },
+        payload: {
+          error: err,
+        },
       })
     }
 
-    if (images.length + newImages.length > 5) {
+    if (
+      images.length + newImages.length > 5
+    ) {
       return dispatch({
         type: 'NOTIFY',
         payload: {
@@ -142,7 +316,14 @@ const ProductsManager = () => {
       ...prev,
       ...newImages,
     ])
+
+    // Allow selecting the same file again
+    e.target.value = ''
   }
+
+  // =========================================================
+  // DELETE IMAGE
+  // =========================================================
 
   const deleteImage = (index) => {
     setImages((prev) =>
@@ -150,35 +331,86 @@ const ProductsManager = () => {
     )
   }
 
+  // =========================================================
+  // SUBMIT PRODUCT
+  // =========================================================
+
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    if (!auth.user || auth.user.role !== 'admin') {
-      return dispatch({
-        type: 'NOTIFY',
-        payload: {
-          error: 'Authentication is not valid.',
-        },
-      })
-    }
+    // =======================================================
+    // AUTHORIZATION
+    // =======================================================
 
     if (
-      !title ||
-      !price ||
-      !inStock ||
-      !description ||
-      !content ||
-      !category ||
-      category === 'all' ||
-      images.length === 0
+      !auth?.user ||
+      !['admin', 'seller'].includes(
+        auth.user.role
+      )
     ) {
       return dispatch({
         type: 'NOTIFY',
         payload: {
-          error: 'Please complete all required fields.',
+          error:
+            'You are not authorized to manage products.',
         },
       })
     }
+
+    // =======================================================
+    // BASIC VALIDATION
+    // =======================================================
+
+    if (
+    !title ||
+    price === '' ||
+    price === null ||
+    Number(price) <= 0 ||
+    !inStock ||
+    Number(inStock) <= 0 ||
+    !description ||
+    !content ||
+    !category ||
+    category === 'all' ||
+    images.length === 0
+  ) {
+    return dispatch({
+      type: 'NOTIFY',
+      payload: {
+        error: 'Please enter a valid price, stock quantity, and complete all required fields.',
+      },
+    })
+  }
+
+    // =======================================================
+    // SUBCATEGORY VALIDATION
+    // =======================================================
+
+    if (
+      subcategory &&
+      subcategory !== 'all'
+    ) {
+      const exists = subcategories.some(
+        (item) =>
+          item &&
+          item._id?.toString() ===
+            subcategory.toString()
+      )
+
+      if (!exists) {
+        return dispatch({
+          type: 'NOTIFY',
+          payload: {
+            error:
+              'Selected subcategory is not valid for this category.',
+          },
+        })
+      }
+    }
+
+    // =======================================================
+    // LOADING
+    // =======================================================
 
     dispatch({
       type: 'NOTIFY',
@@ -186,6 +418,10 @@ const ProductsManager = () => {
         loading: true,
       },
     })
+
+    // =======================================================
+    // UPLOAD IMAGES
+    // =======================================================
 
     let media = []
 
@@ -201,35 +437,53 @@ const ProductsManager = () => {
       media = await imageUpload(imgNewURL)
     }
 
+    // =======================================================
+    // FINAL PAYLOAD
+    // =======================================================
+
+    const payload = {
+      title,
+      price,
+      inStock,
+      description,
+      content,
+      category,
+      subcategory:
+        subcategory &&
+        subcategory !== 'all'
+          ? subcategory
+          : null,
+      images: [
+        ...imgOldURL,
+        ...media,
+      ],
+    }
+
+    // =======================================================
+    // CREATE / UPDATE
+    // =======================================================
+
     let res
 
     if (onEdit) {
       res = await putData(
         `product/${id}`,
-        {
-          ...product,
-          images: [
-            ...imgOldURL,
-            ...media,
-          ],
-        },
+        payload,
         auth.token
       )
     } else {
       res = await postData(
         'product',
-        {
-          ...product,
-          images: [
-            ...imgOldURL,
-            ...media,
-          ],
-        },
+        payload,
         auth.token
       )
     }
 
-    if (res.err) {
+    // =======================================================
+    // ERROR
+    // =======================================================
+
+    if (res?.err) {
       return dispatch({
         type: 'NOTIFY',
         payload: {
@@ -238,6 +492,10 @@ const ProductsManager = () => {
       })
     }
 
+    // =======================================================
+    // SUCCESS
+    // =======================================================
+
     return dispatch({
       type: 'NOTIFY',
       payload: {
@@ -245,6 +503,10 @@ const ProductsManager = () => {
       },
     })
   }
+
+  // =========================================================
+  // RENDER
+  // =========================================================
 
   return (
     <>
@@ -263,7 +525,6 @@ const ProductsManager = () => {
       </Head>
 
       <main className="min-h-screen px-4 py-6 sm:px-6 lg:px-8">
-
         <div className="mx-auto max-w-7xl">
 
           {/* =================================================
@@ -287,25 +548,18 @@ const ProductsManager = () => {
               </div>
 
               <h1 className="text-3xl font-semibold tracking-tight text-gray-950 sm:text-4xl">
-
                 {onEdit
                   ? 'Edit Product'
                   : 'Create Product'}
-
               </h1>
 
               <p className="mt-2 text-sm text-gray-500">
-
                 {onEdit
                   ? 'Update product information, pricing and media.'
                   : 'Add a new product to your NovaCart catalog.'}
-
               </p>
 
             </div>
-
-
-            {/* Status */}
 
             <div className="flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-xs font-medium text-gray-600 shadow-sm">
 
@@ -319,7 +573,6 @@ const ProductsManager = () => {
 
           </div>
 
-
           {/* =================================================
               FORM
           ================================================== */}
@@ -328,15 +581,15 @@ const ProductsManager = () => {
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_430px]">
 
-
               {/* =================================================
                   LEFT COLUMN
               ================================================== */}
 
               <div className="space-y-6">
 
-
-                {/* BASIC INFORMATION */}
+                {/* =================================================
+                    BASIC INFORMATION
+                ================================================== */}
 
                 <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
 
@@ -364,10 +617,11 @@ const ProductsManager = () => {
 
                   </div>
 
-
                   <div className="space-y-5 p-6">
 
-                    {/* Title */}
+                    {/* =================================================
+                        TITLE
+                    ================================================== */}
 
                     <div>
 
@@ -390,8 +644,9 @@ const ProductsManager = () => {
 
                     </div>
 
-
-                    {/* Price / Stock */}
+                    {/* =================================================
+                        PRICE / STOCK
+                    ================================================== */}
 
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
 
@@ -406,10 +661,9 @@ const ProductsManager = () => {
 
                         <div className="relative">
 
-                          <DollarSign
-                            size={16}
-                            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                          />
+                          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-gray-400">
+                            ₹
+                          </span>
 
                           <input
                             type="number"
@@ -425,7 +679,6 @@ const ProductsManager = () => {
                         </div>
 
                       </div>
-
 
                       <div>
 
@@ -460,8 +713,9 @@ const ProductsManager = () => {
 
                     </div>
 
-
-                    {/* Category */}
+                    {/* =================================================
+                        CATEGORY
+                    ================================================== */}
 
                     <div>
 
@@ -482,7 +736,7 @@ const ProductsManager = () => {
                         <select
                           name="category"
                           id="category"
-                          value={category}
+                          value={category || ''}
                           onChange={handleChangeInput}
                           className="h-12 w-full appearance-none rounded-xl border border-gray-200 bg-gray-50 pl-10 pr-4 text-sm capitalize text-gray-900 outline-none transition focus:border-gray-900 focus:bg-white focus:ring-4 focus:ring-gray-900/5"
                         >
@@ -491,14 +745,16 @@ const ProductsManager = () => {
                             Select category
                           </option>
 
-                          {categories.map((item) => (
-                            <option
-                              key={item._id}
-                              value={item._id}
-                            >
-                              {item.name}
-                            </option>
-                          ))}
+                          {parentCategories.map(
+                            (item) => (
+                              <option
+                                key={item._id}
+                                value={item._id}
+                              >
+                                {item.name}
+                              </option>
+                            )
+                          )}
 
                         </select>
 
@@ -506,12 +762,74 @@ const ProductsManager = () => {
 
                     </div>
 
+                    {/* =================================================
+                        SUBCATEGORY
+                    ================================================== */}
+
+                    <div>
+
+                      <label
+                        htmlFor="subcategory"
+                        className="mb-2 block text-xs font-semibold text-gray-700"
+                      >
+                        Subcategory
+                      </label>
+
+                      <div className="relative">
+
+                        <Tag
+                          size={16}
+                          className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                        />
+
+                        <select
+                          name="subcategory"
+                          id="subcategory"
+                          value={subcategory || ''}
+                          onChange={handleChangeInput}
+                          disabled={!category}
+                          className="h-12 w-full appearance-none rounded-xl border border-gray-200 bg-gray-50 pl-10 pr-4 text-sm capitalize text-gray-900 outline-none transition focus:border-gray-900 focus:bg-white focus:ring-4 focus:ring-gray-900/5 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+
+                          <option value="">
+                            {!category
+                              ? 'Select category first'
+                              : subcategories.length === 0
+                              ? 'No subcategories available'
+                              : 'Select subcategory'}
+                          </option>
+
+                          {subcategories.map(
+                            (item) => (
+                              <option
+                                key={item._id}
+                                value={item._id}
+                              >
+                                {item.name}
+                              </option>
+                            )
+                          )}
+
+                        </select>
+
+                      </div>
+
+                      {category &&
+                        subcategories.length === 0 && (
+                          <p className="mt-2 text-xs text-gray-400">
+                            No subcategories have been created for this category yet.
+                          </p>
+                        )}
+
+                    </div>
+
                   </div>
 
                 </section>
 
-
-                {/* DESCRIPTION */}
+                {/* =================================================
+                    DESCRIPTION
+                ================================================== */}
 
                 <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
 
@@ -539,10 +857,9 @@ const ProductsManager = () => {
 
                   </div>
 
-
                   <div className="space-y-5 p-6">
 
-                    {/* Description */}
+                    {/* DESCRIPTION */}
 
                     <div>
 
@@ -573,8 +890,7 @@ const ProductsManager = () => {
 
                     </div>
 
-
-                    {/* Content */}
+                    {/* CONTENT */}
 
                     <div>
 
@@ -611,15 +927,15 @@ const ProductsManager = () => {
 
               </div>
 
-
               {/* =================================================
                   RIGHT COLUMN
               ================================================== */}
 
               <div className="space-y-6 lg:sticky lg:top-6 lg:self-start">
 
-
-                {/* MEDIA */}
+                {/* =================================================
+                    MEDIA
+                ================================================== */}
 
                 <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
 
@@ -651,10 +967,9 @@ const ProductsManager = () => {
 
                   </div>
 
-
                   <div className="p-6">
 
-                    {/* Upload */}
+                    {/* UPLOAD */}
 
                     <label
                       htmlFor="product-images"
@@ -693,55 +1008,62 @@ const ProductsManager = () => {
 
                     </label>
 
-
-                    {/* Image preview */}
+                    {/* IMAGE PREVIEW */}
 
                     {images.length > 0 && (
 
                       <div className="mt-5 grid grid-cols-2 gap-3">
 
-                        {images.map((img, index) => (
+                        {images.map(
+                          (img, index) => {
 
-                          <div
-                            key={index}
-                            className="group relative aspect-square overflow-hidden rounded-xl border border-gray-200 bg-gray-100"
-                          >
+                            const imageSrc =
+                              img?.url
+                                ? img.url
+                                : img
+                                ? URL.createObjectURL(
+                                    img
+                                  )
+                                : ''
 
-                            <img
-                              src={
-                                img.url
-                                  ? img.url
-                                  : URL.createObjectURL(
-                                      img
+                            return (
+                              <div
+                                key={index}
+                                className="group relative aspect-square overflow-hidden rounded-xl border border-gray-200 bg-gray-100"
+                              >
+
+                                {imageSrc && (
+                                  <img
+                                    src={imageSrc}
+                                    alt={`Product ${index + 1}`}
+                                    className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                                  />
+                                )}
+
+                                {/* NUMBER */}
+
+                                <span className="absolute left-2 top-2 flex h-6 min-w-6 items-center justify-center rounded-md bg-black/70 px-1.5 text-[10px] font-semibold text-white backdrop-blur">
+                                  {index + 1}
+                                </span>
+
+                                {/* DELETE */}
+
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    deleteImage(
+                                      index
                                     )
-                              }
-                              alt={`Product ${index + 1}`}
-                              className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                            />
+                                  }
+                                  className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-lg bg-white/90 text-gray-600 opacity-0 shadow-sm backdrop-blur transition group-hover:opacity-100 hover:bg-red-500 hover:text-white"
+                                >
+                                  <X size={14} />
+                                </button>
 
-
-                            {/* Number */}
-
-                            <span className="absolute left-2 top-2 flex h-6 min-w-6 items-center justify-center rounded-md bg-black/70 px-1.5 text-[10px] font-semibold text-white backdrop-blur">
-                              {index + 1}
-                            </span>
-
-
-                            {/* Delete */}
-
-                            <button
-                              type="button"
-                              onClick={() =>
-                                deleteImage(index)
-                              }
-                              className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-lg bg-white/90 text-gray-600 opacity-0 shadow-sm backdrop-blur transition group-hover:opacity-100 hover:bg-red-500 hover:text-white"
-                            >
-                              <X size={14} />
-                            </button>
-
-                          </div>
-
-                        ))}
+                              </div>
+                            )
+                          }
+                        )}
 
                       </div>
 
@@ -751,8 +1073,9 @@ const ProductsManager = () => {
 
                 </section>
 
-
-                {/* PUBLISH CARD */}
+                {/* =================================================
+                    PUBLISH CARD
+                ================================================== */}
 
                 <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
 
@@ -771,18 +1094,18 @@ const ProductsManager = () => {
                         </h3>
 
                         <p className="mt-1 text-xs leading-5 text-gray-400">
-                          Make sure all product information
-                          and images are correct before saving.
+                          Make sure all product information and images are correct before saving.
                         </p>
 
                       </div>
 
                     </div>
 
-
                     <button
                       type="submit"
-                      disabled={state.notify?.loading}
+                      disabled={
+                        state.notify?.loading
+                      }
                       className="group flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-black px-5 text-sm font-semibold text-white transition hover:bg-gray-800 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
                     >
 
@@ -795,7 +1118,6 @@ const ProductsManager = () => {
                         : 'Create Product'}
 
                     </button>
-
 
                     {onEdit && (
 
@@ -819,8 +1141,9 @@ const ProductsManager = () => {
 
                 </section>
 
-
-                {/* PRODUCT PREVIEW */}
+                {/* =================================================
+                    PRODUCT PREVIEW
+                ================================================== */}
 
                 <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
 
@@ -836,7 +1159,7 @@ const ProductsManager = () => {
 
                         <img
                           src={
-                            images[0].url
+                            images[0]?.url
                               ? images[0].url
                               : URL.createObjectURL(
                                   images[0]
@@ -849,21 +1172,23 @@ const ProductsManager = () => {
                       ) : (
 
                         <div className="flex h-full w-full items-center justify-center">
+
                           <ImagePlus
                             size={20}
                             className="text-gray-300"
                           />
+
                         </div>
 
                       )}
 
                     </div>
 
-
                     <div className="min-w-0">
 
                       <p className="truncate text-sm font-semibold text-gray-900">
-                        {title || 'Product title'}
+                        {title ||
+                          'Product title'}
                       </p>
 
                       <p className="mt-1 line-clamp-2 text-xs leading-5 text-gray-400">
@@ -872,12 +1197,52 @@ const ProductsManager = () => {
                       </p>
 
                       <p className="mt-2 text-sm font-semibold text-gray-900">
-                        ${price || '0.00'}
+                        {formatPrice(price)}
                       </p>
 
                     </div>
 
                   </div>
+
+                  {/* CATEGORY PREVIEW */}
+
+                  {category && (
+                    <div className="mt-4 border-t border-gray-100 pt-4">
+
+                      <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                        Category
+                      </p>
+
+                      <p className="mt-1 text-xs font-medium text-gray-700">
+
+                        {
+                          parentCategories.find(
+                            (item) =>
+                              item._id?.toString() ===
+                              category?.toString()
+                          )?.name
+                        }
+
+                        {subcategory && (
+                          <>
+                            <span className="mx-1 text-gray-300">
+                              /
+                            </span>
+
+                            {
+                              subcategories.find(
+                                (item) =>
+                                  item._id?.toString() ===
+                                  subcategory?.toString()
+                              )?.name
+                            }
+                          </>
+                        )}
+
+                      </p>
+
+                    </div>
+                  )}
 
                 </section>
 
@@ -888,10 +1253,17 @@ const ProductsManager = () => {
           </form>
 
         </div>
-
       </main>
     </>
   )
 }
 
-export default ProductsManager
+const CreateProductPage = () => {
+    return (
+        <AuthGuard roles={['seller', 'admin']}>
+            <ProductsManager/>
+        </AuthGuard>
+    )
+}
+
+export default CreateProductPage
