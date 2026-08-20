@@ -5,48 +5,176 @@ export const ACTIONS = {
     ADD_MODAL: 'ADD_MODAL',
     ADD_ORDERS: 'ADD_ORDERS',
     ADD_USERS: 'ADD_USERS',
-    ADD_CATEGORIES: 'ADD_CATEGORIES',
+    ADD_CATEGORIES: 'ADD_CATEGORIES'
 }
 
-export const addToCart = (product, cart) => {
-    if(product.inStock === 0)
-    return ({ type: 'NOTIFY', payload: {error: 'This product is out of stock.'} }) 
 
-    const check = cart.every(item => {
-        return item._id !== product._id
+// ==========================================
+// ADD TO CART
+// ==========================================
+
+export const addToCart = (product, cart = []) => {
+    const currentCart = Array.isArray(cart) ? cart : []
+
+    const existingIndex = currentCart.findIndex(
+        item => String(item._id) === String(product._id)
+    )
+
+    // Product already exists → increase quantity
+    if (existingIndex !== -1) {
+
+        const newCart = [...currentCart]
+
+        const existingProduct = newCart[existingIndex]
+
+        newCart[existingIndex] = {
+            ...existingProduct,
+            quantity:
+                (Number(existingProduct.quantity) || 1) + 1
+        }
+
+        return {
+            type: ACTIONS.ADD_CART,
+            payload: newCart
+        }
+    }
+
+    // New product → add it
+    return {
+        type: ACTIONS.ADD_CART,
+        payload: [
+            ...currentCart,
+            {
+                ...product,
+                quantity: Number(product.quantity) || 1
+            }
+        ]
+    }
+}
+
+
+// ==========================================
+// INCREASE QUANTITY
+// ==========================================
+
+export const increase = (product, cart = []) => {
+
+    const currentCart = Array.isArray(cart)
+        ? cart
+        : []
+
+    const newCart = currentCart.map(item => {
+
+        if (
+            String(item._id) ===
+            String(product._id)
+        ) {
+            return {
+                ...item,
+                quantity:
+                    (Number(item.quantity) || 1) + 1
+            }
+        }
+
+        return item
     })
 
-    if(!check) return ({ type: 'NOTIFY', payload: {error: 'The product has been added to cart.'} }) 
-
-    const quantity = Number(product.quantity) > 0 ? Number(product.quantity) : 1
-    return ({ type: 'ADD_CART', payload: [...cart, {...product, quantity}] }) 
+    return {
+        type: ACTIONS.ADD_CART,
+        payload: newCart
+    }
 }
 
-export const decrease = (data, id) => {
-    const newData = [...data]
-    newData.forEach(item => {
-        if(item._id === id) item.quantity -= 1
+
+// ==========================================
+// DECREASE QUANTITY
+// ==========================================
+
+export const decrease = (product, cart = []) => {
+
+    const currentCart = Array.isArray(cart)
+        ? cart
+        : []
+
+    const newCart = currentCart
+        .map(item => {
+
+            if (
+                String(item._id) ===
+                String(product._id)
+            ) {
+                return {
+                    ...item,
+                    quantity:
+                        Math.max(
+                            (Number(item.quantity) || 1) - 1,
+                            1
+                        )
+                }
+            }
+
+            return item
+        })
+
+    return {
+        type: ACTIONS.ADD_CART,
+        payload: newCart
+    }
+}
+
+
+// ==========================================
+// DELETE ITEM FROM CART
+// ==========================================
+
+export const deleteItem = (
+    productId,
+    cart = []
+) => {
+
+    const currentCart = Array.isArray(cart)
+        ? cart
+        : []
+
+    const newCart = currentCart.filter(
+        item =>
+            String(item._id) !==
+            String(productId)
+    )
+
+    return {
+        type: ACTIONS.ADD_CART,
+        payload: newCart
+    }
+}
+
+// ==========================================
+// UPDATE ITEM
+// ==========================================
+
+export const updateItem = (productId, cart = [], quantity) => {
+    const currentCart = Array.isArray(cart)
+        ? cart
+        : []
+
+    const newCart = currentCart.map(item => {
+
+        if (
+            String(item._id) ===
+            String(productId)
+        ) {
+            return {
+                ...item,
+                quantity:
+                    Number(quantity) || 1
+            }
+        }
+
+        return item
     })
 
-    return ({ type: 'ADD_CART', payload: newData })
-}
-
-export const increase = (data, id) => {
-    const newData = [...data]
-    newData.forEach(item => {
-        if(item._id === id) item.quantity += 1
-    })
-
-    return ({ type: 'ADD_CART', payload: newData })
-}
-
-
-export const deleteItem = (data, id, type) => {
-    const newData = data.filter(item => item._id !== id)
-    return ({ type, payload: newData})
-}
-
-export const updateItem = (data, id, post, type) => {
-    const newData = data.map(item => (item._id === id ? post : item))
-    return ({ type, payload: newData})
+    return {
+        type: ACTIONS.ADD_CART,
+        payload: newCart
+    }
 }
