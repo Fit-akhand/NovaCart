@@ -6,15 +6,40 @@ import {
   Package,
   ShoppingBag,
   Users,
+  Store,
   X,
 } from 'lucide-react'
 
 const links = [
-  { href: '/', label: 'Storefront', icon: LayoutDashboard },
-  { href: '/create', label: 'Products', icon: Package },
-  { href: '/categories', label: 'Categories', icon: FolderTree },
-  { href: '/profile#orders', label: 'Orders', icon: ShoppingBag },
-  { href: '/users', label: 'Customers', icon: Users },
+    {
+        href: '/admin',
+        label: 'Dashboard',
+        icon: LayoutDashboard
+    },
+
+    {
+        href: '/users',
+        label: 'Sellers & Customers',
+        icon: Users
+    },
+
+    {
+        href: '/create',
+        label: 'Products',
+        icon: Package
+    },
+
+    {
+        href: '/categories',
+        label: 'Categories',
+        icon: FolderTree
+    },
+
+    {
+        href: '/profile#orders',
+        label: 'Orders',
+        icon: ShoppingBag
+    }
 ]
 
 const AdminSidebar = ({ open, onClose }) => {
@@ -55,7 +80,7 @@ const AdminSidebar = ({ open, onClose }) => {
       })}
 
       <p className="mt-auto px-3 pt-6 text-xs text-[var(--nova-muted)]">
-        Analytics and settings are not available yet.
+        Platform administration
       </p>
     </nav>
   )

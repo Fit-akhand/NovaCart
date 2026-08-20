@@ -16,8 +16,8 @@ const AdminHeader = ({ onMenuClick }) => {
         </button>
         <BrandLogo compact />
         <span className="hidden text-xs font-semibold uppercase tracking-[0.16em] text-[var(--nova-muted)] sm:inline">
-          Admin
-        </span>
+    Super Admin
+</span>
       </div>
       <ThemeToggle />
     </header>
