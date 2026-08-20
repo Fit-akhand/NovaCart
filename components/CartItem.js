@@ -35,7 +35,7 @@ const CartItem = ({ item, dispatch, cart }) => {
         <button
           type="button"
           className="h-10 w-10"
-          onClick={() => dispatch(decrease(cart, item._id))}
+          onClick={() => dispatch(decrease(item, cart))}
           disabled={item.quantity === 1}
           aria-label="Decrease quantity"
         >
@@ -45,8 +45,8 @@ const CartItem = ({ item, dispatch, cart }) => {
         <button
           type="button"
           className="h-10 w-10"
-          onClick={() => dispatch(increase(cart, item._id))}
-          disabled={item.quantity === item.inStock}
+          onClick={() => dispatch(increase(item, cart))}
+          disabled={item.inStock > 0 && item.quantity >= item.inStock}
           aria-label="Increase quantity"
         >
           +
