@@ -23,6 +23,17 @@ const Users = () => {
 
   if (!auth.user) return null
 
+  const isSuperAdmin =
+    auth.user.role === 'admin' && auth.user.root === true
+
+  const isSeller = auth.user.role === 'seller'
+
+  const pageTitle = isSeller ? 'My Customers' : 'Users'
+
+  const pageDescription = isSeller
+    ? 'Customers who have purchased products from your store.'
+    : 'Manage customers, sellers and administrators from one place.'
+
   const filteredUsers = useMemo(() => {
     const value = search.toLowerCase().trim()
 
@@ -36,37 +47,38 @@ const Users = () => {
     )
   }, [users, search])
 
-  const adminCount = users.filter(
-    (user) => user.role === 'admin'
+  const customerCount = users.filter(
+    (user) => user.role === 'user'
   ).length
 
-  const regularUserCount = users.filter(
-    (user) => user.role !== 'admin'
+  const sellerCount = users.filter(
+    (user) => user.role === 'seller'
+  ).length
+
+  const adminCount = users.filter(
+    (user) => user.role === 'admin'
   ).length
 
   return (
     <>
       <Head>
-        <title>Users | NovaCart Admin</title>
+        <title>
+          {isSeller ? 'My Customers | NovaCart' : 'Users | NovaCart'}
+        </title>
 
         <meta
           name="description"
-          content="Manage NovaCart users and administrators."
+          content={pageDescription}
         />
       </Head>
 
       <main className="min-h-screen px-4 py-6 sm:px-6 lg:px-8">
-
         <div className="mx-auto max-w-7xl">
 
-          {/* =================================================
-              HEADER
-          ================================================== */}
-
+          {/* HEADER */}
           <div className="mb-8 flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
 
             <div>
-
               <div className="mb-3 flex items-center gap-2">
 
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-black text-white">
@@ -74,96 +86,100 @@ const Users = () => {
                 </div>
 
                 <span className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-400">
-                  NovaCart Admin
+                  {isSeller ? 'NovaCart Seller' : 'NovaCart Super Admin'}
                 </span>
 
               </div>
 
               <h1 className="text-3xl font-semibold tracking-tight text-gray-950 sm:text-4xl">
-                Users
+                {pageTitle}
               </h1>
 
               <p className="mt-2 max-w-xl text-sm text-gray-500">
-                Manage customers, administrators and account
-                permissions from one place.
+                {pageDescription}
               </p>
-
             </div>
 
+            {/* STATISTICS */}
 
-            {/* Statistics */}
-
-            <div className="grid grid-cols-3 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-
-              <div className="px-5 py-4">
-
+            {isSeller ? (
+              <div className="rounded-2xl border border-gray-200 bg-white px-6 py-4 shadow-sm">
                 <p className="text-[11px] font-medium uppercase tracking-wider text-gray-400">
-                  Total
+                  My Customers
                 </p>
 
-                <p className="mt-1 text-xl font-semibold text-gray-900">
+                <p className="mt-1 text-2xl font-semibold text-gray-900">
                   {users.length}
                 </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-4 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+
+                <div className="px-5 py-4">
+                  <p className="text-[11px] font-medium uppercase tracking-wider text-gray-400">
+                    Total
+                  </p>
+
+                  <p className="mt-1 text-xl font-semibold text-gray-900">
+                    {users.length}
+                  </p>
+                </div>
+
+                <div className="border-l border-gray-100 px-5 py-4">
+                  <p className="text-[11px] font-medium uppercase tracking-wider text-gray-400">
+                    Customers
+                  </p>
+
+                  <p className="mt-1 text-xl font-semibold text-gray-900">
+                    {customerCount}
+                  </p>
+                </div>
+
+                <div className="border-l border-gray-100 px-5 py-4">
+                  <p className="text-[11px] font-medium uppercase tracking-wider text-gray-400">
+                    Sellers
+                  </p>
+
+                  <p className="mt-1 text-xl font-semibold text-gray-900">
+                    {sellerCount}
+                  </p>
+                </div>
+
+                <div className="border-l border-gray-100 px-5 py-4">
+                  <p className="text-[11px] font-medium uppercase tracking-wider text-gray-400">
+                    Admins
+                  </p>
+
+                  <p className="mt-1 text-xl font-semibold text-gray-900">
+                    {adminCount}
+                  </p>
+                </div>
 
               </div>
-
-              <div className="border-l border-gray-100 px-5 py-4">
-
-                <p className="text-[11px] font-medium uppercase tracking-wider text-gray-400">
-                  Admins
-                </p>
-
-                <p className="mt-1 text-xl font-semibold text-gray-900">
-                  {adminCount}
-                </p>
-
-              </div>
-
-              <div className="border-l border-gray-100 px-5 py-4">
-
-                <p className="text-[11px] font-medium uppercase tracking-wider text-gray-400">
-                  Customers
-                </p>
-
-                <p className="mt-1 text-xl font-semibold text-gray-900">
-                  {regularUserCount}
-                </p>
-
-              </div>
-
-            </div>
+            )}
 
           </div>
 
-
-          {/* =================================================
-              MAIN CARD
-          ================================================== */}
+          {/* MAIN CARD */}
 
           <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
 
-            {/* Toolbar */}
+            {/* TOOLBAR */}
 
             <div className="flex flex-col gap-4 border-b border-gray-100 px-5 py-5 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
 
               <div>
-
                 <h2 className="text-base font-semibold text-gray-900">
-                  All Users
+                  {isSeller ? 'My Customers' : 'All Users'}
                 </h2>
 
                 <p className="mt-1 text-xs text-gray-400">
                   {filteredUsers.length} user
-                  {filteredUsers.length !== 1
-                    ? 's'
-                    : ''}{' '}
-                  shown
+                  {filteredUsers.length !== 1 ? 's' : ''} shown
                 </p>
-
               </div>
 
-
-              {/* Search */}
+              {/* SEARCH */}
 
               <div className="relative w-full lg:w-80">
 
@@ -175,9 +191,7 @@ const Users = () => {
                 <input
                   type="text"
                   value={search}
-                  onChange={(e) =>
-                    setSearch(e.target.value)
-                  }
+                  onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search by name, email or ID..."
                   className="h-11 w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-10 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-900 focus:bg-white focus:ring-4 focus:ring-gray-900/5"
                 />
@@ -196,17 +210,13 @@ const Users = () => {
 
             </div>
 
-
-            {/* =================================================
-                DESKTOP TABLE
-            ================================================== */}
+            {/* DESKTOP TABLE */}
 
             <div className="hidden overflow-x-auto md:block">
 
               <table className="w-full">
 
                 <thead>
-
                   <tr className="border-b border-gray-100 bg-gray-50/70">
 
                     <th className="w-16 px-6 py-4 text-left text-[10px] font-semibold uppercase tracking-wider text-gray-400">
@@ -221,18 +231,20 @@ const Users = () => {
                       Email
                     </th>
 
-                    <th className="px-4 py-4 text-left text-[10px] font-semibold uppercase tracking-wider text-gray-400">
-                      Role
-                    </th>
+                    {!isSeller && (
+                      <th className="px-4 py-4 text-left text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                        Role
+                      </th>
+                    )}
 
-                    <th className="px-4 py-4 text-right text-[10px] font-semibold uppercase tracking-wider text-gray-400">
-                      Actions
-                    </th>
+                    {isSuperAdmin && (
+                      <th className="px-4 py-4 text-right text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                        Actions
+                      </th>
+                    )}
 
                   </tr>
-
                 </thead>
-
 
                 <tbody className="divide-y divide-gray-100">
 
@@ -242,31 +254,22 @@ const Users = () => {
                       auth.user.email === user.email
 
                     const isRootAdmin =
-                      user.role === 'admin' &&
-                      user.root
+                      user.role === 'admin' && user.root
 
                     const canManage =
-                      auth.user.root &&
-                      !isCurrentUser
+                      isSuperAdmin && !isCurrentUser
 
                     return (
-
                       <tr
                         key={user._id}
                         className="group transition hover:bg-gray-50/70"
                       >
 
-                        {/* Number */}
-
                         <td className="px-6 py-4 text-xs font-medium text-gray-300">
-                          {String(index + 1).padStart(
-                            2,
-                            '0'
-                          )}
+                          {String(index + 1).padStart(2, '0')}
                         </td>
 
-
-                        {/* User */}
+                        {/* USER */}
 
                         <td className="px-4 py-4">
 
@@ -291,7 +294,6 @@ const Users = () => {
 
                             </div>
 
-
                             <div className="min-w-0">
 
                               <p className="truncate text-sm font-semibold text-gray-900">
@@ -308,8 +310,7 @@ const Users = () => {
 
                         </td>
 
-
-                        {/* Email */}
+                        {/* EMAIL */}
 
                         <td className="px-4 py-4">
 
@@ -326,104 +327,96 @@ const Users = () => {
 
                         </td>
 
+                        {/* ROLE */}
 
-                        {/* Role */}
+                        {!isSeller && (
+                          <td className="px-4 py-4">
 
-                        <td className="px-4 py-4">
+                            {user.role === 'admin' ? (
 
-                          {user.role === 'admin' ? (
+                              <div className="inline-flex items-center gap-1.5 rounded-full bg-gray-900 px-3 py-1.5 text-[10px] font-semibold text-white">
 
-                            <div className="inline-flex items-center gap-1.5 rounded-full bg-gray-900 px-3 py-1.5 text-[10px] font-semibold text-white">
+                                {isRootAdmin ? (
+                                  <ShieldCheck size={12} />
+                                ) : (
+                                  <Shield size={12} />
+                                )}
 
-                              {isRootAdmin ? (
-                                <ShieldCheck
-                                  size={12}
-                                />
-                              ) : (
+                                {isRootAdmin ? 'Super Admin' : 'Admin'}
+
+                              </div>
+
+                            ) : user.role === 'seller' ? (
+
+                              <div className="inline-flex items-center gap-1.5 rounded-full bg-blue-100 px-3 py-1.5 text-[10px] font-semibold text-blue-700">
                                 <Shield size={12} />
-                              )}
-
-                              {isRootAdmin
-                                ? 'Root Admin'
-                                : 'Admin'}
-
-                            </div>
-
-                          ) : (
-
-                            <div className="inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1.5 text-[10px] font-semibold text-gray-600">
-
-                              <User size={12} />
-
-                              Customer
-
-                            </div>
-
-                          )}
-
-                        </td>
-
-
-                        {/* Actions */}
-
-                        <td className="px-4 py-4">
-
-                          <div className="flex justify-end gap-1">
-
-                            {canManage ? (
-
-                              <>
-
-                                <Link
-                                  href={`/edit_user/${user._id}`}
-                                  title="Edit user"
-                                  className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-gray-900"
-                                >
-                                  <Edit3 size={16} />
-                                </Link>
-
-
-                                <button
-                                  type="button"
-                                  title="Remove user"
-                                  data-toggle="modal"
-                                  data-target="#exampleModal"
-                                  onClick={() =>
-                                    dispatch({
-                                      type: 'ADD_MODAL',
-                                      payload: [
-                                        {
-                                          data: users,
-                                          id: user._id,
-                                          title: user.name,
-                                          type: 'ADD_USERS',
-                                        },
-                                      ],
-                                    })
-                                  }
-                                  className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 transition hover:bg-red-50 hover:text-red-500"
-                                >
-                                  <Trash2 size={16} />
-                                </button>
-
-                              </>
+                                Seller
+                              </div>
 
                             ) : (
 
-                              <div className="flex h-9 items-center rounded-lg bg-gray-50 px-3 text-[10px] font-medium text-gray-400">
-                                {isCurrentUser
-                                  ? 'You'
-                                  : 'Protected'}
+                              <div className="inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1.5 text-[10px] font-semibold text-gray-600">
+                                <User size={12} />
+                                Customer
                               </div>
 
                             )}
 
-                          </div>
+                          </td>
+                        )}
 
-                        </td>
+                        {/* ACTIONS */}
+
+                        {isSuperAdmin && (
+                          <td className="px-4 py-4">
+
+                            <div className="flex justify-end gap-1">
+
+                              {canManage ? (
+                                <>
+                                  <Link
+                                    href={`/edit_user/${user._id}`}
+                                    title="Edit user"
+                                    className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-gray-900"
+                                  >
+                                    <Edit3 size={16} />
+                                  </Link>
+
+                                  <button
+                                    type="button"
+                                    title="Remove user"
+                                    data-toggle="modal"
+                                    data-target="#exampleModal"
+                                    onClick={() =>
+                                      dispatch({
+                                        type: 'ADD_MODAL',
+                                        payload: [
+                                          {
+                                            data: users,
+                                            id: user._id,
+                                            title: user.name,
+                                            type: 'ADD_USERS',
+                                          },
+                                        ],
+                                      })
+                                    }
+                                    className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 transition hover:bg-red-50 hover:text-red-500"
+                                  >
+                                    <Trash2 size={16} />
+                                  </button>
+                                </>
+                              ) : (
+                                <div className="flex h-9 items-center rounded-lg bg-gray-50 px-3 text-[10px] font-medium text-gray-400">
+                                  {isCurrentUser ? 'You' : 'Protected'}
+                                </div>
+                              )}
+
+                            </div>
+
+                          </td>
+                        )}
 
                       </tr>
-
                     )
                   })}
 
@@ -433,10 +426,7 @@ const Users = () => {
 
             </div>
 
-
-            {/* =================================================
-                MOBILE USER CARDS
-            ================================================== */}
+            {/* MOBILE */}
 
             <div className="divide-y divide-gray-100 md:hidden">
 
@@ -446,11 +436,9 @@ const Users = () => {
                   auth.user.email === user.email
 
                 const canManage =
-                  auth.user.root &&
-                  !isCurrentUser
+                  isSuperAdmin && !isCurrentUser
 
                 return (
-
                   <div
                     key={user._id}
                     className="p-5"
@@ -493,125 +481,115 @@ const Users = () => {
 
                       </div>
 
-
                       <span className="shrink-0 text-[10px] font-medium text-gray-300">
                         #{index + 1}
                       </span>
 
                     </div>
 
-
                     <div className="mt-4 flex items-center justify-between">
 
-                      {user.role === 'admin' ? (
+                      {!isSeller && (
+                        <>
+                          {user.role === 'admin' ? (
+                            <span className="flex items-center gap-1.5 rounded-full bg-gray-900 px-3 py-1.5 text-[10px] font-semibold text-white">
 
-                        <span className="flex items-center gap-1.5 rounded-full bg-gray-900 px-3 py-1.5 text-[10px] font-semibold text-white">
+                              {user.root ? (
+                                <ShieldCheck size={12} />
+                              ) : (
+                                <Shield size={12} />
+                              )}
 
-                          {user.root ? (
-                            <ShieldCheck size={12} />
+                              {user.root ? 'Super Admin' : 'Admin'}
+
+                            </span>
+                          ) : user.role === 'seller' ? (
+                            <span className="flex items-center gap-1.5 rounded-full bg-blue-100 px-3 py-1.5 text-[10px] font-semibold text-blue-700">
+                              <Shield size={12} />
+                              Seller
+                            </span>
                           ) : (
-                            <Shield size={12} />
+                            <span className="flex items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1.5 text-[10px] font-semibold text-gray-600">
+                              <User size={12} />
+                              Customer
+                            </span>
                           )}
-
-                          {user.root
-                            ? 'Root Admin'
-                            : 'Admin'}
-
-                        </span>
-
-                      ) : (
-
-                        <span className="flex items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1.5 text-[10px] font-semibold text-gray-600">
-
-                          <User size={12} />
-
-                          Customer
-
-                        </span>
-
+                        </>
                       )}
 
+                      {isSuperAdmin && (
+                        <div className="flex gap-1">
 
-                      <div className="flex gap-1">
+                          {canManage ? (
+                            <>
+                              <Link
+                                href={`/edit_user/${user._id}`}
+                                className="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-50 text-gray-500"
+                              >
+                                <Edit3 size={16} />
+                              </Link>
 
-                        {canManage ? (
+                              <button
+                                type="button"
+                                data-toggle="modal"
+                                data-target="#exampleModal"
+                                onClick={() =>
+                                  dispatch({
+                                    type: 'ADD_MODAL',
+                                    payload: [
+                                      {
+                                        data: users,
+                                        id: user._id,
+                                        title: user.name,
+                                        type: 'ADD_USERS',
+                                      },
+                                    ],
+                                  })
+                                }
+                                className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-50 text-red-500"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </>
+                          ) : (
+                            <span className="rounded-lg bg-gray-50 px-3 py-2 text-[10px] text-gray-400">
+                              {isCurrentUser ? 'You' : 'Protected'}
+                            </span>
+                          )}
 
-                          <>
-
-                            <Link
-                              href={`/edit_user/${user._id}`}
-                              className="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-50 text-gray-500"
-                            >
-                              <Edit3 size={16} />
-                            </Link>
-
-                            <button
-                              type="button"
-                              data-toggle="modal"
-                              data-target="#exampleModal"
-                              onClick={() =>
-                                dispatch({
-                                  type: 'ADD_MODAL',
-                                  payload: [
-                                    {
-                                      data: users,
-                                      id: user._id,
-                                      title: user.name,
-                                      type: 'ADD_USERS',
-                                    },
-                                  ],
-                                })
-                              }
-                              className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-50 text-red-500"
-                            >
-                              <Trash2 size={16} />
-                            </button>
-
-                          </>
-
-                        ) : (
-
-                          <span className="rounded-lg bg-gray-50 px-3 py-2 text-[10px] text-gray-400">
-                            {isCurrentUser
-                              ? 'You'
-                              : 'Protected'}
-                          </span>
-
-                        )}
-
-                      </div>
+                        </div>
+                      )}
 
                     </div>
 
                   </div>
-
                 )
               })}
 
             </div>
 
-
-            {/* Empty state */}
+            {/* EMPTY */}
 
             {filteredUsers.length === 0 && (
-
               <div className="flex min-h-[320px] flex-col items-center justify-center px-6 text-center">
 
                 <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-100">
-
                   <Search
                     size={27}
                     className="text-gray-400"
                   />
-
                 </div>
 
                 <h3 className="text-base font-semibold text-gray-900">
-                  No users found
+                  {isSeller
+                    ? 'No customers yet'
+                    : 'No users found'}
                 </h3>
 
                 <p className="mt-2 max-w-sm text-sm text-gray-400">
-                  No users match your current search.
+                  {isSeller
+                    ? 'Customers who purchase your products will appear here.'
+                    : 'No users match your current search.'}
                 </p>
 
                 {search && (
@@ -626,24 +604,16 @@ const Users = () => {
                 )}
 
               </div>
-
             )}
 
           </section>
 
-
-          {/* Footer */}
-
           <div className="mt-5 flex items-center justify-center gap-2 text-[11px] text-gray-400">
-
             <Check size={13} />
-
             User permissions are protected by NovaCart
-
           </div>
 
         </div>
-
       </main>
     </>
   )
