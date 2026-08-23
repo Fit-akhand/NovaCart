@@ -1,295 +1,528 @@
-import { createContext, useEffect, useRef, useState, useReducer } from 'react'
+import {
+    createContext,
+    useEffect,
+    useReducer,
+    useRef,
+    useState
+} from 'react'
+
 import reducers from './Reducers'
 
 export const DataContext = createContext()
 
-const initialState = {
-    notify: {},
-    auth: {},
-    cart: [],
-    modal: [],
-    orders: [],
-    users: [],
-    categories: []
-}
+// ============================================================
+// STORAGE KEYS
+// ============================================================
 
 const GUEST_CART_KEY = '__novacart_guest_cart'
 
 const getUserCartKey = (userId) =>
     `__novacart_cart_${userId}`
 
-const normalizeCart = (cart) =>
-    Array.isArray(cart)
-        ? cart.filter(item => item && item._id)
-        : []
 
-const mergeCarts = (guestCart, userCart) => {
+// ============================================================
+// STORAGE HELPERS
+// ============================================================
 
-    const merged = [...normalizeCart(userCart)]
+const getStoredCart = (key) => {
 
-    for (const guestItem of normalizeCart(guestCart)) {
+    if (typeof window === 'undefined') {
+        return []
+    }
 
-        const existingIndex = merged.findIndex(
-            item =>
-                String(item._id) ===
-                String(guestItem._id)
+    try {
+
+        const value =
+            localStorage.getItem(key)
+
+        if (!value) {
+            return []
+        }
+
+        const parsed =
+            JSON.parse(value)
+
+        return Array.isArray(parsed)
+            ? parsed
+            : []
+
+    } catch (error) {
+
+        console.error(
+            'NovaCart: failed to read cart',
+            error
         )
+
+        return []
+    }
+}
+
+
+const setStoredCart = (
+    key,
+    cart
+) => {
+
+    if (typeof window === 'undefined') {
+        return
+    }
+
+    try {
+
+        localStorage.setItem(
+            key,
+            JSON.stringify(
+                Array.isArray(cart)
+                    ? cart
+                    : []
+            )
+        )
+
+    } catch (error) {
+
+        console.error(
+            'NovaCart: failed to save cart',
+            error
+        )
+    }
+}
+
+
+// ============================================================
+// CART MERGE
+// ============================================================
+
+const mergeCarts = (
+    accountCart,
+    guestCart
+) => {
+
+    const account =
+        Array.isArray(accountCart)
+            ? accountCart
+            : []
+
+    const guest =
+        Array.isArray(guestCart)
+            ? guestCart
+            : []
+
+    const result = account.map(
+        item => ({
+            ...item,
+            quantity:
+                Math.max(
+                    1,
+                    Number(item.quantity) || 1
+                )
+        })
+    )
+
+
+    for (const guestItem of guest) {
+
+        if (!guestItem?._id) {
+            continue
+        }
+
+
+        const existingIndex =
+            result.findIndex(
+                item =>
+                    String(item._id) ===
+                    String(guestItem._id)
+            )
+
+
+        // ====================================================
+        // NEW PRODUCT
+        // ====================================================
 
         if (existingIndex === -1) {
 
-            merged.push({
+            const quantity =
+                Math.max(
+                    1,
+                    Number(
+                        guestItem.quantity
+                    ) || 1
+                )
+
+            const stock =
+                Number(
+                    guestItem.inStock
+                ) || 0
+
+
+            result.push({
                 ...guestItem,
+
                 quantity:
-                    Number(guestItem.quantity) || 1
+                    stock > 0
+                        ? Math.min(
+                            quantity,
+                            stock
+                        )
+                        : quantity
             })
 
             continue
         }
 
-        const existingItem = merged[existingIndex]
 
-        const existingQuantity =
-            Number(existingItem.quantity) || 1
+        // ====================================================
+        // EXISTING PRODUCT
+        // ====================================================
+
+        const existing =
+            result[existingIndex]
+
+
+        const accountQuantity =
+            Math.max(
+                1,
+                Number(
+                    existing.quantity
+                ) || 1
+            )
+
 
         const guestQuantity =
-            Number(guestItem.quantity) || 1
+            Math.max(
+                1,
+                Number(
+                    guestItem.quantity
+                ) || 1
+            )
 
-        const requestedQuantity =
-            existingQuantity + guestQuantity
+
+        let quantity =
+            accountQuantity +
+            guestQuantity
+
 
         const stock =
             Number(
-                guestItem.inStock ??
-                existingItem.inStock
-            )
+                existing.inStock ??
+                guestItem.inStock
+            ) || 0
 
-        const quantity =
-            stock > 0
-                ? Math.min(requestedQuantity, stock)
-                : requestedQuantity
 
-        merged[existingIndex] = {
-            ...existingItem,
-            ...guestItem,
+        if (stock > 0) {
+            quantity =
+                Math.min(
+                    quantity,
+                    stock
+                )
+        }
+
+
+        result[existingIndex] = {
+            ...existing,
             quantity
         }
     }
 
-    return merged
+
+    return result
 }
 
-export const DataProvider = ({ children }) => {
 
-    const [state, dispatch] = useReducer(
+// ============================================================
+// INITIAL STATE
+// ============================================================
+
+const initialState = {
+
+    notify: {},
+
+    auth: {},
+
+    cart: [],
+
+    modal: [],
+
+    orders: [],
+
+    users: [],
+
+    categories: []
+}
+
+
+// ============================================================
+// PROVIDER
+// ============================================================
+
+export const DataProvider = ({
+    children
+}) => {
+
+    const [
+        state,
+        dispatch
+    ] = useReducer(
         reducers,
         initialState
     )
 
-    const [cartReady, setCartReady] = useState(false)
 
-    const authChecked = useRef(false)
+    const {
+        auth,
+        cart
+    } = state
 
-    const { cart, auth } = state
 
-    // =====================================================
-    // RESTORE AUTH + CART
-    // =====================================================
+    // ========================================================
+    // AUTH READY
+    // ========================================================
+
+    const [
+        authReady,
+        setAuthReady
+    ] = useState(false)
+
+
+    // ========================================================
+    // CURRENT ACCOUNT
+    //
+    // This is deliberately kept outside React state so we
+    // can distinguish:
+    //
+    // LOGIN
+    // LOGOUT
+    // GUEST
+    // ========================================================
+
+    const currentUserId =
+        useRef(null)
+
+
+    // ========================================================
+    // CART OWNER
+    //
+    // Possible values:
+    //
+    // null       = guest
+    // userId     = account
+    // ========================================================
+
+    const cartOwner =
+        useRef(null)
+
+
+    // ========================================================
+    // CART READY
+    // ========================================================
+
+    const cartReady =
+        useRef(false)
+
+
+    // ========================================================
+    // PREVENT CART SAVE DURING TRANSITION
+    // ========================================================
+
+    const skipNextCartSave =
+        useRef(false)
+
+
+    // ========================================================
+    // RESTORE AUTH
+    // ========================================================
 
     useEffect(() => {
 
-        if (typeof window === 'undefined') return
+        if (
+            typeof window ===
+            'undefined'
+        ) {
+            return
+        }
+
 
         let mounted = true
 
-        const restoreSession = async () => {
 
-            try {
+        const restoreAuth =
+            async () => {
 
-                // -------------------------------------------------
-                // Check authentication
-                // -------------------------------------------------
+                try {
 
-                const tokenResponse =
-                    await fetch('/api/auth/accessToken', {
-                        method: 'GET',
-                        credentials: 'include'
-                    })
+                    const response =
+                        await fetch(
+                            '/api/auth/accessToken',
+                            {
+                                method:
+                                    'GET',
 
-                let user = null
+                                credentials:
+                                    'include',
 
-                if (tokenResponse.ok) {
+                                cache:
+                                    'no-store'
+                            }
+                        )
 
-                    const userResponse =
-                        await fetch('/api/user', {
-                            method: 'GET',
-                            credentials: 'include'
+
+                    if (
+                        !response.ok
+                    ) {
+
+                        if (mounted) {
+
+                            dispatch({
+                                type:
+                                    'AUTH',
+
+                                payload:
+                                    {}
+                            })
+                        }
+
+                        return
+                    }
+
+
+                    const data =
+                        await response
+                            .json()
+                            .catch(
+                                () => ({})
+                            )
+
+
+                    const accessToken =
+                        data?.access_token ||
+                        ''
+
+
+                    const user =
+                        data?.user
+
+
+                    if (
+                        mounted &&
+                        user?._id
+                    ) {
+
+                        dispatch({
+                            type:
+                                'AUTH',
+
+                            payload: {
+                                user,
+                                token:
+                                    accessToken
+                            }
                         })
 
-                    if (userResponse.ok) {
+                    } else {
+
+                        const userResponse =
+                            await fetch(
+                                '/api/user',
+                                {
+                                    method:
+                                        'GET',
+
+                                    credentials:
+                                        'include',
+
+                                    cache:
+                                        'no-store'
+                                }
+                            )
+
+
+                        if (
+                            !userResponse.ok
+                        ) {
+
+                            if (mounted) {
+
+                                dispatch({
+                                    type:
+                                        'AUTH',
+
+                                    payload:
+                                        {}
+                                })
+                            }
+
+                            return
+                        }
+
 
                         const userData =
                             await userResponse.json()
 
-                        user =
-                            userData?.user ||
-                            userData ||
-                            null
 
-                        if (!user?._id) {
-                            user = null
+                        const restoredUser =
+                            userData?.user ||
+                            userData
+
+
+                        if (
+                            mounted &&
+                            restoredUser?._id
+                        ) {
+
+                            dispatch({
+                                type:
+                                    'AUTH',
+
+                                payload: {
+                                    user:
+                                        restoredUser,
+
+                                    token:
+                                        accessToken
+                                }
+                            })
+
+                        } else {
+
+                            dispatch({
+                                type:
+                                    'AUTH',
+
+                                payload:
+                                    {}
+                            })
                         }
                     }
-                }
 
-                if (!mounted) return
+                } catch (error) {
 
-                // -------------------------------------------------
-                // GUEST
-                // -------------------------------------------------
+                    console.error(
+                        'NovaCart auth restore failed:',
+                        error
+                    )
 
-                if (!user) {
 
-                    const savedGuestCart =
-                        localStorage.getItem(
-                            GUEST_CART_KEY
-                        )
+                    if (mounted) {
 
-                    let guestCart = []
+                        dispatch({
+                            type:
+                                'AUTH',
 
-                    try {
-                        guestCart = savedGuestCart
-                            ? JSON.parse(savedGuestCart)
-                            : []
-                    } catch {
-                        guestCart = []
+                            payload:
+                                {}
+                        })
                     }
 
-                    dispatch({
-                        type: 'AUTH',
-                        payload: {}
-                    })
+                } finally {
 
-                    dispatch({
-                        type: 'ADD_CART',
-                        payload: normalizeCart(guestCart)
-                    })
-
-                    setCartReady(true)
-                    authChecked.current = true
-
-                    return
-                }
-
-                // -------------------------------------------------
-                // LOGGED-IN USER
-                // -------------------------------------------------
-
-                const userCartKey =
-                    getUserCartKey(user._id)
-
-                const savedUserCart =
-                    localStorage.getItem(userCartKey)
-
-                const savedGuestCart =
-                    localStorage.getItem(
-                        GUEST_CART_KEY
-                    )
-
-                let userCart = []
-                let guestCart = []
-
-                try {
-                    userCart = savedUserCart
-                        ? JSON.parse(savedUserCart)
-                        : []
-                } catch {
-                    userCart = []
-                }
-
-                try {
-                    guestCart = savedGuestCart
-                        ? JSON.parse(savedGuestCart)
-                        : []
-                } catch {
-                    guestCart = []
-                }
-
-                // -------------------------------------------------
-                // MERGE GUEST + USER CART
-                // -------------------------------------------------
-
-                const mergedCart =
-                    mergeCarts(
-                        guestCart,
-                        userCart
-                    )
-
-                // Save merged cart to user's cart
-                localStorage.setItem(
-                    userCartKey,
-                    JSON.stringify(mergedCart)
-                )
-
-                // Guest cart has now been transferred
-                localStorage.removeItem(
-                    GUEST_CART_KEY
-                )
-
-                dispatch({
-                    type: 'AUTH',
-                    payload: {
-                        user
+                    if (mounted) {
+                        setAuthReady(true)
                     }
-                })
-
-                dispatch({
-                    type: 'ADD_CART',
-                    payload: mergedCart
-                })
-
-                setCartReady(true)
-                authChecked.current = true
-
-            } catch (error) {
-
-                console.error(
-                    'Session/cart restore failed:',
-                    error
-                )
-
-                if (!mounted) return
-
-                dispatch({
-                    type: 'AUTH',
-                    payload: {}
-                })
-
-                const savedGuestCart =
-                    localStorage.getItem(
-                        GUEST_CART_KEY
-                    )
-
-                let guestCart = []
-
-                try {
-                    guestCart = savedGuestCart
-                        ? JSON.parse(savedGuestCart)
-                        : []
-                } catch {
-                    guestCart = []
                 }
-
-                dispatch({
-                    type: 'ADD_CART',
-                    payload: normalizeCart(guestCart)
-                })
-
-                setCartReady(true)
-                authChecked.current = true
             }
-        }
 
-        restoreSession()
+
+        restoreAuth()
+
 
         return () => {
             mounted = false
@@ -298,64 +531,354 @@ export const DataProvider = ({ children }) => {
     }, [])
 
 
-    // =====================================================
-    // SAVE CART
-    // =====================================================
+    // ========================================================
+    // LOAD CATEGORIES
+    // ========================================================
+
+    useEffect(() => {
+        let mounted = true
+
+        const loadCategories = async () => {
+            try {
+                const response = await fetch(
+                    '/api/categories',
+                    {
+                        method: 'GET',
+                        credentials: 'include',
+                        cache: 'no-store',
+                    }
+                )
+
+                const data = await response.json()
+
+                if (!response.ok) {
+                    throw new Error(
+                        data?.err ||
+                        'Failed to load categories.'
+                    )
+                }
+
+                if (!mounted) {
+                    return
+                }
+
+                dispatch({
+                    type: 'ADD_CATEGORIES',
+                    payload:
+                        Array.isArray(data?.categories)
+                            ? data.categories
+                            : [],
+                })
+            } catch (error) {
+                console.error(
+                    'NovaCart categories load failed:',
+                    error
+                )
+
+                if (mounted) {
+                    dispatch({
+                        type: 'ADD_CATEGORIES',
+                        payload: [],
+                    })
+                }
+            }
+        }
+
+        loadCategories()
+
+        return () => {
+            mounted = false
+        }
+    }, [])
+
+
+    // ========================================================
+    // CART OWNER TRANSITION
+    // ========================================================
 
     useEffect(() => {
 
         if (
-            typeof window === 'undefined' ||
-            !cartReady
+            typeof window ===
+            'undefined'
         ) {
             return
         }
 
+
+        if (!authReady) {
+            return
+        }
+
+
         const userId =
             auth?.user?._id
+                ? String(
+                    auth.user._id
+                )
+                : null
 
-        try {
 
-            // -------------------------------------------------
-            // LOGGED-IN USER
-            // -------------------------------------------------
+        // ====================================================
+        // SAME USER
+        //
+        // Nothing to reload.
+        // ====================================================
 
-            if (userId) {
+        if (
+            userId &&
+            currentUserId.current ===
+            userId
+        ) {
+            return
+        }
 
-                const cartKey =
-                    getUserCartKey(userId)
 
-                localStorage.setItem(
-                    cartKey,
-                    JSON.stringify(cart)
+        // ====================================================
+        // LOGGED-IN USER
+        // ====================================================
+
+        if (userId) {
+
+            const accountKey =
+                getUserCartKey(
+                    userId
                 )
 
-                return
+
+            const accountCart =
+                getStoredCart(
+                    accountKey
+                )
+
+
+            const guestCart =
+                getStoredCart(
+                    GUEST_CART_KEY
+                )
+
+
+            // ================================================
+            // IMPORTANT
+            //
+            // Guest cart only exists if the user actually
+            // added products while logged out.
+            //
+            // Account cart is NEVER treated as guest cart.
+            // ================================================
+
+            let finalCart =
+                accountCart
+
+
+            if (
+                guestCart.length > 0
+            ) {
+
+                finalCart =
+                    mergeCarts(
+                        accountCart,
+                        guestCart
+                    )
+
+
+                // Guest cart has now been consumed.
+                localStorage.removeItem(
+                    GUEST_CART_KEY
+                )
             }
 
-            // -------------------------------------------------
-            // GUEST
-            // -------------------------------------------------
 
-            localStorage.setItem(
-                GUEST_CART_KEY,
-                JSON.stringify(cart)
+            // ================================================
+            // SAVE FINAL ACCOUNT CART
+            // ================================================
+
+            setStoredCart(
+                accountKey,
+                finalCart
             )
 
-        } catch (error) {
 
-            console.error(
-                'Failed to save cart:',
-                error
-            )
+            // ================================================
+            // ACCOUNT IS NOW CART OWNER
+            // ================================================
+
+            currentUserId.current =
+                userId
+
+            cartOwner.current =
+                userId
+
+            cartReady.current =
+                true
+
+
+            dispatch({
+                type:
+                    'ADD_CART',
+
+                payload:
+                    finalCart
+            })
+
+
+            return
         }
+
+
+        // ====================================================
+        // LOGGED OUT
+        // ====================================================
+
+        // If we had a logged-in user before,
+        // this is a logout.
+        //
+        // NEVER convert that account cart into guest cart.
+
+        if (
+            currentUserId.current
+        ) {
+
+            currentUserId.current =
+                null
+
+            cartOwner.current =
+                null
+
+            cartReady.current =
+                false
+
+            skipNextCartSave.current =
+                true
+
+
+            dispatch({
+                type:
+                    'ADD_CART',
+
+                payload:
+                    []
+            })
+
+
+            return
+        }
+
+
+        // ====================================================
+        // REAL GUEST SESSION
+        // ====================================================
+
+        const guestCart =
+            getStoredCart(
+                GUEST_CART_KEY
+            )
+
+
+        cartOwner.current =
+            null
+
+        cartReady.current =
+            true
+
+
+        dispatch({
+            type:
+                'ADD_CART',
+
+            payload:
+                guestCart
+        })
+
+    }, [
+        authReady,
+        auth?.user?._id
+    ])
+
+
+    // ========================================================
+    // SAVE CART
+    // ========================================================
+
+    useEffect(() => {
+
+        if (
+            typeof window ===
+            'undefined'
+        ) {
+            return
+        }
+
+
+        if (!authReady) {
+            return
+        }
+
+
+        if (!cartReady.current) {
+            return
+        }
+
+
+        // ====================================================
+        // LOGOUT TRANSITION
+        //
+        // Do not write [] into guest storage.
+        // ====================================================
+
+        if (
+            skipNextCartSave.current
+        ) {
+
+            skipNextCartSave.current =
+                false
+
+            return
+        }
+
+
+        // ====================================================
+        // LOGGED-IN USER
+        // ====================================================
+
+        if (
+            cartOwner.current
+        ) {
+
+            const accountKey =
+                getUserCartKey(
+                    cartOwner.current
+                )
+
+
+            setStoredCart(
+                accountKey,
+                cart
+            )
+
+
+            return
+        }
+
+
+        // ====================================================
+        // GUEST
+        // ====================================================
+
+        setStoredCart(
+            GUEST_CART_KEY,
+            cart
+        )
 
     }, [
         cart,
-        auth?.user?._id,
-        cartReady
+        authReady
     ])
 
+
+    // ========================================================
+    // PROVIDER
+    // ========================================================
 
     return (
         <DataContext.Provider

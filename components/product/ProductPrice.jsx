@@ -1,13 +1,24 @@
 import { formatPrice } from '@/lib/formatPrice'
 
-const ProductPrice = ({ price, className = '' }) => {
-  const value = Number(price) || 0
+const ProductPrice = ({
+  price,
+  className = '',
+}) => {
+  const value = Number(price)
 
   return (
     <span
-      className={`text-base font-semibold text-[var(--nova-text)] ${className}`}
+      className={`
+        text-base font-semibold
+        text-[var(--nova-text)]
+        ${className}
+      `}
     >
-      {formatPrice(value)}
+      {formatPrice(
+        Number.isFinite(value)
+          ? value
+          : 0
+      )}
     </span>
   )
 }

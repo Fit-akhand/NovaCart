@@ -1,13 +1,17 @@
-export const formatPrice = (price) => {
-  const value = Number(price)
+export const formatPrice = (value) => {
+  const amount = Number(value)
 
-  if (!Number.isFinite(value)) {
-    return '₹0'
+  if (!Number.isFinite(amount)) {
+    return '₹0.00'
   }
 
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    maximumFractionDigits: 2,
-  }).format(value)
+  return new Intl.NumberFormat(
+    'en-IN',
+    {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }
+  ).format(amount)
 }

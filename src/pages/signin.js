@@ -1,7 +1,11 @@
 import Head from 'next/head'
 import Link from 'next/link'
-import { useState, useContext } from 'react'
+import {
+    useState,
+    useContext
+} from 'react'
 import { useRouter } from 'next/router'
+
 import {
     Eye,
     EyeOff,
@@ -9,223 +13,279 @@ import {
     Mail,
     ShieldCheck,
     Store,
-    UserPlus,
+    UserPlus
 } from 'lucide-react'
 
 import { DataContext } from '../../store/GlobalState'
 import { postData } from '@/lib/api-client'
+
 import BrandLogo from '../../components/common/BrandLogo'
 import Button from '../../components/common/Button'
 import ThemeToggle from '../../components/common/ThemeToggle'
 
+
 const fieldClass =
     'h-12 w-full rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface)] px-4 !pl-12 pr-12 text-sm text-[var(--nova-text)] outline-none placeholder:text-[var(--nova-muted)] focus:border-[var(--nova-blue)]'
 
+
 const Signin = () => {
-    const [userData, setUserData] = useState({
+
+    const [
+        userData,
+        setUserData
+    ] = useState({
         email: '',
-        password: '',
+        password: ''
     })
 
-    const [showPassword, setShowPassword] =
-        useState(false)
 
-    const { email, password } = userData
+    const [
+        showPassword,
+        setShowPassword
+    ] = useState(false)
 
-    const { state, dispatch } =
-        useContext(DataContext)
 
-    const { notify } = state
+    const {
+        email,
+        password
+    } = userData
 
-    const router = useRouter()
 
-    // ==========================================
-    // INPUT CHANGE
-    // ==========================================
+    const {
+        state,
+        dispatch
+    } = useContext(
+        DataContext
+    )
 
-    const handleChangeInput = (e) => {
-        const {
-            name,
-            value,
-        } = e.target
 
-        setUserData((prev) => ({
-            ...prev,
-            [name]: value,
-        }))
+    const {
+        notify
+    } = state
 
-        dispatch({
-            type: 'NOTIFY',
-            payload: {},
-        })
-    }
 
-    // ==========================================
-    // LOGIN
-    // ==========================================
+    const router =
+        useRouter()
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
 
-        // ------------------------------------------
-        // VALIDATION
-        // ------------------------------------------
+    // =========================================================
+    // INPUT
+    // =========================================================
 
-        if (!email.trim() || !password) {
-            return dispatch({
+    const handleChangeInput =
+        (e) => {
+
+            const {
+                name,
+                value
+            } = e.target
+
+            setUserData(
+                prev => ({
+                    ...prev,
+                    [name]: value
+                })
+            )
+
+            dispatch({
                 type: 'NOTIFY',
-                payload: {
-                    error:
-                        'Please enter your email and password.',
-                },
+                payload: {}
             })
         }
 
-        // ------------------------------------------
-        // LOADING
-        // ------------------------------------------
 
-        dispatch({
-            type: 'NOTIFY',
-            payload: {
-                loading: true,
-            },
-        })
+    // =========================================================
+    // LOGIN
+    // =========================================================
 
-        try {
-            // ------------------------------------------
-            // LOGIN API
-            // ------------------------------------------
+    const handleSubmit =
+        async (e) => {
 
-            const res = await postData(
-                'auth/login',
-                {
-                    email:
-                        email
-                            .trim()
-                            .toLowerCase(),
+            e.preventDefault()
 
-                    password,
-                }
-            )
 
-            // ------------------------------------------
-            // API ERROR
-            // ------------------------------------------
-
-            if (res?.err) {
-                return dispatch({
-                    type: 'NOTIFY',
-                    payload: {
-                        error: res.err,
-                    },
-                })
-            }
-
-            // ------------------------------------------
-            // VALIDATE RESPONSE
-            // ------------------------------------------
+            // -------------------------------------------------
+            // VALIDATION
+            // -------------------------------------------------
 
             if (
-                !res?.access_token ||
-                !res?.user
+                !email.trim() ||
+                !password
             ) {
-                console.error(
-                    'Invalid login response:',
-                    res
-                )
 
                 return dispatch({
                     type: 'NOTIFY',
                     payload: {
                         error:
-                            'Login response is invalid.',
-                    },
+                            'Please enter your email and password.'
+                    }
                 })
             }
 
-            // ------------------------------------------
-            // UPDATE AUTH STATE
-            // ------------------------------------------
 
-            dispatch({
-                type: 'AUTH',
-                payload: {
-                    token:
-                        res.access_token,
-
-                    user:
-                        res.user,
-                },
-            })
-
-            // ------------------------------------------
-            // LOGIN FLAG
-            // ------------------------------------------
-
-            localStorage.setItem(
-                'firstLogin',
-                'true'
-            )
-
-            // ------------------------------------------
-            // SUCCESS MESSAGE
-            // ------------------------------------------
+            // -------------------------------------------------
+            // LOADING
+            // -------------------------------------------------
 
             dispatch({
                 type: 'NOTIFY',
                 payload: {
-                    success:
-                        res.msg ||
-                        'Login successful.',
-                },
+                    loading: true
+                }
             })
 
-            // ------------------------------------------
-            // REDIRECT TO ORIGINAL DESTINATION
-            // ------------------------------------------
 
-            // If the user came from a protected/checkout page,
-            // return them there after successful login.
-            //
-            // Example:
-            // /signin?returnUrl=/cart
-            //
-            // After login:
-            // /cart
+            try {
 
-            const returnUrl = router.query.returnUrl
+                // -------------------------------------------------
+                // LOGIN API
+                // -------------------------------------------------
 
-            if (
-                typeof returnUrl === 'string' &&
-                returnUrl.startsWith('/') &&
-                !returnUrl.startsWith('//')
-            ) {
-                await router.replace(returnUrl)
-            } else {
-                // Normal login without a return destination
-                await router.replace('/')
+                const res =
+                    await postData(
+                        'auth/login',
+                        {
+                            email:
+                                email
+                                    .trim()
+                                    .toLowerCase(),
+
+                            password
+                        }
+                    )
+
+
+                // -------------------------------------------------
+                // API ERROR
+                // -------------------------------------------------
+
+                if (res?.err) {
+
+                    return dispatch({
+                        type: 'NOTIFY',
+                        payload: {
+                            error:
+                                res.err
+                        }
+                    })
+                }
+
+
+                // -------------------------------------------------
+                // VALIDATE RESPONSE
+                // -------------------------------------------------
+
+                if (
+                    !res?.access_token ||
+                    !res?.user
+                ) {
+
+                    console.error(
+                        'Invalid login response:',
+                        res
+                    )
+
+                    return dispatch({
+                        type: 'NOTIFY',
+                        payload: {
+                            error:
+                                'Login response is invalid.'
+                        }
+                    })
+                }
+
+
+                // -------------------------------------------------
+                // AUTH STATE
+                // -------------------------------------------------
+
+                dispatch({
+                    type: 'AUTH',
+                    payload: {
+                        token:
+                            res.access_token,
+
+                        user:
+                            res.user
+                    }
+                })
+
+
+                // -------------------------------------------------
+                // LOGIN FLAG
+                // -------------------------------------------------
+
+                localStorage.setItem(
+                    'firstLogin',
+                    'true'
+                )
+
+
+                // -------------------------------------------------
+                // SUCCESS
+                // -------------------------------------------------
+
+                dispatch({
+                    type: 'NOTIFY',
+                    payload: {
+                        success:
+                            res.msg ||
+                            'Login successful.'
+                    }
+                })
+
+
+                // -------------------------------------------------
+                // IMPORTANT
+                //
+                // Return the user to the page they originally
+                // wanted instead of always sending them home.
+                // -------------------------------------------------
+
+                const returnUrl =
+                    router.query.returnUrl
+
+
+                if (
+                    typeof returnUrl ===
+                        'string' &&
+                    returnUrl.startsWith('/')
+                ) {
+
+                    await router.replace(
+                        returnUrl
+                    )
+
+                } else {
+
+                    await router.replace(
+                        '/'
+                    )
+                }
+
+            } catch (error) {
+
+                console.error(
+                    'Login error:',
+                    error
+                )
+
+                dispatch({
+                    type: 'NOTIFY',
+                    payload: {
+                        error:
+                            error?.message ||
+                            'Unable to login. Please try again.'
+                    }
+                })
             }
-        } catch (error) {
-            console.error(
-                'Login error:',
-                error
-            )
-
-            dispatch({
-                type: 'NOTIFY',
-                payload: {
-                    error:
-                        error?.message ||
-                        'Unable to login. Please try again.',
-                },
-            })
         }
-    }
+
 
     return (
         <>
             <Head>
+
                 <title>
                     Sign In | NovaCart
                 </title>
@@ -234,88 +294,110 @@ const Signin = () => {
                     name="description"
                     content="Sign in to your NovaCart account."
                 />
+
             </Head>
 
+
             <main className="min-h-screen bg-[var(--nova-bg)]">
+
                 <div className="mx-auto flex min-h-screen max-w-[1500px]">
 
-                    {/* =====================================
-                        LEFT BRAND PANEL
-                    ====================================== */}
+
+                    {/* =================================================
+                        LEFT PANEL
+                    ================================================= */}
 
                     <section className="relative hidden overflow-hidden bg-[var(--nova-navy)] lg:flex lg:w-[48%]">
 
-                        <div className="relative z-10 flex w-full flex-col justify-between p-12 text-white xl:p-16">
+                        <div className="relative z-10 flex w-full flex-col justify-between p-12 text-white">
 
                             <BrandLogo
-                                variant="light"
+                                size="lg"
                             />
 
-                            <div className="max-w-lg">
 
-                                <p className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-white/60">
+                            <div>
+
+                                <p className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-blue-300">
                                     NovaCart
                                 </p>
 
-                                <h1 className="text-5xl font-semibold leading-tight tracking-tight xl:text-6xl">
+                                <h1 className="max-w-lg text-5xl font-semibold leading-tight">
                                     Shop smarter.
                                     <br />
                                     Live better.
                                 </h1>
 
-                                <p className="mt-6 max-w-md text-sm leading-6 text-white/70">
-                                    Sign in to continue shopping,
-                                    manage orders, sell products,
-                                    and manage your NovaCart
-                                    account.
+                                <p className="mt-6 max-w-md text-base leading-7 text-slate-300">
+                                    Sign in to manage your account,
+                                    track orders and enjoy a faster
+                                    shopping experience.
                                 </p>
 
                             </div>
 
-                            <p className="text-xs text-white/40">
-                                © {new Date().getFullYear()} NovaCart
-                            </p>
+
+                            <div className="flex items-center gap-3 text-sm text-slate-400">
+
+                                <ShieldCheck
+                                    size={18}
+                                />
+
+                                Secure account access
+
+                            </div>
 
                         </div>
 
                     </section>
 
-                    {/* =====================================
-                        LOGIN SECTION
-                    ====================================== */}
 
-                    <section className="flex w-full items-center justify-center px-5 py-10 sm:px-8 lg:w-[52%]">
+                    {/* =================================================
+                        RIGHT PANEL
+                    ================================================= */}
+
+                    <section className="flex flex-1 items-center justify-center px-5 py-10">
 
                         <div className="w-full max-w-md">
 
-                            {/* TOP */}
+
+                            {/* HEADER */}
 
                             <div className="mb-8 flex items-center justify-between">
 
-                                <div className="lg:hidden">
-                                    <BrandLogo compact />
-                                </div>
+                                <BrandLogo
+                                    size="md"
+                                />
 
                                 <ThemeToggle />
 
                             </div>
 
-                            {/* HEADING */}
 
-                            <h2 className="text-3xl font-semibold tracking-tight">
-                                Welcome back
-                            </h2>
+                            <div className="mb-8">
 
-                            <p className="mt-2 text-sm text-[var(--nova-muted)]">
-                                Sign in to your NovaCart account.
-                            </p>
+                                <h2 className="text-3xl font-semibold">
+                                    Welcome back
+                                </h2>
 
-                            {/* FORM */}
+                                <p className="mt-2 text-sm text-[var(--nova-muted)]">
+                                    Sign in to continue shopping.
+                                </p>
+
+                            </div>
+
+
+                            {/* =================================================
+                                FORM
+                            ================================================= */}
 
                             <form
-                                onSubmit={handleSubmit}
-                                className="mt-8 space-y-5"
+                                onSubmit={
+                                    handleSubmit
+                                }
+                                className="space-y-5"
                             >
+
 
                                 {/* EMAIL */}
 
@@ -332,18 +414,18 @@ const Signin = () => {
 
                                         <Mail
                                             size={17}
-                                            className="pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 text-[var(--nova-muted)]"
+                                            className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--nova-muted)]"
                                         />
 
                                         <input
-                                            type="email"
                                             id="email"
                                             name="email"
+                                            type="email"
                                             value={email}
                                             onChange={
                                                 handleChangeInput
                                             }
-                                            placeholder="you@example.com"
+                                            placeholder="Enter your email"
                                             autoComplete="email"
                                             className={fieldClass}
                                         />
@@ -351,6 +433,7 @@ const Signin = () => {
                                     </div>
 
                                 </div>
+
 
                                 {/* PASSWORD */}
 
@@ -367,17 +450,17 @@ const Signin = () => {
 
                                         <Lock
                                             size={17}
-                                            className="pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 text-[var(--nova-muted)]"
+                                            className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--nova-muted)]"
                                         />
 
                                         <input
+                                            id="password"
+                                            name="password"
                                             type={
                                                 showPassword
                                                     ? 'text'
                                                     : 'password'
                                             }
-                                            id="password"
-                                            name="password"
                                             value={password}
                                             onChange={
                                                 handleChangeInput
@@ -391,125 +474,109 @@ const Signin = () => {
                                             type="button"
                                             onClick={() =>
                                                 setShowPassword(
-                                                    !showPassword
+                                                    prev =>
+                                                        !prev
                                                 )
                                             }
-                                            className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg text-[var(--nova-muted)] transition hover:bg-[var(--nova-surface-soft)] hover:text-[var(--nova-text)]"
+                                            className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center justify-center p-1 text-[var(--nova-muted)]"
                                             aria-label={
                                                 showPassword
                                                     ? 'Hide password'
                                                     : 'Show password'
                                             }
                                         >
+
                                             {showPassword ? (
-                                                <EyeOff size={17} />
+                                                <EyeOff
+                                                    size={17}
+                                                />
                                             ) : (
-                                                <Eye size={17} />
+                                                <Eye
+                                                    size={17}
+                                                />
                                             )}
+
                                         </button>
 
                                     </div>
 
                                 </div>
 
-                                {/* SECURITY */}
 
-                                <div className="flex items-start gap-3 rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] px-3 py-3 text-xs leading-5 text-[var(--nova-muted)]">
+                                {/* ERROR */}
 
-                                    <ShieldCheck
-                                        size={15}
-                                        className="mt-0.5 shrink-0"
-                                    />
+                                {notify?.error && (
 
-                                    <span>
-                                        Your account access is
-                                        protected by secure
-                                        authentication.
-                                    </span>
+                                    <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+                                        {notify.error}
+                                    </div>
 
-                                </div>
+                                )}
 
-                                {/* LOGIN BUTTON */}
+
+                                {/* BUTTON */}
 
                                 <Button
                                     type="submit"
-                                    loading={
+                                    className="w-full"
+                                    disabled={
                                         notify?.loading
                                     }
-                                    className="flex w-full items-center justify-center gap-2"
                                 >
-                                    Sign in
+
+                                    {notify?.loading
+                                        ? 'Signing in...'
+                                        : 'Sign in'}
+
                                 </Button>
+
 
                             </form>
 
-                            {/* =====================================
-                                CREATE ACCOUNT
-                            ====================================== */}
 
-                            <div className="mt-8 rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] p-4">
+                            {/* REGISTER */}
 
-                                <div className="mb-4">
+                            <div className="mt-8 space-y-4">
 
-                                    <p className="text-sm font-semibold text-[var(--nova-text)]">
-                                        New to NovaCart?
-                                    </p>
+                                <div className="text-center text-sm text-[var(--nova-muted)]">
 
-                                    <p className="mt-1 text-xs leading-5 text-[var(--nova-muted)]">
-                                        Create an account to shop
-                                        or start selling on
-                                        NovaCart.
-                                    </p>
-
-                                </div>
-
-                                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-
-                                    {/* CUSTOMER */}
+                                    Don't have an account?{' '}
 
                                     <Link
                                         href="/register"
-                                        className="flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface)] px-4 py-2.5 text-center text-sm font-semibold text-[var(--nova-text)] transition hover:border-[var(--nova-blue)] hover:text-[var(--nova-blue)]"
+                                        className="font-semibold text-[var(--nova-blue)] hover:underline"
                                     >
-                                        <UserPlus
-                                            size={16}
-                                        />
-
-                                        Create Account
-                                    </Link>
-
-                                    {/* SELLER */}
-
-                                    <Link
-                                        href="/seller/register"
-                                        className="flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[var(--nova-blue)] px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:opacity-90"
-                                    >
-                                        <Store
-                                            size={16}
-                                        />
-
-                                        Create Account as Seller
+                                        Create account
                                     </Link>
 
                                 </div>
 
+
+                                <Link
+                                    href="/seller/signin"
+                                    className="flex items-center justify-center gap-2 text-xs text-[var(--nova-muted)] hover:text-[var(--nova-text)]"
+                                >
+
+                                    <Store
+                                        size={14}
+                                    />
+
+                                    Seller sign in
+
+                                </Link>
+
                             </div>
-
-                            {/* FOOTER */}
-
-                            <p className="mt-6 text-center text-xs text-[var(--nova-muted)]">
-                                By continuing, you agree to NovaCart&apos;s
-                                terms and policies.
-                            </p>
 
                         </div>
 
                     </section>
 
                 </div>
+
             </main>
         </>
     )
 }
+
 
 export default Signin

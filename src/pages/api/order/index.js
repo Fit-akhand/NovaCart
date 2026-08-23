@@ -4,7 +4,6 @@ import Products from '../../../../models/productModel'
 import auth from '../../../../middleware/auth'
 
 connectDB()
-
 // ============================================================
 // MAIN API HANDLER
 // ============================================================

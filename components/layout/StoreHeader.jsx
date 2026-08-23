@@ -112,35 +112,90 @@ const StoreHeader = () => {
      Logout
   ----------------------------------------- */
 
-  const handleLogout = async () => {
+   const handleLogout = async () => {
+
     try {
-      await postData(
-        'auth/logout',
-        null,
-        auth?.token
-      )
 
-      localStorage.removeItem('firstLogin')
+        await postData(
+            'auth/logout',
+            null,
+            auth?.token
+        )
 
-      dispatch({ type: 'AUTH', payload: {} })
-      dispatch({ type: 'ADD_ORDERS', payload: [] })
-      dispatch({ type: 'ADD_USERS', payload: [] })
-      dispatch({ type: 'ADD_CART', payload: [] })
 
-      setMenuOpen(false)
-      setProfileOpen(false)
+        // ================================================
+        // IMPORTANT
+        //
+        // DO NOT clear cart here.
+        //
+        // GlobalState knows that this is a logout
+        // transition and prevents the account cart
+        // from becoming the guest cart.
+        // ================================================
 
-      window.location.href = '/'
+        if (
+            typeof window !==
+            'undefined'
+        ) {
+
+            localStorage.removeItem(
+                'firstLogin'
+            )
+        }
+
+
+        dispatch({
+            type:
+                'AUTH',
+
+            payload:
+                {}
+        })
+
+
+        dispatch({
+            type:
+                'ADD_ORDERS',
+
+            payload:
+                []
+        })
+
+
+        dispatch({
+            type:
+                'ADD_USERS',
+
+            payload:
+                []
+        })
+
+
+        setMenuOpen(false)
+
+        setProfileOpen(false)
+
+
+        // Give GlobalState time to process the
+        // account -> guest transition.
+
+        window.location.href =
+            '/'
+
     } catch (error) {
-      dispatch({
-        type: 'NOTIFY',
-        payload: {
-          error:
-            error.message || 'Logout failed.',
-        },
-      })
+
+        dispatch({
+            type:
+                'NOTIFY',
+
+            payload: {
+                error:
+                    error?.message ||
+                    'Logout failed.'
+            }
+        })
     }
-  }
+}
 
   return (
     <>

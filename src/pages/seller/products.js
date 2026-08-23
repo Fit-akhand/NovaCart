@@ -9,7 +9,11 @@ import {
     Trash2
 } from 'lucide-react'
 import { DataContext } from '../../../store/GlobalState'
-import { getData, deleteData } from '@/lib/api-client'
+import {
+    getData,
+    deleteData,
+    patchData
+} from '@/lib/api-client'
 
 const SellerProducts = () => {
     const { state, dispatch } = useContext(DataContext)
@@ -133,6 +137,70 @@ const SellerProducts = () => {
             })
         }
     }
+
+            const handleStockChange = async (
+            productId,
+            change
+        ) => {
+            if (!productId || !auth?.token) return
+
+            try {
+                const res = await patchData(
+                    'seller/products',
+                    {
+                        id: productId,
+                        change
+                    },
+                    auth.token
+                )
+
+                if (res?.err) {
+                    dispatch({
+                        type: 'NOTIFY',
+                        payload: {
+                            error: res.err
+                        }
+                    })
+
+                    return
+                }
+
+                setProducts((previous) =>
+                    previous.map((product) =>
+                        product._id === productId
+                            ? {
+                                ...product,
+                                inStock:
+                                    res.product.inStock
+                            }
+                            : product
+                    )
+                )
+
+                dispatch({
+                    type: 'NOTIFY',
+                    payload: {
+                        success:
+                            change === 1
+                                ? 'Stock increased.'
+                                : 'Stock decreased.'
+                    }
+                })
+            } catch (error) {
+                console.error(
+                    'Stock update error:',
+                    error
+                )
+
+                dispatch({
+                    type: 'NOTIFY',
+                    payload: {
+                        error:
+                            'Unable to update stock.'
+                    }
+                })
+            }
+        }
 
     if (!auth?.user) {
         return (
@@ -289,9 +357,44 @@ const SellerProducts = () => {
                                             ₹{Number(product.price || 0).toLocaleString('en-IN')}
                                         </p>
 
-                                        <p className="mt-2 text-sm text-[var(--nova-muted)]">
-                                            Stock: {product.inStock || 0}
+                                        <div className="mt-4">
+                                        <p className="mb-2 text-xs font-medium text-[var(--nova-muted)]">
+                                            Stock
                                         </p>
+
+                                        <div className="flex items-center gap-3">
+                                            <button
+                                                type="button"
+                                                disabled={Number(product.inStock) <= 0}
+                                                onClick={() =>
+                                                    handleStockChange(
+                                                        product._id,
+                                                        -1
+                                                    )
+                                                }
+                                                className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--nova-border)] text-lg font-bold transition hover:border-[var(--nova-blue)] hover:text-[var(--nova-blue)] disabled:cursor-not-allowed disabled:opacity-40"
+                                            >
+                                                −
+                                            </button>
+
+                                            <span className="min-w-12 text-center text-lg font-bold">
+                                                {Number(product.inStock) || 0}
+                                            </span>
+
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    handleStockChange(
+                                                        product._id,
+                                                        1
+                                                    )
+                                                }
+                                                className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--nova-blue)] text-lg font-bold text-white transition hover:opacity-90"
+                                            >
+                                                +
+                                            </button>
+                                        </div>
+                                    </div>
 
                                         {/* ACTIONS */}
                                         <div className="mt-5 flex gap-3">

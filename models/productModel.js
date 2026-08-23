@@ -44,10 +44,32 @@ const productSchema = new mongoose.Schema(
             default: null
         },
 
+        /*
+         * SELLER OWNERSHIP
+         *
+         * For seller-created products:
+         * seller = seller's user ID
+         *
+         * For Super Admin-created products:
+         * seller = null
+         */
         seller: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'user',
             default: null
+        },
+
+        /*
+         * PRODUCT OWNER TYPE
+         *
+         * seller -> created/owned by a seller
+         * admin  -> created/owned by Super Admin
+         */
+        ownerType: {
+            type: String,
+            enum: ['seller', 'admin'],
+            default: 'seller',
+            required: true
         },
 
         images: [

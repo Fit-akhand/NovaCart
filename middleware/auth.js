@@ -3,72 +3,156 @@ import Users from '../models/userModel'
 
 const auth = async (req, res) => {
     try {
-        const authorization = req.headers.authorization
 
-        if (!authorization) {
-            return res.status(401).json({
-                err: 'Invalid Authentication.'
-            })
+        // =====================================================
+        // GET ACCESS TOKEN
+        // =====================================================
+
+        const authorization =
+            req.headers.authorization
+
+        let token = null
+
+
+        // =====================================================
+        // AUTHORIZATION HEADER
+        // =====================================================
+
+        if (authorization) {
+
+            token =
+                authorization.startsWith('Bearer ')
+                    ? authorization.slice(7)
+                    : authorization
         }
 
-        // Supports:
-        // Authorization: Bearer <token>
-        // OR
-        // Authorization: <token>
 
-        const token = authorization.startsWith('Bearer ')
-            ? authorization.slice(7)
-            : authorization
+        // =====================================================
+        // OPTIONAL COOKIE FALLBACK
+        // =====================================================
+
+        if (
+            !token &&
+            req.cookies?.accesstoken
+        ) {
+
+            token =
+                req.cookies.accesstoken
+        }
+
+
+        // =====================================================
+        // TOKEN REQUIRED
+        // =====================================================
 
         if (!token) {
+
             return res.status(401).json({
-                err: 'Invalid Authentication.'
+                err:
+                    'Invalid Authentication.'
             })
         }
 
-        const decoded = jwt.verify(
-            token,
-            process.env.ACCESS_TOKEN_SECRET
-        )
+
+        // =====================================================
+        // VERIFY TOKEN
+        // =====================================================
+
+        const decoded =
+            jwt.verify(
+                token,
+                process.env.ACCESS_TOKEN_SECRET
+            )
+
 
         if (!decoded?.id) {
+
             return res.status(401).json({
-                err: 'Invalid Authentication.'
+                err:
+                    'Invalid Authentication.'
             })
         }
 
-        const user = await Users.findById(decoded.id)
+
+        // =====================================================
+        // FIND USER
+        // =====================================================
+
+        const user =
+            await Users.findById(
+                decoded.id
+            )
+
 
         if (!user) {
+
             return res.status(401).json({
-                err: 'Invalid Authentication.'
+                err:
+                    'Invalid Authentication.'
             })
         }
 
+
+        // =====================================================
+        // AUTHENTICATED USER
+        // =====================================================
+
         return {
-            id: user._id,
-            role: user.role,
-            root: user.root
+            id:
+                user._id,
+
+            role:
+                user.role,
+
+            root:
+                user.root
         }
 
     } catch (err) {
-        console.error('Authentication error:', err.message)
+
+        console.error(
+            'Authentication error:',
+            err.message
+        )
+
 
         return res.status(401).json({
-            err: 'Invalid Authentication.'
+            err:
+                'Invalid Authentication.'
         })
     }
 }
 
-export const isSeller = (user) => {
-    return user?.role === 'seller'
+
+// =============================================================
+// SELLER
+// =============================================================
+
+export const isSeller = (
+    user
+) => {
+
+    return (
+        user?.role ===
+        'seller'
+    )
 }
 
-export const isSuperAdmin = (user) => {
+
+// =============================================================
+// SUPER ADMIN
+// =============================================================
+
+export const isSuperAdmin = (
+    user
+) => {
+
     return (
-        user?.role === 'admin' &&
+        user?.role ===
+            'admin' &&
         user?.root === true
     )
 }
+
 
 export default auth

@@ -336,7 +336,7 @@ const AdminDashboard = () => {
 
 
                                     <Link
-                                        href="/create"
+                                        href="/admin/products"
                                         className="group rounded-2xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-5 transition hover:-translate-y-0.5 hover:bg-[var(--nova-surface-soft)]"
                                     >
 

@@ -1,22 +1,34 @@
 import { getData } from '@/lib/api-client'
 
 export async function fetchCatalogProps(query = {}) {
-  const page = query.page || 1
   const category = query.category || 'all'
   const sort = query.sort || ''
   const search = query.search || 'all'
 
   try {
     const res = await getData(
-      `product?limit=${page * 6}&category=${category}&sort=${sort}&title=${search}`
+      `product?limit=1000&category=${encodeURIComponent(
+        category
+      )}&sort=${encodeURIComponent(
+        sort
+      )}&title=${encodeURIComponent(
+        search
+      )}`
     )
 
     return {
-      products: res?.products || [],
-      result: res?.result || 0,
+      products: Array.isArray(res?.products)
+        ? res.products
+        : [],
+
+      result: Number(res?.result) || 0,
     }
   } catch (error) {
-    console.error('Catalog product fetch error:', error)
+    console.error(
+      'Catalog product fetch error:',
+      error
+    )
+
     return {
       products: [],
       result: 0,

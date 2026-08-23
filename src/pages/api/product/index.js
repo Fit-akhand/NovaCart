@@ -5,9 +5,7 @@ import auth, {
     isSeller,
     isSuperAdmin
 } from '../../../../middleware/auth'
-
 connectDB()
-
 // ============================================================
 // HELPERS
 // ============================================================
@@ -461,38 +459,37 @@ const createProduct = async (req, res) => {
                 ? result.id
                 : null
 
+        const createdBy =
+            result.id
         // ====================================================
         // CREATE PRODUCT
         // ====================================================
 
-        const newProduct =
-            new Products({
-                title:
-                    title.trim().toLowerCase(),
+        const newProduct = new Products({
+            title: title.trim().toLowerCase(),
 
-                price:
-                    numericPrice,
+            price: numericPrice,
 
-                inStock:
-                    numericStock,
+            inStock: numericStock,
 
-                description:
-                    description.trim(),
+            description: description.trim(),
 
-                content:
-                    content.trim(),
+            content: content.trim(),
 
-                category:
-                    parentCategory._id,
+            category: parentCategory._id,
 
-                subcategory:
-                    finalSubcategory,
+            subcategory: subcategoryId,
 
-                seller:
-                    sellerId,
+            seller: isSeller(result)
+                ? result.id
+                : null,
 
-                images
-            })
+            ownerType: isSuperAdmin(result)
+                ? 'admin'
+                : 'seller',
+
+            images
+        })
 
         await newProduct.save()
 

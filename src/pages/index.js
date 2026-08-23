@@ -3,11 +3,9 @@ import Link from 'next/link'
 import { useState, useContext, useEffect } from 'react'
 import { DataContext } from '../../store/GlobalState'
 import { useRouter } from 'next/router'
-import filterSearch from '../../utils/filterSearch'
 import { fetchCatalogProps } from '../../utils/fetchCatalogProps'
 import ProductGrid from '../../components/product/ProductGrid'
 import ProductFilters from '../../components/product/ProductFilters'
-import Pagination from '../../components/common/Pagination'
 import EmptyState from '../../components/common/EmptyState'
 import Container from '../../components/common/Container'
 import Button from '../../components/common/Button'
@@ -24,7 +22,6 @@ import {
 const Home = (props) => {
   const [products, setProducts] = useState(props.products || [])
   const [isCheck, setIsCheck] = useState(false)
-  const [page, setPage] = useState(1)
   const router = useRouter()
   const { state, dispatch } = useContext(DataContext)
   const { auth, categories } = state
@@ -33,9 +30,6 @@ const Home = (props) => {
     setProducts(props.products || [])
   }, [props.products])
 
-  useEffect(() => {
-    if (Object.keys(router.query).length === 0) setPage(1)
-  }, [router.query])
 
   const handleCheck = (id) => {
     setProducts((prevProducts) =>
@@ -73,12 +67,6 @@ const Home = (props) => {
     }
 
     dispatch({ type: 'ADD_MODAL', payload: deleteArr })
-  }
-
-  const handleLoadmore = () => {
-    const nextPage = page + 1
-    setPage(nextPage)
-    filterSearch({ router, page: nextPage })
   }
 
   const selectedCount = products.filter((product) => product.checked).length
@@ -227,10 +215,11 @@ const Home = (props) => {
               </>
             )}
 
-            <Pagination
-              hasMore={props.result >= page * 6 && products.length > 0}
-              onLoadMore={handleLoadmore}
-            />
+            {/*
+              Homepage loads the complete catalog.
+              Pagination is intentionally disabled here.
+              The dedicated /products page handles pagination.
+            */}
           </Container>
         </section>
 

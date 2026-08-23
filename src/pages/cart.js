@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import Script from 'next/script'
 import { useContext, useState, useEffect } from 'react'
 import { DataContext } from '../../store/GlobalState'
 import CartItem from '../../components/CartItem'
@@ -8,11 +9,31 @@ import { useRouter } from 'next/router'
 import Container from '../../components/common/Container'
 import Button from '../../components/common/Button'
 import EmptyState from '../../components/common/EmptyState'
-import { Lock, MapPin, Phone, User } from 'lucide-react'
+import {
+  Lock,
+  MapPin,
+  Phone,
+  User,
+} from 'lucide-react'
 import { formatPrice } from '@/lib/formatPrice'
 
+const EMPTY_SHIPPING_ADDRESS = {
+  fullName: '',
+  phone: '',
+  address: '',
+  addressLine2: '',
+  city: '',
+  state: '',
+  pincode: '',
+}
+
+const CHECKOUT_ADDRESS_KEY =
+  'novacart_checkout_address'
+
 const Cart = () => {
-  const { state, dispatch } = useContext(DataContext)
+  const [razorpayLoaded, setRazorpayLoaded] = useState(false)
+  const { state, dispatch } =
+    useContext(DataContext)
 
   const {
     cart,
@@ -20,19 +41,82 @@ const Cart = () => {
     orders,
   } = state
 
-  const [total, setTotal] = useState(0)
-
-  const [shippingAddress, setShippingAddress] = useState({
-    fullName: '',
-    phone: '',
-    address: '',
-    addressLine2: '',
-    city: '',
-    state: '',
-    pincode: '',
-  })
-
   const router = useRouter()
+
+  const [total, setTotal] =
+    useState(0)
+
+  const [shippingAddress, setShippingAddress] =
+    useState(EMPTY_SHIPPING_ADDRESS)
+
+  // =========================================================
+  // RESTORE CHECKOUT ADDRESS
+  // =========================================================
+
+  useEffect(() => {
+    if (
+      typeof window === 'undefined'
+    ) {
+      return
+    }
+
+    try {
+      const savedAddress =
+        sessionStorage.getItem(
+          CHECKOUT_ADDRESS_KEY
+        )
+
+      if (!savedAddress) {
+        return
+      }
+
+      const parsedAddress =
+        JSON.parse(savedAddress)
+
+      if (
+        parsedAddress &&
+        typeof parsedAddress === 'object'
+      ) {
+        setShippingAddress(
+          (current) => ({
+            ...current,
+            ...parsedAddress,
+          })
+        )
+      }
+    } catch (error) {
+      console.error(
+        'Failed to restore checkout address:',
+        error
+      )
+    }
+  }, [])
+
+  // =========================================================
+  // SAVE CHECKOUT ADDRESS
+  // =========================================================
+
+  useEffect(() => {
+    if (
+      typeof window === 'undefined'
+    ) {
+      return
+    }
+
+    try {
+      sessionStorage.setItem(
+        CHECKOUT_ADDRESS_KEY,
+        JSON.stringify(
+          shippingAddress
+        )
+      )
+    } catch (error) {
+      console.error(
+        'Failed to save checkout address:',
+        error
+      )
+    }
+  }, [shippingAddress])
 
   // =========================================================
   // CALCULATE CART TOTAL
@@ -44,13 +128,14 @@ const Cart = () => {
       return
     }
 
-    const cartTotal = cart.reduce(
-      (sum, item) =>
-        sum +
-        Number(item.price || 0) *
-        Number(item.quantity || 0),
-      0
-    )
+    const cartTotal =
+      cart.reduce(
+        (sum, item) =>
+          sum +
+          Number(item.price || 0) *
+            Number(item.quantity || 0),
+        0
+      )
 
     setTotal(cartTotal)
   }, [cart])
@@ -60,315 +145,676 @@ const Cart = () => {
   // =========================================================
 
   useEffect(() => {
-    if (!auth?.user) return
+    if (!auth?.user) {
+      return
+    }
 
-    setShippingAddress((current) => ({
-      ...current,
+    setShippingAddress(
+      (current) => ({
+        ...current,
 
-      fullName:
-        current.fullName ||
-        auth.user.name ||
-        auth.user.username ||
-        '',
+        fullName:
+          current.fullName ||
+          auth.user.name ||
+          auth.user.username ||
+          '',
 
-      phone:
-        current.phone ||
-        auth.user.phone ||
-        '',
+        phone:
+          current.phone ||
+          auth.user.phone ||
+          '',
 
-      address:
-        current.address ||
-        auth.user.address ||
-        '',
+        address:
+          current.address ||
+          auth.user.address ||
+          '',
 
-      city:
-        current.city ||
-        auth.user.city ||
-        '',
+        city:
+          current.city ||
+          auth.user.city ||
+          '',
 
-      state:
-        current.state ||
-        auth.user.state ||
-        '',
+        state:
+          current.state ||
+          auth.user.state ||
+          '',
 
-      pincode:
-        current.pincode ||
-        auth.user.pincode ||
-        '',
-    }))
+        pincode:
+          current.pincode ||
+          auth.user.pincode ||
+          '',
+      })
+    )
   }, [auth?.user])
 
   // =========================================================
   // ADDRESS INPUT HANDLER
   // =========================================================
 
-  const handleAddressChange = (event) => {
+  const handleAddressChange = (
+    event
+  ) => {
     const {
       name,
       value,
     } = event.target
 
-    setShippingAddress((current) => ({
-      ...current,
-      [name]: value,
-    }))
+    setShippingAddress(
+      (current) => ({
+        ...current,
+        [name]: value,
+      })
+    )
   }
 
   // =========================================================
   // CHECKOUT
   // =========================================================
 
-  const handlePayment = async () => {
+const handlePayment = async () => {
     const {
-      fullName,
-      phone,
-      address,
-      addressLine2,
-      city,
-      state,
-      pincode,
+        fullName,
+        phone,
+        address,
+        addressLine2,
+        city,
+        state,
+        pincode,
     } = shippingAddress
 
-    // -------------------------------------------------------
-    // REQUIRED FIELD VALIDATION
-    // -------------------------------------------------------
+    // =========================================================
+    // REQUIRED FIELDS
+    // =========================================================
 
     if (
-      !fullName.trim() ||
-      !phone.trim() ||
-      !address.trim() ||
-      !city.trim() ||
-      !state.trim() ||
-      !pincode.trim()
+        !fullName.trim() ||
+        !phone.trim() ||
+        !address.trim() ||
+        !city.trim() ||
+        !state.trim() ||
+        !pincode.trim()
     ) {
-      return dispatch({
-        type: 'NOTIFY',
-        payload: {
-          error:
-            'Please complete all delivery address fields.',
-        },
-      })
+        return dispatch({
+            type: 'NOTIFY',
+            payload: {
+                error:
+                    'Please complete all delivery address fields.',
+            },
+        })
     }
 
-    // -------------------------------------------------------
+    // =========================================================
     // PHONE VALIDATION
-    // -------------------------------------------------------
+    // =========================================================
 
-    if (!/^[6-9]\d{9}$/.test(phone.trim())) {
-      return dispatch({
-        type: 'NOTIFY',
-        payload: {
-          error:
-            'Please enter a valid 10-digit mobile number.',
-        },
-      })
+    if (
+        !/^[6-9]\d{9}$/.test(
+            phone.trim()
+        )
+    ) {
+        return dispatch({
+            type: 'NOTIFY',
+            payload: {
+                error:
+                    'Please enter a valid 10-digit mobile number.',
+            },
+        })
     }
 
-    // -------------------------------------------------------
+    // =========================================================
     // PINCODE VALIDATION
-    // -------------------------------------------------------
+    // =========================================================
 
-    if (!/^\d{6}$/.test(pincode.trim())) {
-      return dispatch({
-        type: 'NOTIFY',
-        payload: {
-          error:
-            'Please enter a valid 6-digit PIN code.',
-        },
-      })
+    if (
+        !/^\d{6}$/.test(
+            pincode.trim()
+        )
+    ) {
+        return dispatch({
+            type: 'NOTIFY',
+            payload: {
+                error:
+                    'Please enter a valid 6-digit PIN code.',
+            },
+        })
     }
 
-    // -------------------------------------------------------
-    // VERIFY CART AGAINST DATABASE
-    // -------------------------------------------------------
+    // =========================================================
+    // LOGIN CHECK
+    // =========================================================
 
-    const newCart = []
+    if (!auth?.token || !auth?.user) {
+        return router.push(
+            `/signin?returnUrl=${encodeURIComponent(
+                '/cart'
+            )}`
+        )
+    }
+
+    // =========================================================
+    // VERIFY CART AGAINST DATABASE
+    // =========================================================
+
+    const verifiedCart = []
 
     for (const item of cart) {
-      const response =
-        await getData(
-          `product/${item._id}`
-        )
+        const response =
+            await getData(
+                `product/${item._id}`
+            )
 
-      if (!response?.product) {
-        return dispatch({
-          type: 'NOTIFY',
-          payload: {
-            error:
-              `Unable to verify ${item.title}. Please try again.`,
-          },
+        if (!response?.product) {
+            return dispatch({
+                type: 'NOTIFY',
+                payload: {
+                    error:
+                        `Unable to verify ${item.title}. Please try again.`,
+                },
+            })
+        }
+
+        const currentProduct =
+            response.product
+
+        // =====================================================
+        // STOCK VALIDATION
+        // =====================================================
+
+        if (
+            Number(
+                currentProduct.inStock
+            ) <
+            Number(item.quantity)
+        ) {
+            return dispatch({
+                type: 'NOTIFY',
+                payload: {
+                    error:
+                        `${item.title} does not have enough stock.`,
+                },
+            })
+        }
+
+        // =====================================================
+        // USE SERVER PRICE
+        // =====================================================
+
+        const price =
+            Number(
+                currentProduct.price
+            )
+
+        if (
+            !Number.isFinite(price) ||
+            price < 0
+        ) {
+            return dispatch({
+                type: 'NOTIFY',
+                payload: {
+                    error:
+                        `Invalid price for ${item.title}.`,
+                },
+            })
+        }
+
+        verifiedCart.push({
+            ...item,
+
+            price,
+
+            inStock:
+                Number(
+                    currentProduct.inStock
+                ),
+
+            sold:
+                Number(
+                    currentProduct.sold
+                ) || 0,
+
+            quantity:
+                Number(item.quantity),
         })
-      }
-
-      const currentProduct =
-        response.product
-
-      // -----------------------------------------------------
-      // STOCK VALIDATION
-      // -----------------------------------------------------
-
-      if (
-        Number(currentProduct.inStock) <
-        Number(item.quantity)
-      ) {
-        return dispatch({
-          type: 'NOTIFY',
-          payload: {
-            error:
-              `${item.title} does not have enough stock.`,
-          },
-        })
-      }
-
-      // -----------------------------------------------------
-      // ALWAYS USE SERVER PRICE
-      // -----------------------------------------------------
-
-      newCart.push({
-        ...item,
-
-        price:
-          Number(currentProduct.price),
-
-        inStock:
-          Number(currentProduct.inStock),
-
-        sold:
-          Number(currentProduct.sold) || 0,
-
-        quantity:
-          Number(item.quantity),
-      })
     }
 
-    // -------------------------------------------------------
-    // FINAL SERVER-VERIFIED TOTAL
-    // -------------------------------------------------------
+    // =========================================================
+    // SERVER-VERIFIED TOTAL
+    // =========================================================
 
     const finalTotal =
-      newCart.reduce(
-        (sum, item) =>
-          sum +
-          Number(item.price) *
-          Number(item.quantity),
-        0
-      )
+        verifiedCart.reduce(
+            (sum, item) =>
+                sum +
+                Number(item.price) *
+                    Number(item.quantity),
+            0
+        )
 
-    // -------------------------------------------------------
-    // SHIPPING ADDRESS
-    // -------------------------------------------------------
-
-    const finalShippingAddress = {
-      fullName:
-        fullName.trim(),
-
-      phone:
-        phone.trim(),
-
-      address:
-        addressLine2.trim()
-          ? `${address.trim()}, ${addressLine2.trim()}`
-          : address.trim(),
-
-      city:
-        city.trim(),
-
-      state:
-        state.trim(),
-
-      pincode:
-        pincode.trim(),
+    if (
+        !Number.isFinite(finalTotal) ||
+        finalTotal <= 0
+    ) {
+        return dispatch({
+            type: 'NOTIFY',
+            payload: {
+                error:
+                    'Invalid order amount.',
+            },
+        })
     }
 
-    // -------------------------------------------------------
+    // =========================================================
+    // FINAL SHIPPING ADDRESS
+    // =========================================================
+
+    const finalShippingAddress = {
+        fullName:
+            fullName.trim(),
+
+        phone:
+            phone.trim(),
+
+        address:
+            addressLine2.trim()
+                ? `${address.trim()}, ${addressLine2.trim()}`
+                : address.trim(),
+
+        city:
+            city.trim(),
+
+        state:
+            state.trim(),
+
+        pincode:
+            pincode.trim(),
+    }
+
+    // =========================================================
     // LOADING
-    // -------------------------------------------------------
+    // =========================================================
 
     dispatch({
-      type: 'NOTIFY',
-      payload: {
-        loading: true,
-      },
-    })
-
-    // -------------------------------------------------------
-    // CREATE ORDER
-    // -------------------------------------------------------
-
-    postData(
-      'order',
-      {
-        shippingAddress:
-          finalShippingAddress,
-
-        cart:
-          newCart,
-
-        total:
-          finalTotal,
-      },
-      auth.token
-    ).then((response) => {
-
-      // -----------------------------------------------------
-      // API ERROR
-      // -----------------------------------------------------
-
-      if (response.err) {
-        return dispatch({
-          type: 'NOTIFY',
-          payload: {
-            error:
-              response.err,
-          },
-        })
-      }
-
-      // -----------------------------------------------------
-      // CLEAR CART
-      // -----------------------------------------------------
-
-      dispatch({
-        type: 'ADD_CART',
-        payload: [],
-      })
-
-      // -----------------------------------------------------
-      // ADD ORDER TO GLOBAL STATE
-      // -----------------------------------------------------
-
-      dispatch({
-        type: 'ADD_ORDERS',
-        payload: [
-          ...orders,
-          {
-            ...response.newOrder,
-            user: auth.user,
-          },
-        ],
-      })
-
-      // -----------------------------------------------------
-      // SUCCESS
-      // -----------------------------------------------------
-
-      dispatch({
         type: 'NOTIFY',
         payload: {
-          success:
-            response.msg,
+            loading: true,
         },
-      })
-
-      // -----------------------------------------------------
-      // ORDER DETAILS
-      // -----------------------------------------------------
-
-      return router.push(
-        `/order/${response.newOrder._id}`
-      )
     })
-  }
+
+    try {
+        // =====================================================
+        // STEP 1 — CREATE RAZORPAY ORDER
+        // =====================================================
+
+        const razorpayOrder =
+            await postData(
+                'create-order',
+                {
+                    cart: verifiedCart,
+                },
+                auth.token
+            )
+
+        if (razorpayOrder?.err) {
+            return dispatch({
+                type: 'NOTIFY',
+                payload: {
+                    error:
+                        razorpayOrder.err,
+                },
+            })
+        }
+
+        if (
+            !razorpayOrder?.order_id
+        ) {
+            return dispatch({
+                type: 'NOTIFY',
+                payload: {
+                    error:
+                        'Unable to create Razorpay order.',
+                },
+            })
+        }
+
+        // =====================================================
+        // CHECK RAZORPAY SCRIPT
+        // =====================================================
+
+        if (typeof window === 'undefined') {
+            return dispatch({
+                type: 'NOTIFY',
+                payload: {
+                    error: 'Payment is not available.',
+                },
+            })
+        }
+
+        if (!window.Razorpay) {
+            return dispatch({
+                type: 'NOTIFY',
+                payload: {
+                    error:
+                        'Razorpay Checkout is still loading. Please wait a moment and try again.',
+                },
+            })
+        }
+
+        // =====================================================
+        // STEP 2 — RAZORPAY OPTIONS
+        // =====================================================
+
+        const options = {
+            key:
+                process.env
+                    .NEXT_PUBLIC_RAZORPAY_KEY_ID,
+
+            amount:
+                razorpayOrder.amount,
+
+            currency:
+                razorpayOrder.currency ||
+                'INR',
+
+            name:
+                'NovaCart',
+
+            description:
+                'NovaCart Order Payment',
+
+            order_id:
+                razorpayOrder.order_id,
+
+            prefill: {
+                name:
+                    fullName.trim(),
+
+                email:
+                    auth.user.email || '',
+
+                contact:
+                    phone.trim(),
+            },
+
+            notes: {
+                address:
+                    finalShippingAddress.address,
+
+                city:
+                    finalShippingAddress.city,
+
+                state:
+                    finalShippingAddress.state,
+
+                pincode:
+                    finalShippingAddress.pincode,
+            },
+
+            theme: {
+                color: '#2563eb',
+            },
+
+            // =================================================
+            // PAYMENT SUCCESS
+            // =================================================
+
+            handler: async function (
+                paymentResponse
+            ) {
+                try {
+                    // ---------------------------------------------
+                    // VERIFY PAYMENT SIGNATURE
+                    // ---------------------------------------------
+
+                    const verification =
+                        await postData(
+                            'verify-payment',
+                            {
+                                razorpay_order_id:
+                                    paymentResponse.razorpay_order_id,
+
+                                razorpay_payment_id:
+                                    paymentResponse.razorpay_payment_id,
+
+                                razorpay_signature:
+                                    paymentResponse.razorpay_signature,
+                            },
+                            auth.token
+                        )
+
+                    if (
+                        verification?.err
+                    ) {
+                        dispatch({
+                            type: 'NOTIFY',
+                            payload: {
+                                error:
+                                    verification.err,
+                            },
+                        })
+
+                        return
+                    }
+
+                    if (
+                        verification?.status !==
+                        'success'
+                    ) {
+                        dispatch({
+                            type: 'NOTIFY',
+                            payload: {
+                                error:
+                                    'Payment verification failed.',
+                            },
+                        })
+
+                        return
+                    }
+
+                    // ---------------------------------------------
+                    // PAYMENT VERIFIED
+                    // ---------------------------------------------
+                    //
+                    // Only NOW create the NovaCart order.
+                    //
+                    // Your existing /api/order endpoint will then
+                    // perform the existing stock deduction logic.
+                    // ---------------------------------------------
+
+                    const orderResponse =
+                        await postData(
+                            'order',
+                            {
+                                shippingAddress:
+                                    finalShippingAddress,
+
+                                cart:
+                                    verifiedCart,
+
+                                total:
+                                    finalTotal,
+
+                                // Razorpay information
+                                razorpayOrderId:
+                                    paymentResponse.razorpay_order_id,
+
+                                razorpayPaymentId:
+                                    paymentResponse.razorpay_payment_id,
+
+                                razorpaySignature:
+                                    paymentResponse.razorpay_signature,
+
+                                paymentMethod:
+                                    'razorpay',
+
+                                paid:
+                                    true,
+                            },
+                            auth.token
+                        )
+
+                    if (
+                        orderResponse?.err
+                    ) {
+                        dispatch({
+                            type: 'NOTIFY',
+                            payload: {
+                                error:
+                                    `Payment succeeded, but order creation failed. Payment ID: ${paymentResponse.razorpay_payment_id}`,
+                            },
+                        })
+
+                        return
+                    }
+
+                    // ---------------------------------------------
+                    // CLEAR CART
+                    // ---------------------------------------------
+
+                    dispatch({
+                        type: 'ADD_CART',
+                        payload: [],
+                    })
+
+                    // ---------------------------------------------
+                    // CLEAR TEMPORARY ADDRESS
+                    // ---------------------------------------------
+
+                    if (
+                        typeof window !==
+                        'undefined'
+                    ) {
+                        sessionStorage.removeItem(
+                            CHECKOUT_ADDRESS_KEY
+                        )
+                    }
+
+                    // ---------------------------------------------
+                    // ADD ORDER TO GLOBAL STATE
+                    // ---------------------------------------------
+
+                    dispatch({
+                        type: 'ADD_ORDERS',
+                        payload: [
+                            ...orders,
+                            {
+                                ...orderResponse.newOrder,
+
+                                user:
+                                    auth.user,
+
+                                paymentStatus:
+                                    'paid',
+
+                                razorpayPaymentId:
+                                    paymentResponse.razorpay_payment_id,
+
+                                razorpayOrderId:
+                                    paymentResponse.razorpay_order_id,
+                            },
+                        ],
+                    })
+
+                    // ---------------------------------------------
+                    // SUCCESS
+                    // ---------------------------------------------
+
+                    dispatch({
+                        type: 'NOTIFY',
+                        payload: {
+                            success:
+                                'Payment successful! Order placed successfully.',
+                        },
+                    })
+
+                    // ---------------------------------------------
+                    // ORDER DETAILS
+                    // ---------------------------------------------
+
+                    return router.push(
+                        `/order/${orderResponse.newOrder._id}`
+                    )
+
+                } catch (error) {
+                    console.error(
+                        'Payment verification/order error:',
+                        error
+                    )
+
+                    dispatch({
+                        type: 'NOTIFY',
+                        payload: {
+                            error:
+                                'Payment was completed, but we could not complete your order. Please contact support with your payment ID.',
+                        },
+                    })
+                }
+            },
+
+            // =================================================
+            // PAYMENT FAILED
+            // =================================================
+
+            modal: {
+                ondismiss: function () {
+                    dispatch({
+                        type: 'NOTIFY',
+                        payload: {
+                            error:
+                                'Payment cancelled. Your cart has not been changed.',
+                        },
+                    })
+                },
+            },
+        }
+
+        // =====================================================
+        // STEP 3 — OPEN RAZORPAY
+        // =====================================================
+
+        const razorpay =
+            new window.Razorpay(
+                options
+            )
+
+        razorpay.on(
+            'payment.failed',
+            function (
+                response
+            ) {
+                console.error(
+                    'Razorpay payment failed:',
+                    response
+                )
+
+                dispatch({
+                    type: 'NOTIFY',
+                    payload: {
+                        error:
+                            response?.error?.description ||
+                            'Payment failed. Please try again.',
+                    },
+                })
+            }
+        )
+
+        razorpay.open()
+
+    } catch (error) {
+        console.error(
+            'Checkout error:',
+            error
+        )
+
+        dispatch({
+            type: 'NOTIFY',
+            payload: {
+                error:
+                    error?.message ||
+                    'Unable to start payment. Please try again.',
+            },
+        })
+    }
+}
 
   // =========================================================
   // EMPTY CART
@@ -406,14 +852,16 @@ const Cart = () => {
   }
 
   // =========================================================
-  // ITEM COUNT
+  // TOTAL ITEM COUNT
   // =========================================================
 
   const itemCount =
     cart.reduce(
       (sum, item) =>
         sum +
-        Number(item.quantity || 0),
+        Number(
+          item.quantity || 0
+        ),
       0
     )
 
@@ -423,6 +871,48 @@ const Cart = () => {
 
   return (
     <>
+    <Script
+        id="razorpay-checkout"
+        src="https://checkout.razorpay.com/v1/checkout.js"
+        strategy="afterInteractive"
+        onLoad={() => {
+            console.log('✅ Razorpay checkout.js loaded')
+            console.log(
+                'window.Razorpay:',
+                window.Razorpay
+            )
+
+            setRazorpayLoaded(
+                typeof window.Razorpay === 'function'
+            )
+        }}
+        onReady={() => {
+            console.log('✅ Razorpay Script ready')
+
+            if (
+                typeof window !== 'undefined' &&
+                window.Razorpay
+            ) {
+                setRazorpayLoaded(true)
+            }
+        }}
+        onError={(error) => {
+            console.error(
+                '❌ Razorpay checkout.js failed:',
+                error
+            )
+
+            setRazorpayLoaded(false)
+
+            dispatch({
+                type: 'NOTIFY',
+                payload: {
+                    error:
+                        'Unable to load Razorpay Checkout.',
+                },
+            })
+        }}
+    />
       <Head>
         <title>
           Your Cart | NovaCart
@@ -434,7 +924,7 @@ const Cart = () => {
         <Container>
 
           {/* =================================================
-              HEADER
+              PAGE HEADER
           ================================================= */}
 
           <div className="mb-8">
@@ -453,7 +943,7 @@ const Cart = () => {
           </div>
 
           {/* =================================================
-              MAIN GRID
+              CART + BILLING
           ================================================= */}
 
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_380px]">
@@ -466,16 +956,16 @@ const Cart = () => {
 
               <div className="divide-y divide-[var(--nova-border)]">
 
-                {cart.map((item) => (
-
-                  <CartItem
-                    key={item._id}
-                    item={item}
-                    dispatch={dispatch}
-                    cart={cart}
-                  />
-
-                ))}
+                {cart.map(
+                  (item) => (
+                    <CartItem
+                      key={item._id}
+                      item={item}
+                      dispatch={dispatch}
+                      cart={cart}
+                    />
+                  )
+                )}
 
               </div>
 
@@ -520,6 +1010,7 @@ const Cart = () => {
                       className="mb-2 flex items-center gap-2 text-sm font-medium"
                     >
                       <User size={14} />
+
                       Full name
                     </label>
 
@@ -549,6 +1040,7 @@ const Cart = () => {
                       className="mb-2 flex items-center gap-2 text-sm font-medium"
                     >
                       <Phone size={14} />
+
                       Mobile number
                     </label>
 
@@ -571,7 +1063,7 @@ const Cart = () => {
 
                   </div>
 
-                  {/* ADDRESS */}
+                  {/* FULL ADDRESS */}
 
                   <div>
 
@@ -580,6 +1072,7 @@ const Cart = () => {
                       className="mb-2 flex items-center gap-2 text-sm font-medium"
                     >
                       <MapPin size={14} />
+
                       Full address
                     </label>
 
@@ -600,7 +1093,7 @@ const Cart = () => {
 
                   </div>
 
-                  {/* ADDRESS LINE 2 */}
+                  {/* LANDMARK */}
 
                   <div>
 
@@ -690,7 +1183,7 @@ const Cart = () => {
 
                   </div>
 
-                  {/* PINCODE */}
+                  {/* PIN CODE */}
 
                   <div>
 
@@ -725,7 +1218,7 @@ const Cart = () => {
               </div>
 
               {/* =================================================
-                  BILLING
+                  BILLING DETAILS
               ================================================= */}
 
               <div className="my-6 border-t border-[var(--nova-border)] pt-5">
@@ -817,25 +1310,32 @@ const Cart = () => {
               </div>
 
               {/* =================================================
-                  CHECKOUT BUTTON
+                  CHECKOUT
               ================================================= */}
 
               {auth?.user ? (
 
-                <Button
-                  onClick={handlePayment}
-                  className="w-full"
+                <button
+                    type="button"
+                    disabled={!razorpayLoaded}
+                    onClick={handlePayment}
+                    className="w-full rounded-lg bg-[var(--nova-blue)] px-4 py-3 text-white"
                 >
-                  Proceed to payment
-                </Button>
+                    {!razorpayLoaded
+                        ? 'Loading payment...'
+                        : 'Proceed to payment'}
+                </button>
 
               ) : (
 
                 <Link
                   href={{
-                    pathname: '/signin',
+                    pathname:
+                      '/signin',
+
                     query: {
-                      returnUrl: '/cart',
+                      returnUrl:
+                        '/cart',
                     },
                   }}
                 >
