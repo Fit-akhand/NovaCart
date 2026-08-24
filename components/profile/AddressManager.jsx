@@ -211,7 +211,7 @@ const AddressManager = ({ token }) => {
 
     return (
 
-        <section className="rounded-2xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-5 sm:p-6">
+        <section className="rounded-3xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-5 shadow-[var(--shadow-sm)] sm:p-6">
 
             <div className="flex flex-wrap items-center justify-between gap-4">
 
@@ -219,9 +219,11 @@ const AddressManager = ({ token }) => {
 
                     <div className="flex items-center gap-2">
 
-                        <MapPin size={18} />
+                        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--nova-lavender-soft)] text-[var(--nova-primary)]">
+                            <MapPin size={18} />
+                        </span>
 
-                        <h2 className="text-lg font-semibold">
+                        <h2 className="text-lg font-bold tracking-tight text-[var(--nova-text)]">
                             Saved Addresses
                         </h2>
 
@@ -237,7 +239,7 @@ const AddressManager = ({ token }) => {
                 <button
                     type="button"
                     onClick={openCreate}
-                    className="flex items-center gap-2 rounded-lg bg-[var(--nova-blue)] px-4 py-2.5 text-sm font-semibold text-white"
+                    className="flex items-center gap-2 rounded-xl bg-[var(--nova-primary)] px-4 py-2.5 text-sm font-bold text-white shadow-[0_8px_20px_rgba(124,58,237,0.16)] transition-all hover:-translate-y-0.5 hover:shadow-[0_12px_26px_rgba(124,58,237,0.22)]"
                 >
                     <Plus size={16} />
                     Add Address
@@ -248,7 +250,7 @@ const AddressManager = ({ token }) => {
 
             {error && (
 
-                <div className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+                <div className="mt-4 rounded-xl border border-[rgba(239,68,68,0.18)] bg-[rgba(239,68,68,0.08)] px-4 py-3 text-sm font-medium text-[var(--nova-danger)]">
                     {error}
                 </div>
 
@@ -257,7 +259,7 @@ const AddressManager = ({ token }) => {
 
             {success && (
 
-                <div className="mt-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-600">
+                <div className="mt-4 rounded-xl border border-[rgba(34,197,94,0.18)] bg-[rgba(34,197,94,0.08)] px-4 py-3 text-sm font-medium text-[var(--nova-success)]">
                     {success}
                 </div>
 
@@ -270,10 +272,10 @@ const AddressManager = ({ token }) => {
 
                 <form
                     onSubmit={handleSubmit}
-                    className="mt-6 rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] p-4 sm:p-5"
+                    className="mt-6 rounded-2xl border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] p-4 sm:p-5"
                 >
 
-                    <h3 className="mb-5 text-base font-semibold">
+                    <h3 className="mb-5 text-base font-bold tracking-tight text-[var(--nova-text)]">
                         {editingId
                             ? 'Edit Address'
                             : 'Add New Address'}
@@ -284,7 +286,7 @@ const AddressManager = ({ token }) => {
 
                         <div>
 
-                            <label className="mb-2 block text-sm font-medium">
+                            <label className="mb-2 block text-sm font-semibold text-[var(--nova-text)]">
                                 Address type
                             </label>
 
@@ -292,7 +294,7 @@ const AddressManager = ({ token }) => {
                                 name="label"
                                 value={form.label}
                                 onChange={handleChange}
-                                className="h-11 w-full rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface)] px-3 text-sm outline-none"
+                                className="h-11 w-full rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-3 text-sm text-[var(--nova-text)] outline-none transition-all placeholder:text-[var(--nova-muted)] hover:border-[var(--nova-violet-light)] focus:border-[var(--nova-primary)] focus:ring-2 focus:ring-[rgba(139,92,246,0.12)]"
                             >
                                 <option value="Home">
                                     Home
@@ -313,7 +315,7 @@ const AddressManager = ({ token }) => {
 
                         <div>
 
-                            <label className="mb-2 block text-sm font-medium">
+                            <label className="mb-2 block text-sm font-semibold text-[var(--nova-text)]">
                                 Full name
                             </label>
 
@@ -322,7 +324,7 @@ const AddressManager = ({ token }) => {
                                 value={form.fullName}
                                 onChange={handleChange}
                                 placeholder="Full name"
-                                className="h-11 w-full rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface)] px-3 text-sm outline-none"
+                                className="h-11 w-full rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-3 text-sm text-[var(--nova-text)] outline-none transition-all placeholder:text-[var(--nova-muted)] hover:border-[var(--nova-violet-light)] focus:border-[var(--nova-primary)] focus:ring-2 focus:ring-[rgba(139,92,246,0.12)]"
                             />
 
                         </div>
@@ -330,7 +332,7 @@ const AddressManager = ({ token }) => {
 
                         <div>
 
-                            <label className="mb-2 block text-sm font-medium">
+                            <label className="mb-2 block text-sm font-semibold text-[var(--nova-text)]">
                                 Phone
                             </label>
 
@@ -340,7 +342,7 @@ const AddressManager = ({ token }) => {
                                 onChange={handleChange}
                                 placeholder="10-digit phone"
                                 inputMode="numeric"
-                                className="h-11 w-full rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface)] px-3 text-sm outline-none"
+                                className="h-11 w-full rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-3 text-sm text-[var(--nova-text)] outline-none transition-all placeholder:text-[var(--nova-muted)] hover:border-[var(--nova-violet-light)] focus:border-[var(--nova-primary)] focus:ring-2 focus:ring-[rgba(139,92,246,0.12)]"
                             />
 
                         </div>
@@ -348,7 +350,7 @@ const AddressManager = ({ token }) => {
 
                         <div>
 
-                            <label className="mb-2 block text-sm font-medium">
+                            <label className="mb-2 block text-sm font-semibold text-[var(--nova-text)]">
                                 Pincode
                             </label>
 
@@ -358,7 +360,7 @@ const AddressManager = ({ token }) => {
                                 onChange={handleChange}
                                 placeholder="6-digit pincode"
                                 inputMode="numeric"
-                                className="h-11 w-full rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface)] px-3 text-sm outline-none"
+                                className="h-11 w-full rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-3 text-sm text-[var(--nova-text)] outline-none transition-all placeholder:text-[var(--nova-muted)] hover:border-[var(--nova-violet-light)] focus:border-[var(--nova-primary)] focus:ring-2 focus:ring-[rgba(139,92,246,0.12)]"
                             />
 
                         </div>
@@ -366,7 +368,7 @@ const AddressManager = ({ token }) => {
 
                         <div className="sm:col-span-2">
 
-                            <label className="mb-2 block text-sm font-medium">
+                            <label className="mb-2 block text-sm font-semibold text-[var(--nova-text)]">
                                 Address
                             </label>
 
@@ -376,7 +378,7 @@ const AddressManager = ({ token }) => {
                                 onChange={handleChange}
                                 rows={3}
                                 placeholder="House number, street, locality"
-                                className="w-full resize-none rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface)] px-3 py-3 text-sm outline-none"
+                                className="w-full resize-none rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-3 py-3 text-sm text-[var(--nova-text)] outline-none transition-all placeholder:text-[var(--nova-muted)] hover:border-[var(--nova-violet-light)] focus:border-[var(--nova-primary)] focus:ring-2 focus:ring-[rgba(139,92,246,0.12)]"
                             />
 
                         </div>
@@ -384,7 +386,7 @@ const AddressManager = ({ token }) => {
 
                         <div>
 
-                            <label className="mb-2 block text-sm font-medium">
+                            <label className="mb-2 block text-sm font-semibold text-[var(--nova-text)]">
                                 City
                             </label>
 
@@ -393,7 +395,7 @@ const AddressManager = ({ token }) => {
                                 value={form.city}
                                 onChange={handleChange}
                                 placeholder="City"
-                                className="h-11 w-full rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface)] px-3 text-sm outline-none"
+                                className="h-11 w-full rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-3 text-sm text-[var(--nova-text)] outline-none transition-all placeholder:text-[var(--nova-muted)] hover:border-[var(--nova-violet-light)] focus:border-[var(--nova-primary)] focus:ring-2 focus:ring-[rgba(139,92,246,0.12)]"
                             />
 
                         </div>
@@ -401,7 +403,7 @@ const AddressManager = ({ token }) => {
 
                         <div>
 
-                            <label className="mb-2 block text-sm font-medium">
+                            <label className="mb-2 block text-sm font-semibold text-[var(--nova-text)]">
                                 State
                             </label>
 
@@ -410,7 +412,7 @@ const AddressManager = ({ token }) => {
                                 value={form.state}
                                 onChange={handleChange}
                                 placeholder="State"
-                                className="h-11 w-full rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface)] px-3 text-sm outline-none"
+                                className="h-11 w-full rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-3 text-sm text-[var(--nova-text)] outline-none transition-all placeholder:text-[var(--nova-muted)] hover:border-[var(--nova-violet-light)] focus:border-[var(--nova-primary)] focus:ring-2 focus:ring-[rgba(139,92,246,0.12)]"
                             />
 
                         </div>
@@ -418,7 +420,7 @@ const AddressManager = ({ token }) => {
                     </div>
 
 
-                    <label className="mt-4 flex items-center gap-2 text-sm">
+                    <label className="mt-4 flex items-center gap-2 rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-3 py-2.5 text-sm text-[var(--nova-text)]">
 
                         <input
                             type="checkbox"
@@ -437,7 +439,7 @@ const AddressManager = ({ token }) => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="rounded-lg bg-[var(--nova-blue)] px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60"
+                            className="rounded-xl bg-[var(--nova-primary)] px-5 py-2.5 text-sm font-bold text-white shadow-[0_8px_20px_rgba(124,58,237,0.16)] transition-all hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
                         >
                             {loading
                                 ? 'Saving...'
@@ -450,7 +452,7 @@ const AddressManager = ({ token }) => {
                         <button
                             type="button"
                             onClick={() => setShowForm(false)}
-                            className="rounded-lg border border-[var(--nova-border)] px-5 py-2.5 text-sm font-semibold"
+                            className="rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-5 py-2.5 text-sm font-bold text-[var(--nova-text)] transition-all hover:border-[var(--nova-violet-light)] hover:bg-[var(--nova-surface-soft)]"
                         >
                             Cancel
                         </button>
@@ -470,7 +472,7 @@ const AddressManager = ({ token }) => {
 
                     <div
                         key={item._id}
-                        className="rounded-xl border border-[var(--nova-border)] p-4"
+                        className="rounded-2xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-4 shadow-[var(--shadow-sm)] transition-all hover:-translate-y-0.5 hover:border-[var(--nova-violet-light)] hover:shadow-[var(--shadow-md)]"
                     >
 
                         <div className="flex items-start justify-between gap-3">
@@ -518,12 +520,12 @@ const AddressManager = ({ token }) => {
                         </div>
 
 
-                        <div className="mt-4 flex gap-2">
+                        <div className="mt-4 flex flex-wrap gap-2">
 
                             <button
                                 type="button"
                                 onClick={() => openEdit(item)}
-                                className="flex items-center gap-1.5 rounded-lg border border-[var(--nova-border)] px-3 py-2 text-xs font-semibold"
+                                className="flex items-center gap-1.5 rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-3 py-2 text-xs font-bold text-[var(--nova-text)] transition-all hover:border-[var(--nova-violet-light)] hover:bg-[var(--nova-lavender-soft)] hover:text-[var(--nova-primary)]"
                             >
                                 <Pencil size={13} />
                                 Edit
@@ -533,7 +535,7 @@ const AddressManager = ({ token }) => {
                             <button
                                 type="button"
                                 onClick={() => handleDelete(item._id)}
-                                className="flex items-center gap-1.5 rounded-lg border border-red-200 px-3 py-2 text-xs font-semibold text-red-600"
+                                className="flex items-center gap-1.5 rounded-xl border border-[rgba(239,68,68,0.18)] bg-[var(--nova-surface)] px-3 py-2 text-xs font-bold text-[var(--nova-danger)] transition-all hover:bg-[rgba(239,68,68,0.08)]"
                             >
                                 <Trash2 size={13} />
                                 Delete
@@ -550,7 +552,7 @@ const AddressManager = ({ token }) => {
 
             {addresses.length === 0 && !showForm && (
 
-                <div className="mt-6 rounded-xl border border-dashed border-[var(--nova-border)] p-8 text-center">
+                <div className="mt-6 rounded-2xl border border-dashed border-[var(--nova-border)] bg-[var(--nova-surface-soft)] p-8 text-center">
 
                     <MapPin
                         size={25}

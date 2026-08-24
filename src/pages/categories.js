@@ -29,9 +29,11 @@ const Categories = () => {
   const [discountActive, setDiscountActive] = useState(false)
 
   const [parentCategory, setParentCategory] = useState('')
-  const [openCategories, setOpenCategories] = useState({})
+  const [openCategories, setOpenCategories] =
+    useState({})
 
-  const { state, dispatch } = useContext(DataContext)
+  const { state, dispatch } =
+    useContext(DataContext)
 
   const {
     categories = [],
@@ -40,6 +42,7 @@ const Categories = () => {
 
   const isAdmin =
     auth?.user?.role === 'admin'
+
   // ==========================================
   // PARENT CATEGORIES
   // ==========================================
@@ -122,22 +125,6 @@ const Categories = () => {
   // ==========================================
   // RESET FORM
   // ==========================================
-
-  /*
-   * keepParent = true
-   *
-   * Used after creating a subcategory.
-   *
-   * Example:
-   *
-   * Men's Fashion
-   *      ↓
-   * Shirts
-   *      ↓
-   * Create
-   *      ↓
-   * Parent remains Men's Fashion
-   */
 
   const resetForm = (
     keepParent = false
@@ -225,13 +212,6 @@ const Categories = () => {
           )
         )
 
-        /*
-         * After editing:
-         *
-         * Keep parent selected if editing
-         * a subcategory.
-         */
-
         const updatedParent =
           res.category?.parentCategory
 
@@ -279,10 +259,6 @@ const Categories = () => {
         })
       }
 
-      /*
-       * Add the new category locally.
-       */
-
       if (res.newCategory) {
         dispatch({
           type: 'ADD_CATEGORIES',
@@ -294,23 +270,8 @@ const Categories = () => {
       }
 
       // ========================================
-      // IMPORTANT
+      // KEEP PARENT FOR SUBCATEGORY
       // ========================================
-
-      /*
-       * If creating a subcategory:
-       *
-       * KEEP the parent selected.
-       *
-       * This allows:
-       *
-       * Shirts
-       * T-Shirts
-       * Jeans
-       * Jackets
-       *
-       * to be created continuously.
-       */
 
       if (isCreatingSubcategory) {
         const selectedParent =
@@ -323,10 +284,6 @@ const Categories = () => {
           selectedParent
         )
 
-        /*
-         * Automatically expand parent.
-         */
-
         setOpenCategories(
           (previous) => ({
             ...previous,
@@ -334,11 +291,6 @@ const Categories = () => {
           })
         )
       } else {
-        /*
-         * Normal category creation.
-         * Clear parent selection.
-         */
-
         resetForm(false)
       }
 
@@ -381,21 +333,10 @@ const Categories = () => {
         : ''
     )
 
-    /*
-     * IMPORTANT:
-     *
-     * Existing subcategory automatically
-     * gets its parent selected.
-     */
-
     if (category.parentCategory) {
       setParentCategory(
         category.parentCategory.toString()
       )
-
-      /*
-       * Expand parent automatically.
-       */
 
       setOpenCategories(
         (previous) => ({
@@ -426,17 +367,9 @@ const Categories = () => {
     setId('')
     setName('')
 
-    /*
-     * Keep selected parent.
-     */
-
     setParentCategory(
       parentId.toString()
     )
-
-    /*
-     * Expand parent.
-     */
 
     setOpenCategories(
       (previous) => ({
@@ -480,11 +413,6 @@ const Categories = () => {
       getSubcategories(
         category._id
       )
-
-    /*
-     * Prevent deleting a parent while it
-     * still has subcategories.
-     */
 
     if (children.length > 0) {
       return dispatch({
@@ -531,8 +459,12 @@ const Categories = () => {
     }
 
     return (
-      <div className="divide-y divide-[var(--nova-border)]">
-
+      <div
+        className="
+          divide-y
+          divide-[var(--nova-border)]
+        "
+      >
         {filteredParentCategories.map(
           (parent) => {
             const children =
@@ -549,18 +481,42 @@ const Categories = () => {
             return (
               <div
                 key={parent._id}
+                className="
+                  transition-colors
+                  duration-200
+                "
               >
 
-                {/* ================================= */}
-                {/* PARENT CATEGORY */}
-                {/* ================================= */}
+                {/* =================================
+                    PARENT CATEGORY
+                ================================= */}
 
-                <div className="flex items-center justify-between gap-4 px-5 py-4">
+                <div
+                  className="
+                    flex
+                    items-center
+                    justify-between
+                    gap-3
 
-                  <div className="flex min-w-0 items-center gap-2">
+                    px-4
+                    py-4
 
-                    {children.length >
-                    0 ? (
+                    sm:px-5
+                  "
+                >
+
+                  <div
+                    className="
+                      flex
+                      min-w-0
+                      items-center
+                      gap-2
+                    "
+                  >
+
+                    {/* EXPAND */}
+
+                    {children.length > 0 ? (
                       <button
                         type="button"
                         onClick={() =>
@@ -573,7 +529,28 @@ const Categories = () => {
                             ? 'Collapse category'
                             : 'Expand category'
                         }
-                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg hover:bg-[var(--nova-surface-soft)]"
+                        className="
+                          flex
+                          h-9
+                          w-9
+                          shrink-0
+                          items-center
+                          justify-center
+
+                          rounded-xl
+
+                          border
+                          border-transparent
+
+                          text-[var(--nova-muted)]
+
+                          transition-all
+                          duration-200
+
+                          hover:border-[var(--nova-border)]
+                          hover:bg-[var(--nova-lavender-soft)]
+                          hover:text-[var(--nova-primary)]
+                        "
                       >
                         {isOpen ? (
                           <ChevronDown
@@ -586,31 +563,94 @@ const Categories = () => {
                         )}
                       </button>
                     ) : (
-                      <div className="w-8" />
+                      <div className="w-9 shrink-0" />
                     )}
 
-                    <FolderOpen
-                      size={18}
-                      className="shrink-0 text-[var(--nova-muted)]"
-                    />
+                    {/* FOLDER */}
+
+                    <div
+                      className="
+                        flex
+                        h-9
+                        w-9
+                        shrink-0
+                        items-center
+                        justify-center
+
+                        rounded-xl
+
+                        bg-[var(--nova-lavender-soft)]
+
+                        text-[var(--nova-primary)]
+                      "
+                    >
+                      <FolderOpen
+                        size={17}
+                      />
+                    </div>
+
+                    {/* NAME */}
 
                     <Link
                       href={`/products?category=${parent._id}`}
-                      className="truncate font-semibold capitalize hover:text-[var(--nova-blue)]"
+                      className="
+                        min-w-0
+                        truncate
+
+                        text-sm
+                        font-semibold
+                        capitalize
+
+                        text-[var(--nova-text)]
+
+                        transition-colors
+                        duration-200
+
+                        hover:text-[var(--nova-primary)]
+                      "
                     >
                       {parent.name}
                     </Link>
 
-                    {children.length >
-                      0 && (
-                      <span className="rounded-full bg-[var(--nova-surface-soft)] px-2 py-0.5 text-xs text-[var(--nova-muted)]">
+                    {/* COUNT */}
+
+                    {children.length > 0 && (
+                      <span
+                        className="
+                          shrink-0
+
+                          rounded-full
+
+                          border
+                          border-[var(--nova-border)]
+
+                          bg-[var(--nova-surface-soft)]
+
+                          px-2
+                          py-0.5
+
+                          text-[10px]
+                          font-semibold
+
+                          text-[var(--nova-muted)]
+                        "
+                      >
                         {children.length}
                       </span>
                     )}
 
                   </div>
 
-                  <div className="flex shrink-0 items-center gap-1">
+                  {/* ACTIONS */}
+
+                  <div
+                    className="
+                      flex
+                      shrink-0
+                      items-center
+                      gap-1
+                    "
+                  >
 
                     {/* ADD SUBCATEGORY */}
 
@@ -621,7 +661,32 @@ const Categories = () => {
                           parent._id
                         )
                       }
-                      className="hidden h-9 items-center gap-1.5 rounded-lg px-3 text-xs font-medium text-[var(--nova-blue)] hover:bg-[var(--nova-surface-soft)] sm:flex"
+                      className="
+                        hidden
+                        h-9
+                        items-center
+                        gap-1.5
+
+                        rounded-xl
+
+                        border
+                        border-transparent
+
+                        px-3
+
+                        text-xs
+                        font-semibold
+
+                        text-[var(--nova-primary)]
+
+                        transition-all
+                        duration-200
+
+                        hover:border-[var(--nova-border)]
+                        hover:bg-[var(--nova-lavender-soft)]
+
+                        sm:flex
+                      "
                     >
                       <Plus
                         size={14}
@@ -640,7 +705,27 @@ const Categories = () => {
                         )
                       }
                       aria-label={`Edit ${parent.name}`}
-                      className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-[var(--nova-surface-soft)]"
+                      className="
+                        flex
+                        h-9
+                        w-9
+                        items-center
+                        justify-center
+
+                        rounded-xl
+
+                        border
+                        border-transparent
+
+                        text-[var(--nova-muted)]
+
+                        transition-all
+                        duration-200
+
+                        hover:border-[var(--nova-border)]
+                        hover:bg-[var(--nova-lavender-soft)]
+                        hover:text-[var(--nova-primary)]
+                      "
                     >
                       <Edit3
                         size={15}
@@ -657,7 +742,27 @@ const Categories = () => {
                         )
                       }
                       aria-label={`Delete ${parent.name}`}
-                      className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-[var(--nova-surface-soft)] hover:text-[var(--nova-danger)]"
+                      className="
+                        flex
+                        h-9
+                        w-9
+                        items-center
+                        justify-center
+
+                        rounded-xl
+
+                        border
+                        border-transparent
+
+                        text-[var(--nova-muted)]
+
+                        transition-all
+                        duration-200
+
+                        hover:border-[rgba(239,68,68,0.15)]
+                        hover:bg-[rgba(239,68,68,0.08)]
+                        hover:text-[var(--nova-danger)]
+                      "
                     >
                       <Trash2
                         size={15}
@@ -665,14 +770,22 @@ const Categories = () => {
                     </button>
 
                   </div>
+
                 </div>
 
-                {/* ================================= */}
-                {/* MOBILE ADD SUBCATEGORY */}
-                {/* ================================= */}
+                {/* =================================
+                    MOBILE ADD SUBCATEGORY
+                ================================= */}
 
-                <div className="px-5 pb-3 sm:hidden">
+                <div
+                  className="
+                    px-4
+                    pb-3
 
+                    sm:hidden
+                    sm:px-5
+                  "
+                >
                   <button
                     type="button"
                     onClick={() =>
@@ -680,47 +793,131 @@ const Categories = () => {
                         parent._id
                       )
                     }
-                    className="flex items-center gap-1.5 text-xs font-medium text-[var(--nova-blue)]"
+                    className="
+                      inline-flex
+                      items-center
+                      gap-1.5
+
+                      rounded-lg
+
+                      px-2
+                      py-1.5
+
+                      text-xs
+                      font-semibold
+
+                      text-[var(--nova-primary)]
+
+                      transition-colors
+
+                      hover:bg-[var(--nova-lavender-soft)]
+                    "
                   >
                     <Plus size={14} />
 
                     Add subcategory
                   </button>
-
                 </div>
 
-                {/* ================================= */}
-                {/* SUBCATEGORIES */}
-                {/* ================================= */}
+                {/* =================================
+                    SUBCATEGORIES
+                ================================= */}
 
                 {isOpen &&
-                  children.length >
-                    0 && (
-                    <div className="border-t border-[var(--nova-border)] bg-[var(--nova-surface-soft)]">
+                  children.length > 0 && (
+                    <div
+                      className="
+                        border-t
+                        border-[var(--nova-border)]
 
+                        bg-[var(--nova-surface-soft)]
+
+                        py-1
+                      "
+                    >
                       {children.map(
                         (child) => (
                           <div
                             key={child._id}
-                            className="flex items-center justify-between gap-4 border-b border-[var(--nova-border)] px-5 py-3.5 pl-16 last:border-b-0"
+                            className="
+                              flex
+                              items-center
+                              justify-between
+                              gap-3
+
+                              border-b
+                              border-[var(--nova-border)]
+
+                              px-4
+                              py-3
+
+                              last:border-b-0
+
+                              sm:pl-20
+                            "
                           >
 
-                            <div className="flex min-w-0 items-center gap-3">
+                            <div
+                              className="
+                                flex
+                                min-w-0
+                                items-center
+                                gap-2
+                              "
+                            >
 
-                              <span className="text-[var(--nova-muted)]">
+                              <span
+                                className="
+                                  shrink-0
+
+                                  text-[var(--nova-violet-light)]
+                                "
+                              >
                                 └
                               </span>
 
+                              <div
+                                className="
+                                  h-1.5
+                                  w-1.5
+                                  shrink-0
+
+                                  rounded-full
+
+                                  bg-[var(--nova-violet-light)]
+                                "
+                              />
+
                               <Link
                                 href={`/products?category=${parent._id}&subcategory=${child._id}`}
-                                className="truncate text-sm font-medium capitalize hover:text-[var(--nova-blue)]"
+                                className="
+                                  min-w-0
+                                  truncate
+
+                                  text-sm
+                                  font-medium
+                                  capitalize
+
+                                  text-[var(--nova-muted)]
+
+                                  transition-colors
+
+                                  hover:text-[var(--nova-primary)]
+                                "
                               >
                                 {child.name}
                               </Link>
 
                             </div>
 
-                            <div className="flex shrink-0 items-center gap-1">
+                            <div
+                              className="
+                                flex
+                                shrink-0
+                                items-center
+                                gap-1
+                              "
+                            >
 
                               <button
                                 type="button"
@@ -730,7 +927,22 @@ const Categories = () => {
                                   )
                                 }
                                 aria-label={`Edit ${child.name}`}
-                                className="flex h-8 w-8 items-center justify-center rounded-lg hover:bg-[var(--nova-surface)]"
+                                className="
+                                  flex
+                                  h-8
+                                  w-8
+                                  items-center
+                                  justify-center
+
+                                  rounded-lg
+
+                                  text-[var(--nova-muted)]
+
+                                  transition-all
+
+                                  hover:bg-[var(--nova-surface)]
+                                  hover:text-[var(--nova-primary)]
+                                "
                               >
                                 <Edit3
                                   size={14}
@@ -745,7 +957,22 @@ const Categories = () => {
                                   )
                                 }
                                 aria-label={`Delete ${child.name}`}
-                                className="flex h-8 w-8 items-center justify-center rounded-lg hover:bg-[var(--nova-surface)] hover:text-[var(--nova-danger)]"
+                                className="
+                                  flex
+                                  h-8
+                                  w-8
+                                  items-center
+                                  justify-center
+
+                                  rounded-lg
+
+                                  text-[var(--nova-muted)]
+
+                                  transition-all
+
+                                  hover:bg-[var(--nova-surface)]
+                                  hover:text-[var(--nova-danger)]
+                                "
                               >
                                 <Trash2
                                   size={14}
@@ -757,7 +984,6 @@ const Categories = () => {
                           </div>
                         )
                       )}
-
                     </div>
                   )}
 
@@ -765,7 +991,6 @@ const Categories = () => {
             )
           }
         )}
-
       </div>
     )
   }
@@ -791,47 +1016,151 @@ const Categories = () => {
 
       </Head>
 
-      <main className="py-8 sm:py-10">
+      <main
+        className="
+          min-h-screen
 
+          bg-[var(--nova-bg)]
+
+          py-7
+          sm:py-9
+          lg:py-11
+        "
+      >
         <Container>
 
-          {/* ================================= */}
-          {/* HEADER */}
-          {/* ================================= */}
+          {/* =================================
+              HEADER
+          ================================= */}
 
-          <div className="mb-8">
+          <div
+            className="
+              relative
+              mb-7
+              overflow-hidden
 
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--nova-muted)]">
-              {isAdmin
-                ? 'Super Admin'
-                : 'Shop'}
-            </p>
+              rounded-3xl
 
-            <h1 className="mt-1 text-3xl font-semibold tracking-tight">
-              Categories
-            </h1>
+              border
+              border-[var(--nova-border)]
 
-            <p className="mt-2 max-w-xl text-sm text-[var(--nova-muted)]">
-              {isAdmin
-                ? 'Organize the marketplace catalog with categories and subcategories.'
-                : 'Browse the catalog by category.'}
-            </p>
+              bg-[var(--nova-surface)]
 
+              px-5
+              py-7
+
+              shadow-[var(--shadow-sm)]
+
+              sm:px-7
+              sm:py-8
+            "
+          >
+
+            {/* Violet glow */}
+
+            <div
+              className="
+                pointer-events-none
+                absolute
+                -right-24
+                -top-28
+
+                h-64
+                w-64
+
+                rounded-full
+
+                bg-[rgba(139,92,246,0.10)]
+
+                blur-3xl
+              "
+            />
+
+            <div className="relative">
+
+              <div
+                className="
+                  mb-3
+                  inline-flex
+                  items-center
+
+                  rounded-full
+
+                  border
+                  border-[rgba(139,92,246,0.18)]
+
+                  bg-[var(--nova-lavender-soft)]
+
+                  px-3
+                  py-1.5
+
+                  text-[10px]
+                  font-bold
+                  uppercase
+                  tracking-[0.16em]
+
+                  text-[var(--nova-primary)]
+                "
+              >
+                {isAdmin
+                  ? 'Super Admin'
+                  : 'Shop'}
+              </div>
+
+              <h1
+                className="
+                  text-3xl
+                  font-bold
+                  tracking-[-0.03em]
+
+                  text-[var(--nova-text)]
+
+                  sm:text-4xl
+                "
+              >
+                Categories
+              </h1>
+
+              <p
+                className="
+                  mt-2
+                  max-w-xl
+
+                  text-sm
+                  leading-6
+
+                  text-[var(--nova-muted)]
+                "
+              >
+                {isAdmin
+                  ? 'Organize the marketplace catalog with categories and subcategories.'
+                  : 'Browse the catalog by category.'}
+              </p>
+
+            </div>
           </div>
 
-          {/* ================================= */}
-          {/* CUSTOMER VIEW */}
-          {/* ================================= */}
+          {/* =================================
+              CUSTOMER VIEW
+          ================================= */}
 
           {!isAdmin && (
             filteredParentCategories.length >
             0 ? (
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div
+                className="
+                  grid
+                  grid-cols-1
+                  gap-4
+
+                  sm:grid-cols-2
+                  lg:grid-cols-3
+                "
+              >
 
                 {filteredParentCategories.map(
                   (category) => {
-
                     const children =
                       getSubcategories(
                         category._id
@@ -840,40 +1169,155 @@ const Categories = () => {
                     return (
                       <div
                         key={category._id}
-                        className="rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-6"
+                        className="
+                          group
+
+                          relative
+                          overflow-hidden
+
+                          rounded-2xl
+
+                          border
+                          border-[var(--nova-border)]
+
+                          bg-[var(--nova-surface)]
+
+                          p-5
+
+                          shadow-[var(--shadow-sm)]
+
+                          transition-all
+                          duration-200
+
+                          hover:-translate-y-1
+                          hover:border-[var(--nova-violet-light)]
+                          hover:shadow-[0_12px_30px_rgba(124,58,237,0.10)]
+
+                          sm:p-6
+                        "
                       >
+
+                        {/* Category icon */}
+
+                        <div
+                          className="
+                            mb-5
+                            flex
+                            h-11
+                            w-11
+                            items-center
+                            justify-center
+
+                            rounded-xl
+
+                            bg-[var(--nova-lavender-soft)]
+
+                            text-[var(--nova-primary)]
+
+                            transition-transform
+                            duration-200
+
+                            group-hover:scale-105
+                          "
+                        >
+                          <FolderOpen
+                            size={19}
+                          />
+                        </div>
 
                         <Link
                           href={`/products?category=${category._id}`}
-                          className="text-lg font-semibold capitalize hover:text-[var(--nova-blue)]"
+                          className="
+                            block
+
+                            text-lg
+                            font-bold
+                            capitalize
+
+                            text-[var(--nova-text)]
+
+                            transition-colors
+
+                            hover:text-[var(--nova-primary)]
+                          "
                         >
                           {category.name}
                         </Link>
 
                         {children.length >
                           0 && (
-                          <div className="mt-4 space-y-2">
-
+                          <div
+                            className="
+                              mt-4
+                              space-y-1
+                            "
+                          >
                             {children.map(
                               (child) => (
                                 <Link
-                                  key={child._id}
+                                  key={
+                                    child._id
+                                  }
                                   href={`/products?category=${category._id}&subcategory=${child._id}`}
-                                  className="block text-sm text-[var(--nova-muted)] hover:text-[var(--nova-blue)]"
+                                  className="
+                                    flex
+                                    items-center
+                                    gap-2
+
+                                    rounded-lg
+
+                                    px-2
+                                    py-1.5
+
+                                    text-sm
+
+                                    text-[var(--nova-muted)]
+
+                                    transition-colors
+
+                                    hover:bg-[var(--nova-lavender-soft)]
+                                    hover:text-[var(--nova-primary)]
+                                  "
                                 >
+                                  <span
+                                    className="
+                                      h-1.5
+                                      w-1.5
+                                      rounded-full
+
+                                      bg-[var(--nova-violet-light)]
+                                    "
+                                  />
+
                                   {child.name}
                                 </Link>
                               )
                             )}
-
                           </div>
                         )}
 
                         <Link
                           href={`/products?category=${category._id}`}
-                          className="mt-4 inline-block text-xs font-semibold text-[var(--nova-blue)]"
+                          className="
+                            mt-5
+                            inline-flex
+                            items-center
+                            gap-1
+
+                            text-xs
+                            font-bold
+
+                            text-[var(--nova-primary)]
+
+                            transition-all
+
+                            hover:gap-2
+                          "
                         >
-                          View all products →
+                          View all products
+                          <ChevronRight
+                            size={13}
+                          />
                         </Link>
 
                       </div>
@@ -893,172 +1337,360 @@ const Categories = () => {
             )
           )}
 
-          {/* ================================= */}
-          {/* ADMIN VIEW */}
-          {/* ================================= */}
+          {/* =================================
+              ADMIN VIEW
+          ================================= */}
 
           {isAdmin && (
             <>
 
-              {/* ================================= */}
-              {/* CREATE / EDIT FORM */}
-              {/* ================================= */}
+              {/* =================================
+                  CREATE / EDIT FORM
+              ================================= */}
 
-              <section className="mb-6 rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-5">
+              <section
+                className="
+                  mb-7
 
-                <div className="mb-4">
+                  overflow-hidden
 
-                  <h2 className="text-sm font-semibold">
+                  rounded-2xl
 
-                    {id
-                      ? parentCategory
-                        ? 'Edit subcategory'
-                        : 'Edit category'
-                      : parentCategory
-                        ? 'Create subcategory'
-                        : 'Create category'}
+                  border
+                  border-[var(--nova-border)]
 
-                  </h2>
+                  bg-[var(--nova-surface)]
 
-                  <p className="mt-1 text-xs text-[var(--nova-muted)]">
+                  shadow-[var(--shadow-sm)]
+                "
+              >
 
-                    {id
-                      ? parentCategory
-                        ? 'Update the subcategory name. Its parent category remains unchanged.'
-                        : 'Update the category name.'
-                      : parentCategory
-                        ? `New subcategory under ${
-                            parentCategories.find(
-                              (item) =>
-                                item._id.toString() ===
-                                parentCategory.toString()
-                            )?.name ||
-                            'selected category'
-                          }.`
-                        : 'Create a top-level marketplace category.'}
+                {/* Form header */}
 
-                  </p>
+                <div
+                  className="
+                    border-b
+                    border-[var(--nova-border)]
 
-                </div>
+                    bg-[var(--nova-surface-soft)]
 
-                {/* ================================= */}
-                {/* PARENT CATEGORY SELECT */}
-                {/* ================================= */}
+                    px-5
+                    py-4
+                  "
+                >
 
-                <div className="mb-3">
-
-                  <label
-                    htmlFor="parent-category"
-                    className="mb-2 block text-xs font-medium text-[var(--nova-muted)]"
-                  >
-                    Parent category
-                  </label>
-
-                  <select
-                    id="parent-category"
-                    value={parentCategory}
-                    onChange={(e) =>
-                      setParentCategory(
-                        e.target.value
-                      )
-                    }
-                    disabled={Boolean(id)}
-                    className="h-11 w-full rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface)] px-3 text-sm text-[var(--nova-text)] outline-none focus:border-[var(--nova-blue)] disabled:cursor-not-allowed disabled:opacity-60"
+                  <div
+                    className="
+                      flex
+                      items-center
+                      gap-3
+                    "
                   >
 
-                    <option value="">
-                      No parent — Create category
-                    </option>
+                    <div
+                      className="
+                        flex
+                        h-10
+                        w-10
+                        items-center
+                        justify-center
 
-                    {parentCategories.map(
-                      (category) => (
-                        <option
-                          key={category._id}
-                          value={category._id}
-                        >
-                          {category.name}
-                        </option>
-                      )
-                    )}
+                        rounded-xl
 
-                  </select>
+                        bg-[var(--nova-lavender-soft)]
 
-                  {id &&
-                    parentCategory && (
-                      <p className="mt-2 text-xs text-[var(--nova-muted)]">
-                        Parent category is preserved while editing.
-                      </p>
-                    )}
-
-                </div>
-
-                {/* ================================= */}
-                {/* NAME + BUTTONS */}
-                {/* ================================= */}
-
-                <div className="flex flex-col gap-3 sm:flex-row">
-
-                  <Input
-                    id="category-name"
-                    value={name}
-                    onChange={(e) =>
-                      setName(e.target.value)
-                    }
-                    placeholder={
-                      parentCategory
-                        ? 'Enter subcategory name...'
-                        : 'Enter category name...'
-                    }
-                    onKeyDown={(e) => {
-                      if (
-                        e.key ===
-                        'Enter'
-                      ) {
-                        saveCategory()
-                      }
-                    }}
-                  />
-
-                  <Button
-                    onClick={saveCategory}
-                  >
-                    {id
-                      ? 'Update'
-                      : parentCategory
-                        ? 'Create subcategory'
-                        : 'Create'}
-                  </Button>
-
-                  {(id ||
-                    parentCategory) && (
-                    <Button
-                      variant="secondary"
-                      onClick={() =>
-                        resetForm(false)
-                      }
+                        text-[var(--nova-primary)]
+                      "
                     >
-                      Cancel
-                    </Button>
-                  )}
+                      <Plus size={18} />
+                    </div>
+
+                    <div>
+
+                      <h2
+                        className="
+                          text-sm
+                          font-bold
+
+                          text-[var(--nova-text)]
+                        "
+                      >
+                        {id
+                          ? parentCategory
+                            ? 'Edit subcategory'
+                            : 'Edit category'
+                          : parentCategory
+                            ? 'Create subcategory'
+                            : 'Create category'}
+                      </h2>
+
+                      <p
+                        className="
+                          mt-0.5
+
+                          text-xs
+
+                          text-[var(--nova-muted)]
+                        "
+                      >
+                        {id
+                          ? parentCategory
+                            ? 'Update the subcategory name. Its parent category remains unchanged.'
+                            : 'Update the category name.'
+                          : parentCategory
+                            ? `New subcategory under ${
+                                parentCategories.find(
+                                  (item) =>
+                                    item._id.toString() ===
+                                    parentCategory.toString()
+                                )?.name ||
+                                'selected category'
+                              }.`
+                            : 'Create a top-level marketplace category.'}
+                      </p>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+                {/* Form body */}
+
+                <div className="p-5">
+
+                  {/* PARENT CATEGORY */}
+
+                  <div className="mb-4">
+
+                    <label
+                      htmlFor="parent-category"
+                      className="
+                        mb-2
+                        block
+
+                        text-xs
+                        font-semibold
+                        uppercase
+                        tracking-wide
+
+                        text-[var(--nova-muted)]
+                      "
+                    >
+                      Parent category
+                    </label>
+
+                    <select
+                      id="parent-category"
+                      value={parentCategory}
+                      onChange={(e) =>
+                        setParentCategory(
+                          e.target.value
+                        )
+                      }
+                      disabled={Boolean(id)}
+                      className="
+                        h-11
+                        w-full
+
+                        rounded-xl
+
+                        border
+                        border-[var(--nova-border)]
+
+                        bg-[var(--nova-surface)]
+
+                        px-3
+
+                        text-sm
+                        text-[var(--nova-text)]
+
+                        outline-none
+
+                        transition-all
+
+                        hover:border-[var(--nova-violet-light)]
+
+                        focus:border-[var(--nova-primary)]
+                        focus:ring-2
+                        focus:ring-[rgba(139,92,246,0.12)]
+
+                        disabled:cursor-not-allowed
+                        disabled:opacity-60
+                      "
+                    >
+
+                      <option value="">
+                        No parent — Create category
+                      </option>
+
+                      {parentCategories.map(
+                        (category) => (
+                          <option
+                            key={category._id}
+                            value={category._id}
+                          >
+                            {category.name}
+                          </option>
+                        )
+                      )}
+
+                    </select>
+
+                    {id &&
+                      parentCategory && (
+                        <p
+                          className="
+                            mt-2
+
+                            text-xs
+
+                            text-[var(--nova-muted)]
+                          "
+                        >
+                          Parent category is
+                          preserved while
+                          editing.
+                        </p>
+                      )}
+
+                  </div>
+
+                  {/* NAME + BUTTONS */}
+
+                  <div
+                    className="
+                      flex
+                      flex-col
+                      gap-3
+
+                      sm:flex-row
+                      sm:items-end
+                    "
+                  >
+
+                    <div className="min-w-0 flex-1">
+
+                      <Input
+                        id="category-name"
+                        label="Category name"
+                        value={name}
+                        onChange={(e) =>
+                          setName(
+                            e.target.value
+                          )
+                        }
+                        placeholder={
+                          parentCategory
+                            ? 'Enter subcategory name...'
+                            : 'Enter category name...'
+                        }
+                        onKeyDown={(e) => {
+                          if (
+                            e.key ===
+                            'Enter'
+                          ) {
+                            saveCategory()
+                          }
+                        }}
+                      />
+
+                    </div>
+
+                    <div
+                      className="
+                        flex
+                        gap-2
+
+                        sm:shrink-0
+                      "
+                    >
+
+                      <Button
+                        onClick={saveCategory}
+                      >
+                        {id
+                          ? 'Update'
+                          : parentCategory
+                            ? 'Create subcategory'
+                            : 'Create'}
+                      </Button>
+
+                      {(id ||
+                        parentCategory) && (
+                        <Button
+                          variant="secondary"
+                          onClick={() =>
+                            resetForm(false)
+                          }
+                        >
+                          Cancel
+                        </Button>
+                      )}
+
+                    </div>
+
+                  </div>
 
                 </div>
 
               </section>
 
-              {/* ================================= */}
-              {/* SEARCH */}
-              {/* ================================= */}
+              {/* =================================
+                  SEARCH / LIST HEADER
+              ================================= */}
 
-              <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div
+                className="
+                  mb-4
+
+                  flex
+                  flex-col
+                  gap-4
+
+                  sm:flex-row
+                  sm:items-end
+                  sm:justify-between
+                "
+              >
 
                 <div>
 
-                  <h2 className="text-lg font-semibold">
+                  <p
+                    className="
+                      text-xs
+                      font-semibold
+                      uppercase
+                      tracking-[0.16em]
+
+                      text-[var(--nova-primary)]
+                    "
+                  >
+                    Catalog structure
+                  </p>
+
+                  <h2
+                    className="
+                      mt-1
+
+                      text-xl
+                      font-bold
+
+                      text-[var(--nova-text)]
+                    "
+                  >
                     All categories
                   </h2>
 
-                  <p className="mt-1 text-xs text-[var(--nova-muted)]">
+                  <p
+                    className="
+                      mt-1
 
+                      text-xs
+
+                      text-[var(--nova-muted)]
+                    "
+                  >
                     {parentCategories.length}{' '}
                     categories ·{' '}
 
@@ -1069,16 +1701,35 @@ const Categories = () => {
                     )}{' '}
 
                     subcategories
-
                   </p>
 
                 </div>
 
-                <div className="relative w-full sm:w-72">
+                {/* SEARCH */}
+
+                <div
+                  className="
+                    relative
+                    w-full
+
+                    sm:w-80
+                  "
+                >
 
                   <Search
                     size={17}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--nova-muted)]"
+                    className="
+                      pointer-events-none
+
+                      absolute
+                      left-3.5
+                      top-1/2
+                      z-10
+
+                      -translate-y-1/2
+
+                      text-[var(--nova-muted)]
+                    "
                   />
 
                   <input
@@ -1090,28 +1741,68 @@ const Categories = () => {
                         e.target.value
                       )
                     }
-                    className="h-11 w-full rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface)] pl-11 pr-4 text-sm outline-none focus:border-[var(--nova-blue)]"
+                    className="
+                      h-11
+                      w-full
+
+                      rounded-xl
+
+                      border
+                      border-[var(--nova-border)]
+
+                      bg-[var(--nova-surface)]
+
+                      pl-11
+                      pr-4
+
+                      text-sm
+                      text-[var(--nova-text)]
+
+                      outline-none
+
+                      placeholder:text-[var(--nova-muted)]
+
+                      transition-all
+                      duration-200
+
+                      hover:border-[var(--nova-violet-light)]
+
+                      focus:border-[var(--nova-primary)]
+
+                      focus:ring-2
+                      focus:ring-[rgba(139,92,246,0.12)]
+                    "
                   />
 
                 </div>
 
               </div>
 
-              {/* ================================= */}
-              {/* CATEGORY TREE */}
-              {/* ================================= */}
+              {/* =================================
+                  CATEGORY TREE
+              ================================= */}
 
-              <section className="overflow-hidden rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)]">
+              <section
+                className="
+                  overflow-hidden
 
+                  rounded-2xl
+
+                  border
+                  border-[var(--nova-border)]
+
+                  bg-[var(--nova-surface)]
+
+                  shadow-[var(--shadow-sm)]
+                "
+              >
                 <AdminCategoryTree />
-
               </section>
 
             </>
           )}
 
         </Container>
-
       </main>
     </>
   )

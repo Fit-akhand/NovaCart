@@ -488,11 +488,11 @@ const updatePassword = async () => {
       </Head>
 
 
-      <main className="py-8 sm:py-10">
+      <main className="min-h-screen bg-[var(--nova-bg)] py-6 sm:py-10">
 
         <Container>
 
-          <h1 className="mb-8 text-center text-3xl font-semibold">
+          <h1 className="mb-8 text-center text-3xl font-bold tracking-[-0.03em] text-[var(--nova-text)] sm:text-4xl">
             My Profile
           </h1>
 
@@ -501,11 +501,14 @@ const updatePassword = async () => {
               PROFILE HEADER
           ====================================== */}
 
-          <section className="mb-6 flex flex-col items-center rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-6 py-8 text-center">
+          <section className="relative mb-6 flex flex-col items-center overflow-hidden rounded-3xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-6 py-10 text-center shadow-[var(--shadow-sm)] sm:px-8">
+
+            <div className="pointer-events-none absolute -right-24 -top-28 h-64 w-64 rounded-full bg-[rgba(139,92,246,0.10)] blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-24 -left-20 h-48 w-48 rounded-full bg-[rgba(167,139,250,0.07)] blur-3xl" />
 
             <div className="relative mb-4">
 
-              <div className="h-24 w-24 overflow-hidden rounded-full border border-[var(--nova-border)] bg-[var(--nova-surface-soft)]">
+              <div className="h-28 w-28 overflow-hidden rounded-full border-4 border-[var(--nova-lavender-soft)] bg-[var(--nova-surface-soft)] shadow-[0_10px_30px_rgba(124,58,237,0.14)]">
 
                 <img
                   src={
@@ -522,7 +525,7 @@ const updatePassword = async () => {
 
               <label
                 htmlFor="file_up"
-                className="absolute bottom-0 right-0 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-[var(--nova-navy)] text-white"
+                className="absolute bottom-0 right-0 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-4 border-[var(--nova-surface)] bg-[var(--nova-primary)] text-white shadow-md transition-transform hover:scale-105"
               >
 
                 <Camera size={15} />
@@ -541,7 +544,7 @@ const updatePassword = async () => {
             </div>
 
 
-            <h2 className="text-xl font-semibold">
+            <h2 className="text-xl font-bold tracking-tight text-[var(--nova-text)]">
               {auth.user.name}
             </h2>
 
@@ -573,25 +576,25 @@ const updatePassword = async () => {
               MAIN GRID
           ====================================== */}
 
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_1.1fr]">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:gap-7">
 
 
             {/* ===================================
                 LEFT COLUMN
             ==================================== */}
 
-            <div className="space-y-6">
+            <div className="space-y-5 sm:space-y-6">
 
 
               {/* =================================
                   PERSONAL INFORMATION
               ================================== */}
 
-              <section className="rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-6">
+              <section className="rounded-2xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-5 shadow-[var(--shadow-sm)] sm:p-6">
 
-                <div className="mb-4 flex items-center justify-between">
+                <div className="mb-5 flex items-center justify-between gap-4">
 
-                  <h3 className="font-semibold">
+                  <h3 className="font-bold tracking-tight text-[var(--nova-text)]">
                     Personal information
                   </h3>
 
@@ -683,7 +686,7 @@ const updatePassword = async () => {
                   <dl className="space-y-3 text-sm">
 
 
-                    <div className="flex justify-between gap-4">
+                    <div className="flex flex-col gap-1 rounded-xl bg-[var(--nova-surface-soft)] px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
 
                       <dt className="text-[var(--nova-muted)]">
                         Full name
@@ -696,7 +699,7 @@ const updatePassword = async () => {
                     </div>
 
 
-                    <div className="flex justify-between gap-4">
+                    <div className="flex flex-col gap-1 rounded-xl bg-[var(--nova-surface-soft)] px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
 
                       <dt className="text-[var(--nova-muted)]">
                         Email
@@ -709,7 +712,7 @@ const updatePassword = async () => {
                     </div>
 
 
-                    <div className="flex justify-between gap-4">
+                    <div className="flex flex-col gap-1 rounded-xl bg-[var(--nova-surface-soft)] px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
 
                       <dt className="text-[var(--nova-muted)]">
                         Phone
@@ -746,7 +749,7 @@ const updatePassword = async () => {
                   ACCOUNT
               ================================== */}
 
-              <section className="rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-6">
+              <section className="rounded-2xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-5 shadow-[var(--shadow-sm)] sm:p-6">
 
                 <h3 className="mb-4 font-semibold">
                   Account
@@ -756,7 +759,7 @@ const updatePassword = async () => {
                 <dl className="space-y-3 text-sm">
 
 
-                  <div className="flex justify-between gap-4">
+                  <div className="flex flex-col gap-1 rounded-xl bg-[var(--nova-surface-soft)] px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
 
                     <dt className="text-[var(--nova-muted)]">
                       Account type
@@ -769,7 +772,7 @@ const updatePassword = async () => {
                   </div>
 
 
-                  <div className="flex justify-between gap-4">
+                  <div className="flex flex-col gap-1 rounded-xl bg-[var(--nova-surface-soft)] px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
 
                     <dt className="text-[var(--nova-muted)]">
                       Member since
@@ -784,7 +787,7 @@ const updatePassword = async () => {
 
                   {isSeller && (
 
-                    <div className="flex justify-between gap-4">
+                    <div className="flex flex-col gap-1 rounded-xl bg-[var(--nova-surface-soft)] px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
 
                       <dt className="text-[var(--nova-muted)]">
                         Seller status
@@ -811,7 +814,7 @@ const updatePassword = async () => {
                   QUICK ACTIONS
               ================================== */}
 
-              <section className="rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-6">
+              <section className="rounded-2xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-5 shadow-[var(--shadow-sm)] sm:p-6">
                 <h3 className="mb-4 font-semibold">
                   Quick actions
                 </h3>
@@ -842,10 +845,10 @@ const updatePassword = async () => {
 
                   {/* Super Admin */}
                   {isAdmin && (
-                    <section className="mt-4 w-full rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] p-5">
+                    <section className="mt-5 w-full rounded-2xl border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] p-5">
 
                       <div className="mb-4">
-                        <h3 className="font-semibold">
+                        <h3 className="font-bold tracking-tight text-[var(--nova-text)]">
                           Admin Tools
                         </h3>
 
@@ -921,15 +924,15 @@ const updatePassword = async () => {
 
             <section
               id="orders"
-              className="rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)]"
+              className="overflow-hidden rounded-2xl border border-[var(--nova-border)] bg-[var(--nova-surface)] shadow-[var(--shadow-md)]"
             >
 
 
-              <div className="flex items-center justify-between border-b border-[var(--nova-border)] px-6 py-5">
+              <div className="flex items-center justify-between border-b border-[var(--nova-border)] bg-[var(--nova-surface-soft)] px-5 py-5 sm:px-6">
 
                 <div>
 
-                  <h3 className="font-semibold">
+                  <h3 className="font-bold tracking-tight text-[var(--nova-text)]">
                     Orders
                   </h3>
 
@@ -974,7 +977,7 @@ const updatePassword = async () => {
                     <Link
                       key={order._id}
                       href={`/order/${order._id}`}
-                      className="block px-6 py-5 hover:bg-[var(--nova-surface-soft)]"
+                      className="block px-5 py-5 transition-all duration-200 hover:bg-[var(--nova-surface-soft)] sm:px-6 hover:shadow-[inset_3px_0_0_var(--nova-primary)]"
                     >
 
                       <div className="flex items-start justify-between gap-4">

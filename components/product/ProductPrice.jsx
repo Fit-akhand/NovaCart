@@ -9,8 +9,15 @@ const ProductPrice = ({
   return (
     <span
       className={`
-        text-base font-semibold
+        inline-block
+
+        text-base
+        font-bold
+        leading-none
+        tracking-[-0.01em]
+
         text-[var(--nova-text)]
+
         ${className}
       `}
     >

@@ -32,6 +32,7 @@ const CHECKOUT_ADDRESS_KEY =
 
 const Cart = () => {
   const [razorpayLoaded, setRazorpayLoaded] = useState(false)
+
   const { state, dispatch } =
     useContext(DataContext)
 
@@ -187,76 +188,89 @@ const Cart = () => {
     )
   }, [auth?.user])
 
-const [savedAddresses, setSavedAddresses] = useState([])
-const [selectedAddressId, setSelectedAddressId] = useState(null)
-const [useNewAddress, setUseNewAddress] = useState(false)
-const [saveNewAddress, setSaveNewAddress] = useState(false)
+  const [savedAddresses, setSavedAddresses] =
+    useState([])
 
-const [showAddressForm, setShowAddressForm] = useState(false)
-const [addresses, setAddresses] = useState([])
+  const [selectedAddressId, setSelectedAddressId] =
+    useState(null)
+
+  const [useNewAddress, setUseNewAddress] =
+    useState(false)
+
+  const [saveNewAddress, setSaveNewAddress] =
+    useState(false)
+
+  const [showAddressForm, setShowAddressForm] =
+    useState(false)
+
+  const [addresses, setAddresses] =
+    useState([])
 
   // =========================================================
-// LOAD DEFAULT SAVED ADDRESS
-// =========================================================
+  // LOAD DEFAULT SAVED ADDRESS
+  // =========================================================
 
-useEffect(() => {
+  useEffect(() => {
     if (!auth?.user || !auth?.token) return
 
     const loadAddresses = async () => {
-        try {
-            const res = await getData(
-                'address',
-                auth.token
-            )
+      try {
+        const res = await getData(
+          'address',
+          auth.token
+        )
 
-            if (res?.err) {
-                console.error(res.err)
-                return
-            }
-
-            const addresses = Array.isArray(res?.addresses)
-                ? res.addresses
-                : []
-
-            setSavedAddresses(addresses)
-
-            const defaultAddress =
-                addresses.find(
-                    (item) => item?.isDefault === true
-                ) || addresses[0]
-
-            if (defaultAddress) {
-                setSelectedAddressId(
-                    defaultAddress._id
-                )
-
-                setShippingAddress({
-                    fullName:
-                        defaultAddress.fullName || '',
-                    phone:
-                        defaultAddress.phone || '',
-                    address:
-                        defaultAddress.address || '',
-                    addressLine2:
-                        defaultAddress.landmark || '',
-                    city:
-                        defaultAddress.city || '',
-                    state:
-                        defaultAddress.state || '',
-                    pincode:
-                        defaultAddress.pincode || '',
-                })
-            }
-        } catch (error) {
-            console.error(
-                'Failed to load addresses:',
-                error
-            )
+        if (res?.err) {
+          console.error(res.err)
+          return
         }
+
+        const addresses = Array.isArray(
+          res?.addresses
+        )
+          ? res.addresses
+          : []
+
+        setSavedAddresses(addresses)
+
+        const defaultAddress =
+          addresses.find(
+            (item) =>
+              item?.isDefault === true
+          ) || addresses[0]
+
+        if (defaultAddress) {
+          setSelectedAddressId(
+            defaultAddress._id
+          )
+
+          setShippingAddress({
+            fullName:
+              defaultAddress.fullName || '',
+            phone:
+              defaultAddress.phone || '',
+            address:
+              defaultAddress.address || '',
+            addressLine2:
+              defaultAddress.landmark || '',
+            city:
+              defaultAddress.city || '',
+            state:
+              defaultAddress.state || '',
+            pincode:
+              defaultAddress.pincode || '',
+          })
+        }
+      } catch (error) {
+        console.error(
+          'Failed to load addresses:',
+          error
+        )
+      }
     }
 
     loadAddresses()
-}, [auth?.user, auth?.token])
+  }, [auth?.user, auth?.token])
 
   // =========================================================
   // ADDRESS INPUT HANDLER
@@ -283,29 +297,30 @@ useEffect(() => {
     setSelectedAddressId(item._id)
 
     setShippingAddress({
-        fullName: item.fullName || '',
-        phone: item.phone || '',
-        address: item.address || '',
-        addressLine2: item.landmark || '',
-        city: item.city || '',
-        state: item.state || '',
-        pincode: item.pincode || '',
+      fullName: item.fullName || '',
+      phone: item.phone || '',
+      address: item.address || '',
+      addressLine2:
+        item.landmark || '',
+      city: item.city || '',
+      state: item.state || '',
+      pincode: item.pincode || '',
     })
-}
+  }
 
   // =========================================================
   // CHECKOUT
   // =========================================================
 
-const handlePayment = async () => {
+  const handlePayment = async () => {
     const {
-        fullName,
-        phone,
-        address,
-        addressLine2,
-        city,
-        state,
-        pincode,
+      fullName,
+      phone,
+      address,
+      addressLine2,
+      city,
+      state,
+      pincode,
     } = shippingAddress
 
     // =========================================================
@@ -313,20 +328,20 @@ const handlePayment = async () => {
     // =========================================================
 
     if (
-        !fullName.trim() ||
-        !phone.trim() ||
-        !address.trim() ||
-        !city.trim() ||
-        !state.trim() ||
-        !pincode.trim()
+      !fullName.trim() ||
+      !phone.trim() ||
+      !address.trim() ||
+      !city.trim() ||
+      !state.trim() ||
+      !pincode.trim()
     ) {
-        return dispatch({
-            type: 'NOTIFY',
-            payload: {
-                error:
-                    'Please complete all delivery address fields.',
-            },
-        })
+      return dispatch({
+        type: 'NOTIFY',
+        payload: {
+          error:
+            'Please complete all delivery address fields.',
+        },
+      })
     }
 
     // =========================================================
@@ -334,17 +349,17 @@ const handlePayment = async () => {
     // =========================================================
 
     if (
-        !/^[6-9]\d{9}$/.test(
-            phone.trim()
-        )
+      !/^[6-9]\d{9}$/.test(
+        phone.trim()
+      )
     ) {
-        return dispatch({
-            type: 'NOTIFY',
-            payload: {
-                error:
-                    'Please enter a valid 10-digit mobile number.',
-            },
-        })
+      return dispatch({
+        type: 'NOTIFY',
+        payload: {
+          error:
+            'Please enter a valid 10-digit mobile number.',
+        },
+      })
     }
 
     // =========================================================
@@ -352,17 +367,17 @@ const handlePayment = async () => {
     // =========================================================
 
     if (
-        !/^\d{6}$/.test(
-            pincode.trim()
-        )
+      !/^\d{6}$/.test(
+        pincode.trim()
+      )
     ) {
-        return dispatch({
-            type: 'NOTIFY',
-            payload: {
-                error:
-                    'Please enter a valid 6-digit PIN code.',
-            },
-        })
+      return dispatch({
+        type: 'NOTIFY',
+        payload: {
+          error:
+            'Please enter a valid 6-digit PIN code.',
+        },
+      })
     }
 
     // =========================================================
@@ -370,11 +385,11 @@ const handlePayment = async () => {
     // =========================================================
 
     if (!auth?.token || !auth?.user) {
-        return router.push(
-            `/signin?returnUrl=${encodeURIComponent(
-                '/cart'
-            )}`
-        )
+      return router.push(
+        `/signin?returnUrl=${encodeURIComponent(
+          '/cart'
+        )}`
+      )
     }
 
     // =====================================================
@@ -382,51 +397,63 @@ const handlePayment = async () => {
     // =====================================================
 
     if (useNewAddress && saveNewAddress) {
-        const addressResponse = await postData(
-            'address',
-            {
-                label: 'Home',
-                fullName: fullName.trim(),
-                phone: phone.trim(),
-                address: address.trim(),
-                city: city.trim(),
-                state: state.trim(),
-                pincode: pincode.trim(),
-                isDefault: savedAddresses.length === 0,
-            },
-            auth.token
+      const addressResponse = await postData(
+        'address',
+        {
+          label: 'Home',
+          fullName: fullName.trim(),
+          phone: phone.trim(),
+          address: address.trim(),
+          city: city.trim(),
+          state: state.trim(),
+          pincode: pincode.trim(),
+          isDefault:
+            savedAddresses.length === 0,
+        },
+        auth.token
+      )
+
+      if (addressResponse?.err) {
+        return dispatch({
+          type: 'NOTIFY',
+          payload: {
+            error: addressResponse.err,
+          },
+        })
+      }
+
+      // Refresh saved addresses
+      const refreshed = await getData(
+        'address',
+        auth.token
+      )
+
+      if (
+        Array.isArray(
+          refreshed?.addresses
+        )
+      ) {
+        setSavedAddresses(
+          refreshed.addresses
         )
 
-        if (addressResponse?.err) {
-            return dispatch({
-                type: 'NOTIFY',
-                payload: {
-                    error: addressResponse.err,
-                },
-            })
+        const newlySaved =
+          refreshed.addresses.find(
+            (item) =>
+              item.fullName ===
+                fullName.trim() &&
+              item.phone ===
+                phone.trim() &&
+              item.pincode ===
+                pincode.trim()
+          )
+
+        if (newlySaved) {
+          setSelectedAddressId(
+            newlySaved._id
+          )
         }
-
-        // Refresh saved addresses
-        const refreshed = await getData(
-            'address',
-            auth.token
-        )
-
-        if (Array.isArray(refreshed?.addresses)) {
-            setSavedAddresses(refreshed.addresses)
-
-            const newlySaved =
-                refreshed.addresses.find(
-                    (item) =>
-                        item.fullName === fullName.trim() &&
-                        item.phone === phone.trim() &&
-                        item.pincode === pincode.trim()
-                )
-
-            if (newlySaved) {
-                setSelectedAddressId(newlySaved._id)
-            }
-        }
+      }
     }
 
     // =========================================================
@@ -436,83 +463,83 @@ const handlePayment = async () => {
     const verifiedCart = []
 
     for (const item of cart) {
-        const response =
-            await getData(
-                `product/${item._id}`
-            )
+      const response =
+        await getData(
+          `product/${item._id}`
+        )
 
-        if (!response?.product) {
-            return dispatch({
-                type: 'NOTIFY',
-                payload: {
-                    error:
-                        `Unable to verify ${item.title}. Please try again.`,
-                },
-            })
-        }
-
-        const currentProduct =
-            response.product
-
-        // =====================================================
-        // STOCK VALIDATION
-        // =====================================================
-
-        if (
-            Number(
-                currentProduct.inStock
-            ) <
-            Number(item.quantity)
-        ) {
-            return dispatch({
-                type: 'NOTIFY',
-                payload: {
-                    error:
-                        `${item.title} does not have enough stock.`,
-                },
-            })
-        }
-
-        // =====================================================
-        // USE SERVER PRICE
-        // =====================================================
-
-        const price =
-            Number(
-                currentProduct.price
-            )
-
-        if (
-            !Number.isFinite(price) ||
-            price < 0
-        ) {
-            return dispatch({
-                type: 'NOTIFY',
-                payload: {
-                    error:
-                        `Invalid price for ${item.title}.`,
-                },
-            })
-        }
-
-        verifiedCart.push({
-            ...item,
-
-            price,
-
-            inStock:
-                Number(
-                    currentProduct.inStock
-                ),
-
-            sold:
-                Number(
-                    currentProduct.sold
-                ) || 0,
-
-            quantity:
-                Number(item.quantity),
+      if (!response?.product) {
+        return dispatch({
+          type: 'NOTIFY',
+          payload: {
+            error:
+              `Unable to verify ${item.title}. Please try again.`,
+          },
         })
+      }
+
+      const currentProduct =
+        response.product
+
+      // =====================================================
+      // STOCK VALIDATION
+      // =====================================================
+
+      if (
+        Number(
+          currentProduct.inStock
+        ) <
+        Number(item.quantity)
+      ) {
+        return dispatch({
+          type: 'NOTIFY',
+          payload: {
+            error:
+              `${item.title} does not have enough stock.`,
+          },
+        })
+      }
+
+      // =====================================================
+      // USE SERVER PRICE
+      // =====================================================
+
+      const price =
+        Number(
+          currentProduct.price
+        )
+
+      if (
+        !Number.isFinite(price) ||
+        price < 0
+      ) {
+        return dispatch({
+          type: 'NOTIFY',
+          payload: {
+            error:
+              `Invalid price for ${item.title}.`,
+          },
+        })
+      }
+
+      verifiedCart.push({
+        ...item,
+
+        price,
+
+        inStock:
+          Number(
+            currentProduct.inStock
+          ),
+
+        sold:
+          Number(
+            currentProduct.sold
+          ) || 0,
+
+        quantity:
+          Number(item.quantity),
+      })
     }
 
     // =========================================================
@@ -520,25 +547,25 @@ const handlePayment = async () => {
     // =========================================================
 
     const finalTotal =
-        verifiedCart.reduce(
-            (sum, item) =>
-                sum +
-                Number(item.price) *
-                    Number(item.quantity),
-            0
-        )
+      verifiedCart.reduce(
+        (sum, item) =>
+          sum +
+          Number(item.price) *
+            Number(item.quantity),
+        0
+      )
 
     if (
-        !Number.isFinite(finalTotal) ||
-        finalTotal <= 0
+      !Number.isFinite(finalTotal) ||
+      finalTotal <= 0
     ) {
-        return dispatch({
-            type: 'NOTIFY',
-            payload: {
-                error:
-                    'Invalid order amount.',
-            },
-        })
+      return dispatch({
+        type: 'NOTIFY',
+        payload: {
+          error:
+            'Invalid order amount.',
+        },
+      })
     }
 
     // =========================================================
@@ -546,25 +573,25 @@ const handlePayment = async () => {
     // =========================================================
 
     const finalShippingAddress = {
-        fullName:
-            fullName.trim(),
+      fullName:
+        fullName.trim(),
 
-        phone:
-            phone.trim(),
+      phone:
+        phone.trim(),
 
-        address:
-            addressLine2.trim()
-                ? `${address.trim()}, ${addressLine2.trim()}`
-                : address.trim(),
+      address:
+        addressLine2.trim()
+          ? `${address.trim()}, ${addressLine2.trim()}`
+          : address.trim(),
 
-        city:
-            city.trim(),
+      city:
+        city.trim(),
 
-        state:
-            state.trim(),
+      state:
+        state.trim(),
 
-        pincode:
-            pincode.trim(),
+      pincode:
+        pincode.trim(),
     }
 
     // =========================================================
@@ -572,387 +599,387 @@ const handlePayment = async () => {
     // =========================================================
 
     dispatch({
-        type: 'NOTIFY',
-        payload: {
-            loading: true,
-        },
+      type: 'NOTIFY',
+      payload: {
+        loading: true,
+      },
     })
 
     try {
-        // =====================================================
-        // STEP 1 — CREATE RAZORPAY ORDER
-        // =====================================================
+      // =====================================================
+      // STEP 1 — CREATE RAZORPAY ORDER
+      // =====================================================
 
-        const razorpayOrder =
-            await postData(
-                'create-order',
+      const razorpayOrder =
+        await postData(
+          'create-order',
+          {
+            cart: verifiedCart,
+          },
+          auth.token
+        )
+
+      if (razorpayOrder?.err) {
+        return dispatch({
+          type: 'NOTIFY',
+          payload: {
+            error:
+              razorpayOrder.err,
+          },
+        })
+      }
+
+      if (
+        !razorpayOrder?.order_id
+      ) {
+        return dispatch({
+          type: 'NOTIFY',
+          payload: {
+            error:
+              'Unable to create Razorpay order.',
+          },
+        })
+      }
+
+      // =====================================================
+      // CHECK RAZORPAY SCRIPT
+      // =====================================================
+
+      if (typeof window === 'undefined') {
+        return dispatch({
+          type: 'NOTIFY',
+          payload: {
+            error:
+              'Payment is not available.',
+          },
+        })
+      }
+
+      if (!window.Razorpay) {
+        return dispatch({
+          type: 'NOTIFY',
+          payload: {
+            error:
+              'Razorpay Checkout is still loading. Please wait a moment and try again.',
+          },
+        })
+      }
+
+      // =====================================================
+      // STEP 2 — RAZORPAY OPTIONS
+      // =====================================================
+
+      const options = {
+        key:
+          process.env
+            .NEXT_PUBLIC_RAZORPAY_KEY_ID,
+
+        amount:
+          razorpayOrder.amount,
+
+        currency:
+          razorpayOrder.currency ||
+          'INR',
+
+        name:
+          'NovaCart',
+
+        description:
+          'NovaCart Order Payment',
+
+        order_id:
+          razorpayOrder.order_id,
+
+        prefill: {
+          name:
+            fullName.trim(),
+
+          email:
+            auth.user.email || '',
+
+          contact:
+            phone.trim(),
+        },
+
+        notes: {
+          address:
+            finalShippingAddress.address,
+
+          city:
+            finalShippingAddress.city,
+
+          state:
+            finalShippingAddress.state,
+
+          pincode:
+            finalShippingAddress.pincode,
+        },
+
+        // UI color only
+        theme: {
+          color: '#7c3aed',
+        },
+
+        // =================================================
+        // PAYMENT SUCCESS
+        // =================================================
+
+        handler: async function (
+          paymentResponse
+        ) {
+          try {
+            // ---------------------------------------------
+            // VERIFY PAYMENT SIGNATURE
+            // ---------------------------------------------
+
+            const verification =
+              await postData(
+                'verify-payment',
                 {
-                    cart: verifiedCart,
+                  razorpay_order_id:
+                    paymentResponse.razorpay_order_id,
+
+                  razorpay_payment_id:
+                    paymentResponse.razorpay_payment_id,
+
+                  razorpay_signature:
+                    paymentResponse.razorpay_signature,
                 },
                 auth.token
-            )
+              )
 
-        if (razorpayOrder?.err) {
-            return dispatch({
-                type: 'NOTIFY',
-                payload: {
-                    error:
-                        razorpayOrder.err,
-                },
-            })
-        }
-
-        if (
-            !razorpayOrder?.order_id
-        ) {
-            return dispatch({
-                type: 'NOTIFY',
-                payload: {
-                    error:
-                        'Unable to create Razorpay order.',
-                },
-            })
-        }
-
-        // =====================================================
-        // CHECK RAZORPAY SCRIPT
-        // =====================================================
-
-        if (typeof window === 'undefined') {
-            return dispatch({
-                type: 'NOTIFY',
-                payload: {
-                    error: 'Payment is not available.',
-                },
-            })
-        }
-
-        if (!window.Razorpay) {
-            return dispatch({
-                type: 'NOTIFY',
-                payload: {
-                    error:
-                        'Razorpay Checkout is still loading. Please wait a moment and try again.',
-                },
-            })
-        }
-
-        // =====================================================
-        // STEP 2 — RAZORPAY OPTIONS
-        // =====================================================
-
-        const options = {
-            key:
-                process.env
-                    .NEXT_PUBLIC_RAZORPAY_KEY_ID,
-
-            amount:
-                razorpayOrder.amount,
-
-            currency:
-                razorpayOrder.currency ||
-                'INR',
-
-            name:
-                'NovaCart',
-
-            description:
-                'NovaCart Order Payment',
-
-            order_id:
-                razorpayOrder.order_id,
-
-            prefill: {
-                name:
-                    fullName.trim(),
-
-                email:
-                    auth.user.email || '',
-
-                contact:
-                    phone.trim(),
-            },
-
-            notes: {
-                address:
-                    finalShippingAddress.address,
-
-                city:
-                    finalShippingAddress.city,
-
-                state:
-                    finalShippingAddress.state,
-
-                pincode:
-                    finalShippingAddress.pincode,
-            },
-
-            theme: {
-                color: '#2563eb',
-            },
-
-            // =================================================
-            // PAYMENT SUCCESS
-            // =================================================
-
-            handler: async function (
-                paymentResponse
+            if (
+              verification?.err
             ) {
-                try {
-                    // ---------------------------------------------
-                    // VERIFY PAYMENT SIGNATURE
-                    // ---------------------------------------------
-
-                    const verification =
-                        await postData(
-                            'verify-payment',
-                            {
-                                razorpay_order_id:
-                                    paymentResponse.razorpay_order_id,
-
-                                razorpay_payment_id:
-                                    paymentResponse.razorpay_payment_id,
-
-                                razorpay_signature:
-                                    paymentResponse.razorpay_signature,
-                            },
-                            auth.token
-                        )
-
-                    if (
-                        verification?.err
-                    ) {
-                        dispatch({
-                            type: 'NOTIFY',
-                            payload: {
-                                error:
-                                    verification.err,
-                            },
-                        })
-
-                        return
-                    }
-
-                    if (
-                        verification?.status !==
-                        'success'
-                    ) {
-                        dispatch({
-                            type: 'NOTIFY',
-                            payload: {
-                                error:
-                                    'Payment verification failed.',
-                            },
-                        })
-
-                        return
-                    }
-
-                    // ---------------------------------------------
-                    // PAYMENT VERIFIED
-                    // ---------------------------------------------
-                    //
-                    // Only NOW create the NovaCart order.
-                    //
-                    // Your existing /api/order endpoint will then
-                    // perform the existing stock deduction logic.
-                    // ---------------------------------------------
-
-                    const orderResponse =
-                        await postData(
-                            'order',
-                            {
-                                shippingAddress:
-                                    finalShippingAddress,
-
-                                cart:
-                                    verifiedCart,
-
-                                total:
-                                    finalTotal,
-
-                                // Razorpay information
-                                razorpayOrderId:
-                                    paymentResponse.razorpay_order_id,
-
-                                razorpayPaymentId:
-                                    paymentResponse.razorpay_payment_id,
-
-                                razorpaySignature:
-                                    paymentResponse.razorpay_signature,
-
-                                paymentMethod:
-                                    'razorpay',
-
-                                paid:
-                                    true,
-                            },
-                            auth.token
-                        )
-
-                    if (
-                        orderResponse?.err
-                    ) {
-                        dispatch({
-                            type: 'NOTIFY',
-                            payload: {
-                                error:
-                                    `Payment succeeded, but order creation failed. Payment ID: ${paymentResponse.razorpay_payment_id}`,
-                            },
-                        })
-
-                        return
-                    }
-
-                    // ---------------------------------------------
-                    // CLEAR CART
-                    // ---------------------------------------------
-
-                    dispatch({
-                        type: 'ADD_CART',
-                        payload: [],
-                    })
-
-                    // ---------------------------------------------
-                    // CLEAR TEMPORARY ADDRESS
-                    // ---------------------------------------------
-
-                    if (
-                        typeof window !==
-                        'undefined'
-                    ) {
-                        sessionStorage.removeItem(
-                            CHECKOUT_ADDRESS_KEY
-                        )
-                    }
-
-                    // ---------------------------------------------
-                    // ADD ORDER TO GLOBAL STATE
-                    // ---------------------------------------------
-
-                    dispatch({
-                        type: 'ADD_ORDERS',
-                        payload: [
-                            ...orders,
-                            {
-                                ...orderResponse.newOrder,
-
-                                user:
-                                    auth.user,
-
-                                paymentStatus:
-                                    'paid',
-
-                                razorpayPaymentId:
-                                    paymentResponse.razorpay_payment_id,
-
-                                razorpayOrderId:
-                                    paymentResponse.razorpay_order_id,
-                            },
-                        ],
-                    })
-
-                    // ---------------------------------------------
-                    // SUCCESS
-                    // ---------------------------------------------
-
-                    dispatch({
-                        type: 'NOTIFY',
-                        payload: {
-                            success:
-                                'Payment successful! Order placed successfully.',
-                        },
-                    })
-
-                    // ---------------------------------------------
-                    // ORDER DETAILS
-                    // ---------------------------------------------
-
-                    return router.push(
-                        `/order/${orderResponse.newOrder._id}`
-                    )
-
-                } catch (error) {
-                    console.error(
-                        'Payment verification/order error:',
-                        error
-                    )
-
-                    dispatch({
-                        type: 'NOTIFY',
-                        payload: {
-                            error:
-                                'Payment was completed, but we could not complete your order. Please contact support with your payment ID.',
-                        },
-                    })
-                }
-            },
-
-            // =================================================
-            // PAYMENT FAILED
-            // =================================================
-
-            modal: {
-                ondismiss: function () {
-                    dispatch({
-                        type: 'NOTIFY',
-                        payload: {
-                            error:
-                                'Payment cancelled. Your cart has not been changed.',
-                        },
-                    })
+              dispatch({
+                type: 'NOTIFY',
+                payload: {
+                  error:
+                    verification.err,
                 },
-            },
-        }
+              })
 
-        // =====================================================
-        // STEP 3 — OPEN RAZORPAY
-        // =====================================================
-
-        const razorpay =
-            new window.Razorpay(
-                options
-            )
-
-        razorpay.on(
-            'payment.failed',
-            function (
-                response
-            ) {
-                console.error(
-                    'Razorpay payment failed:',
-                    response
-                )
-
-                dispatch({
-                    type: 'NOTIFY',
-                    payload: {
-                        error:
-                            response?.error?.description ||
-                            'Payment failed. Please try again.',
-                    },
-                })
+              return
             }
+
+            if (
+              verification?.status !==
+              'success'
+            ) {
+              dispatch({
+                type: 'NOTIFY',
+                payload: {
+                  error:
+                    'Payment verification failed.',
+                },
+              })
+
+              return
+            }
+
+            // ---------------------------------------------
+            // PAYMENT VERIFIED
+            // ---------------------------------------------
+            //
+            // Only NOW create the NovaCart order.
+            //
+            // Your existing /api/order endpoint will then
+            // perform the existing stock deduction logic.
+            // ---------------------------------------------
+
+            const orderResponse =
+              await postData(
+                'order',
+                {
+                  shippingAddress:
+                    finalShippingAddress,
+
+                  cart:
+                    verifiedCart,
+
+                  total:
+                    finalTotal,
+
+                  // Razorpay information
+                  razorpayOrderId:
+                    paymentResponse.razorpay_order_id,
+
+                  razorpayPaymentId:
+                    paymentResponse.razorpay_payment_id,
+
+                  razorpaySignature:
+                    paymentResponse.razorpay_signature,
+
+                  paymentMethod:
+                    'razorpay',
+
+                  paid:
+                    true,
+                },
+                auth.token
+              )
+
+            if (
+              orderResponse?.err
+            ) {
+              dispatch({
+                type: 'NOTIFY',
+                payload: {
+                  error:
+                    `Payment succeeded, but order creation failed. Payment ID: ${paymentResponse.razorpay_payment_id}`,
+                },
+              })
+
+              return
+            }
+
+            // ---------------------------------------------
+            // CLEAR CART
+            // ---------------------------------------------
+
+            dispatch({
+              type: 'ADD_CART',
+              payload: [],
+            })
+
+            // ---------------------------------------------
+            // CLEAR TEMPORARY ADDRESS
+            // ---------------------------------------------
+
+            if (
+              typeof window !==
+              'undefined'
+            ) {
+              sessionStorage.removeItem(
+                CHECKOUT_ADDRESS_KEY
+              )
+            }
+
+            // ---------------------------------------------
+            // ADD ORDER TO GLOBAL STATE
+            // ---------------------------------------------
+
+            dispatch({
+              type: 'ADD_ORDERS',
+              payload: [
+                ...orders,
+                {
+                  ...orderResponse.newOrder,
+
+                  user:
+                    auth.user,
+
+                  paymentStatus:
+                    'paid',
+
+                  razorpayPaymentId:
+                    paymentResponse.razorpay_payment_id,
+
+                  razorpayOrderId:
+                    paymentResponse.razorpay_order_id,
+                },
+              ],
+            })
+
+            // ---------------------------------------------
+            // SUCCESS
+            // ---------------------------------------------
+
+            dispatch({
+              type: 'NOTIFY',
+              payload: {
+                success:
+                  'Payment successful! Order placed successfully.',
+              },
+            })
+
+            // ---------------------------------------------
+            // ORDER DETAILS
+            // ---------------------------------------------
+
+            return router.push(
+              `/order/${orderResponse.newOrder._id}`
+            )
+          } catch (error) {
+            console.error(
+              'Payment verification/order error:',
+              error
+            )
+
+            dispatch({
+              type: 'NOTIFY',
+              payload: {
+                error:
+                  'Payment was completed, but we could not complete your order. Please contact support with your payment ID.',
+              },
+            })
+          }
+        },
+
+        // =================================================
+        // PAYMENT FAILED
+        // =================================================
+
+        modal: {
+          ondismiss: function () {
+            dispatch({
+              type: 'NOTIFY',
+              payload: {
+                error:
+                  'Payment cancelled. Your cart has not been changed.',
+              },
+            })
+          },
+        },
+      }
+
+      // =====================================================
+      // STEP 3 — OPEN RAZORPAY
+      // =====================================================
+
+      const razorpay =
+        new window.Razorpay(
+          options
         )
 
-        razorpay.open()
+      razorpay.on(
+        'payment.failed',
+        function (
+          response
+        ) {
+          console.error(
+            'Razorpay payment failed:',
+            response
+          )
 
-    } catch (error) {
-        console.error(
-            'Checkout error:',
-            error
-        )
-
-        dispatch({
+          dispatch({
             type: 'NOTIFY',
             payload: {
-                error:
-                    error?.message ||
-                    'Unable to start payment. Please try again.',
+              error:
+                response?.error?.description ||
+                'Payment failed. Please try again.',
             },
-        })
+          })
+        }
+      )
+
+      razorpay.open()
+    } catch (error) {
+      console.error(
+        'Checkout error:',
+        error
+      )
+
+      dispatch({
+        type: 'NOTIFY',
+        payload: {
+          error:
+            error?.message ||
+            'Unable to start payment. Please try again.',
+        },
+      })
     }
-}
+  }
 
   // =========================================================
   // EMPTY CART
@@ -970,8 +997,7 @@ const handlePayment = async () => {
           </title>
         </Head>
 
-        <Container className="py-16">
-
+        <Container className="min-h-[65vh] py-12 sm:py-16">
           <EmptyState
             title="Your cart is empty"
             description="Looks like you have not added anything to your cart yet."
@@ -983,7 +1009,6 @@ const handlePayment = async () => {
               </Link>
             }
           />
-
         </Container>
       </>
     )
@@ -1009,55 +1034,67 @@ const handlePayment = async () => {
 
   return (
     <>
-    <Script
+      <Script
         id="razorpay-checkout"
         src="https://checkout.razorpay.com/v1/checkout.js"
         strategy="afterInteractive"
         onLoad={() => {
-            console.log('✅ Razorpay checkout.js loaded')
-            console.log(
-                'window.Razorpay:',
-                window.Razorpay
-            )
+          console.log(
+            '✅ Razorpay checkout.js loaded'
+          )
 
-            setRazorpayLoaded(
-                typeof window.Razorpay === 'function'
-            )
+          console.log(
+            'window.Razorpay:',
+            window.Razorpay
+          )
+
+          setRazorpayLoaded(
+            typeof window.Razorpay ===
+              'function'
+          )
         }}
         onReady={() => {
-            console.log('✅ Razorpay Script ready')
+          console.log(
+            '✅ Razorpay Script ready'
+          )
 
-            if (
-                typeof window !== 'undefined' &&
-                window.Razorpay
-            ) {
-                setRazorpayLoaded(true)
-            }
+          if (
+            typeof window !==
+              'undefined' &&
+            window.Razorpay
+          ) {
+            setRazorpayLoaded(
+              true
+            )
+          }
         }}
         onError={(error) => {
-            console.error(
-                '❌ Razorpay checkout.js failed:',
-                error
-            )
+          console.error(
+            '❌ Razorpay checkout.js failed:',
+            error
+          )
 
-            setRazorpayLoaded(false)
+          setRazorpayLoaded(
+            false
+          )
 
-            dispatch({
-                type: 'NOTIFY',
-                payload: {
-                    error:
-                        'Unable to load Razorpay Checkout.',
-                },
-            })
+          dispatch({
+            type: 'NOTIFY',
+            payload: {
+              error:
+                'Unable to load Razorpay Checkout.',
+            },
+          })
         }}
-    />
+      />
+
       <Head>
         <title>
           Your Cart | NovaCart
         </title>
       </Head>
 
-      <main className="py-8 sm:py-10">
+      <main className="min-h-screen bg-[var(--nova-bg)] py-6 sm:py-8 lg:py-10">
 
         <Container>
 
@@ -1065,18 +1102,28 @@ const handlePayment = async () => {
               PAGE HEADER
           ================================================= */}
 
-          <div className="mb-8">
+          <div className="relative mb-7 overflow-hidden rounded-3xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-5 py-6 shadow-[var(--shadow-sm)] sm:mb-8 sm:px-7 sm:py-7">
 
-            <h1 className="text-3xl font-semibold">
-              Shopping cart
-            </h1>
+            <div className="pointer-events-none absolute -right-20 -top-24 h-52 w-52 rounded-full bg-[rgba(139,92,246,0.10)] blur-3xl" />
 
-            <p className="mt-2 text-sm text-[var(--nova-muted)]">
-              {itemCount}{' '}
-              {itemCount === 1
-                ? 'item'
-                : 'items'}
-            </p>
+            <div className="relative">
+
+              <div className="mb-2 inline-flex items-center rounded-full border border-[rgba(139,92,246,0.18)] bg-[var(--nova-lavender-soft)] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--nova-primary)]">
+                Checkout
+              </div>
+
+              <h1 className="text-3xl font-bold tracking-[-0.03em] text-[var(--nova-text)] sm:text-4xl">
+                Shopping cart
+              </h1>
+
+              <p className="mt-2 text-sm text-[var(--nova-muted)]">
+                {itemCount}{' '}
+                {itemCount === 1
+                  ? 'item'
+                  : 'items'}
+              </p>
+
+            </div>
 
           </div>
 
@@ -1084,606 +1131,584 @@ const handlePayment = async () => {
               CART + BILLING
           ================================================= */}
 
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_380px]">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-8">
 
-  {/* =================================================
-      LEFT COLUMN — CART + DELIVERY ADDRESS
-  ================================================= */}
+            {/* =================================================
+                LEFT COLUMN — CART + DELIVERY ADDRESS
+            ================================================= */}
 
-  <div className="min-w-0 space-y-6">
+            <div className="min-w-0 space-y-5 sm:space-y-6">
 
-    {/* =================================================
-        CART ITEMS
-    ================================================= */}
+              {/* =================================================
+                  CART ITEMS
+              ================================================= */}
 
-    <div className="overflow-hidden rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)]">
+              <div className="overflow-hidden rounded-2xl border border-[var(--nova-border)] bg-[var(--nova-surface)] shadow-[var(--shadow-sm)]">
 
-      <div className="divide-y divide-[var(--nova-border)]">
+                <div className="divide-y divide-[var(--nova-border)]">
 
-        {cart.map(
-          (item) => (
-            <CartItem
-              key={item._id}
-              item={item}
-              dispatch={dispatch}
-              cart={cart}
-            />
-          )
-        )}
-
-      </div>
-
-    </div>
-
-
-    {/* =================================================
-        DELIVERY ADDRESS
-    ================================================= */}
-
-    <div className="rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-6">
-
-      <div className="mb-5">
-
-        <h2 className="text-xl font-semibold">
-          Delivery address
-        </h2>
-
-        <p className="mt-1 text-sm text-[var(--nova-muted)]">
-          Select a saved address or add a new delivery address.
-        </p>
-
-      </div>
-
-
-      {/* =================================================
-          SAVED ADDRESSES
-      ================================================= */}
-
-      {savedAddresses.length > 0 && (
-
-        <div className="space-y-3">
-
-          <h3 className="text-sm font-semibold">
-            Saved addresses
-          </h3>
-
-
-          {savedAddresses.map((item) => (
-
-            <button
-              key={item._id}
-              type="button"
-              onClick={() =>
-                handleSelectAddress(item)
-              }
-              className={`w-full rounded-xl border p-4 text-left transition-all duration-200 ${
-                selectedAddressId === item._id &&
-                !useNewAddress
-                  ? 'border-[var(--nova-blue)] bg-blue-50 shadow-md ring-1 ring-[var(--nova-blue)]'
-                  : 'border-gray-200 bg-white hover:border-[var(--nova-blue)] hover:bg-blue-50/40 hover:shadow-sm'
-              }`}
-            >
-
-              <div className="flex items-start justify-between gap-4">
-
-                <div className="min-w-0">
-
-                  <h3 className="text-sm font-semibold text-gray-900">
-                    {item.label || 'Home'}
-                  </h3>
-
-                  <p className="mt-2 text-sm font-medium text-gray-800">
-                    {item.fullName}
-                  </p>
-
-                  <p className="mt-2 text-sm leading-6 text-gray-600">
-                    {item.address}, {item.city}, {item.state} - {item.pincode}
-                  </p>
-
-                  <p className="mt-2 text-sm text-gray-600">
-                    {item.phone}
-                  </p>
-
-                </div>
-
-
-                <div className="flex shrink-0 flex-col items-end gap-2">
-
-                  {item.isDefault && (
-
-                    <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
-                      Default
-                    </span>
-
-                  )}
-
-
-                  {selectedAddressId === item._id &&
-                    !useNewAddress && (
-
-                      <span className="rounded-full bg-[var(--nova-blue)] px-3 py-1 text-xs font-semibold text-white">
-                        Selected
-                      </span>
-
+                  {cart.map(
+                    (item) => (
+                      <CartItem
+                        key={item._id}
+                        item={item}
+                        dispatch={dispatch}
+                        cart={cart}
+                      />
+                    )
                   )}
 
                 </div>
 
               </div>
 
-            </button>
+              {/* =================================================
+                  DELIVERY ADDRESS
+              ================================================= */}
 
-          ))}
+              <div className="rounded-2xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-5 shadow-[var(--shadow-sm)] sm:p-6">
 
-        </div>
-
-      )}
-
-
-      {/* =================================================
-          ADD NEW ADDRESS
-      ================================================= */}
-
-      <button
-        type="button"
-        onClick={() => {
-          setShowAddressForm(true)
-          setUseNewAddress(true)
-          setSelectedAddressId(null)
-        }}
-        className="mt-5 flex items-center gap-2 text-sm font-semibold text-blue-600 transition hover:text-blue-700"
-      >
-        + Add New Address
-      </button>
+                <div className="mb-5">
 
-
-      {/* =================================================
-          DELIVERY INFORMATION FORM
-      ================================================= */}
-
-      {showAddressForm && (
-
-        <div className="mt-5 rounded-2xl border border-gray-200 bg-white p-5">
-
-          <div className="mb-5">
-
-            <h3 className="text-sm font-semibold">
-              Delivery information
-            </h3>
-
-            <p className="mt-1 text-xs text-[var(--nova-muted)]">
-              Enter the complete address for delivery.
-            </p>
-
-          </div>
-
-
-          <div className="space-y-4">
-
-            {/* =================================================
-                FULL NAME
-            ================================================= */}
-
-            <div>
-
-              <label
-                htmlFor="fullName"
-                className="mb-2 flex items-center gap-2 text-sm font-medium"
-              >
-                <User size={14} />
-                Full name
-              </label>
-
-              <input
-                id="fullName"
-                name="fullName"
-                type="text"
-                value={
-                  shippingAddress.fullName
-                }
-                onChange={
-                  handleAddressChange
-                }
-                placeholder="Enter your full name"
-                autoComplete="name"
-                className="w-full rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] px-4 py-3 text-sm outline-none transition focus:border-[var(--nova-blue)]"
-              />
-
-            </div>
-
-
-            {/* =================================================
-                PHONE
-            ================================================= */}
-
-            <div>
-
-              <label
-                htmlFor="phone"
-                className="mb-2 flex items-center gap-2 text-sm font-medium"
-              >
-                <Phone size={14} />
-                Mobile number
-              </label>
-
-              <input
-                id="phone"
-                name="phone"
-                type="tel"
-                inputMode="numeric"
-                maxLength={10}
-                value={
-                  shippingAddress.phone
-                }
-                onChange={
-                  handleAddressChange
-                }
-                placeholder="10-digit mobile number"
-                autoComplete="tel"
-                className="w-full rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] px-4 py-3 text-sm outline-none transition focus:border-[var(--nova-blue)]"
-              />
-
-            </div>
-
-
-            {/* =================================================
-                FULL ADDRESS
-            ================================================= */}
-
-            <div>
-
-              <label
-                htmlFor="address"
-                className="mb-2 flex items-center gap-2 text-sm font-medium"
-              >
-                <MapPin size={14} />
-                Full address
-              </label>
-
-              <textarea
-                id="address"
-                name="address"
-                rows={3}
-                value={
-                  shippingAddress.address
-                }
-                onChange={
-                  handleAddressChange
-                }
-                placeholder="House number, street, area"
-                autoComplete="street-address"
-                className="w-full resize-none rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] px-4 py-3 text-sm outline-none transition focus:border-[var(--nova-blue)]"
-              />
-
-            </div>
-
-
-            {/* =================================================
-                LANDMARK
-            ================================================= */}
-
-            <div>
-
-              <label
-                htmlFor="addressLine2"
-                className="mb-2 block text-sm font-medium"
-              >
-
-                Landmark / Apartment
-
-                <span className="ml-1 text-xs text-[var(--nova-muted)]">
-                  (optional)
-                </span>
-
-              </label>
-
-              <input
-                id="addressLine2"
-                name="addressLine2"
-                type="text"
-                value={
-                  shippingAddress.addressLine2
-                }
-                onChange={
-                  handleAddressChange
-                }
-                placeholder="Apartment, landmark, etc."
-                autoComplete="address-line2"
-                className="w-full rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] px-4 py-3 text-sm outline-none transition focus:border-[var(--nova-blue)]"
-              />
-
-            </div>
-
-
-            {/* =================================================
-                CITY + STATE
-            ================================================= */}
-
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-
-              <div>
-
-                <label
-                  htmlFor="city"
-                  className="mb-2 block text-sm font-medium"
-                >
-                  City
-                </label>
-
-                <input
-                  id="city"
-                  name="city"
-                  type="text"
-                  value={
-                    shippingAddress.city
-                  }
-                  onChange={
-                    handleAddressChange
-                  }
-                  placeholder="City"
-                  autoComplete="address-level2"
-                  className="w-full rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] px-4 py-3 text-sm outline-none transition focus:border-[var(--nova-blue)]"
-                />
-
-              </div>
-
-
-              <div>
-
-                <label
-                  htmlFor="state"
-                  className="mb-2 block text-sm font-medium"
-                >
-                  State
-                </label>
-
-                <input
-                  id="state"
-                  name="state"
-                  type="text"
-                  value={
-                    shippingAddress.state
-                  }
-                  onChange={
-                    handleAddressChange
-                  }
-                  placeholder="State"
-                  autoComplete="address-level1"
-                  className="w-full rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] px-4 py-3 text-sm outline-none transition focus:border-[var(--nova-blue)]"
-                />
-
-              </div>
-
-            </div>
-
-
-            {/* =================================================
-                PIN CODE
-            ================================================= */}
-
-            <div>
-
-              <label
-                htmlFor="pincode"
-                className="mb-2 block text-sm font-medium"
-              >
-                PIN code
-              </label>
-
-              <input
-                id="pincode"
-                name="pincode"
-                type="text"
-                inputMode="numeric"
-                maxLength={6}
-                value={
-                  shippingAddress.pincode
-                }
-                onChange={
-                  handleAddressChange
-                }
-                placeholder="6-digit PIN code"
-                autoComplete="postal-code"
-                className="w-full rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] px-4 py-3 text-sm outline-none transition focus:border-[var(--nova-blue)]"
-              />
-
-
-              {useNewAddress && (
-
-                <label className="mt-4 flex items-center gap-2 text-sm">
-
-                  <input
-                    type="checkbox"
-                    checked={saveNewAddress}
-                    onChange={(e) =>
-                      setSaveNewAddress(
-                        e.target.checked
+                  <h2 className="text-xl font-bold tracking-tight text-[var(--nova-text)]">
+                    Delivery address
+                  </h2>
+
+                  <p className="mt-1 text-sm text-[var(--nova-muted)]">
+                    Select a saved address or add a new delivery address.
+                  </p>
+
+                </div>
+
+                {/* =================================================
+                    SAVED ADDRESSES
+                ================================================= */}
+
+                {savedAddresses.length > 0 && (
+
+                  <div className="space-y-3">
+
+                    <h3 className="text-sm font-bold text-[var(--nova-text)]">
+                      Saved addresses
+                    </h3>
+
+                    {savedAddresses.map(
+                      (item) => (
+
+                        <button
+                          key={item._id}
+                          type="button"
+                          onClick={() =>
+                            handleSelectAddress(item)
+                          }
+                          className={`w-full rounded-2xl border p-4 text-left transition-all duration-200 ${
+                            selectedAddressId === item._id &&
+                            !useNewAddress
+                              ? 'border-[var(--nova-primary)] bg-[var(--nova-lavender-soft)] shadow-[0_8px_24px_rgba(124,58,237,0.10)] ring-1 ring-[var(--nova-primary)]'
+                              : 'border-[var(--nova-border)] bg-[var(--nova-surface)] hover:border-[var(--nova-violet-light)] hover:bg-[var(--nova-surface-soft)] hover:shadow-[var(--shadow-sm)]'
+                          }`}
+                        >
+
+                          <div className="flex items-start justify-between gap-4">
+
+                            <div className="min-w-0">
+
+                              <h3 className="text-sm font-bold text-[var(--nova-text)]">
+                                {item.label || 'Home'}
+                              </h3>
+
+                              <p className="mt-2 text-sm font-semibold text-[var(--nova-text)]">
+                                {item.fullName}
+                              </p>
+
+                              <p className="mt-2 text-sm leading-6 text-[var(--nova-muted)]">
+                                {item.address}, {item.city}, {item.state} - {item.pincode}
+                              </p>
+
+                              <p className="mt-2 text-sm text-[var(--nova-muted)]">
+                                {item.phone}
+                              </p>
+
+                            </div>
+
+                            <div className="flex shrink-0 flex-col items-end gap-2">
+
+                              {item.isDefault && (
+
+                                <span className="rounded-full border border-[rgba(139,92,246,0.18)] bg-[var(--nova-lavender-soft)] px-3 py-1 text-xs font-semibold text-[var(--nova-primary)]">
+                                  Default
+                                </span>
+
+                              )}
+
+                              {selectedAddressId === item._id &&
+                                !useNewAddress && (
+
+                                  <span className="rounded-full bg-[var(--nova-primary)] px-3 py-1 text-xs font-semibold text-white">
+                                    Selected
+                                  </span>
+
+                                )}
+
+                            </div>
+
+                          </div>
+
+                        </button>
+
                       )
-                    }
-                  />
+                    )}
 
-                  Save this address to my profile
+                  </div>
 
-                </label>
+                )}
+
+                {/* =================================================
+                    ADD NEW ADDRESS
+                ================================================= */}
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowAddressForm(true)
+                    setUseNewAddress(true)
+                    setSelectedAddressId(null)
+                  }}
+                  className="mt-5 inline-flex items-center gap-2 rounded-xl border border-dashed border-[var(--nova-violet-light)] px-4 py-2.5 text-sm font-semibold text-[var(--nova-primary)] transition-all hover:bg-[var(--nova-lavender-soft)]"
+                >
+                  + Add New Address
+                </button>
+
+                {/* =================================================
+                    DELIVERY INFORMATION FORM
+                ================================================= */}
+
+                {showAddressForm && (
+
+                  <div className="mt-5 rounded-2xl border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] p-5">
+
+                    <div className="mb-5">
+
+                      <h3 className="text-sm font-bold text-[var(--nova-text)]">
+                        Delivery information
+                      </h3>
+
+                      <p className="mt-1 text-xs text-[var(--nova-muted)]">
+                        Enter the complete address for delivery.
+                      </p>
+
+                    </div>
+
+                    <div className="space-y-4">
+
+                      {/* =================================================
+                          FULL NAME
+                      ================================================= */}
+
+                      <div>
+
+                        <label
+                          htmlFor="fullName"
+                          className="mb-2 flex items-center gap-2 text-sm font-semibold text-[var(--nova-text)]"
+                        >
+                          <User size={14} />
+                          Full name
+                        </label>
+
+                        <input
+                          id="fullName"
+                          name="fullName"
+                          type="text"
+                          value={
+                            shippingAddress.fullName
+                          }
+                          onChange={
+                            handleAddressChange
+                          }
+                          placeholder="Enter your full name"
+                          autoComplete="name"
+                          className="w-full rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-4 py-3 text-sm text-[var(--nova-text)] outline-none transition-all placeholder:text-[var(--nova-muted)] hover:border-[var(--nova-violet-light)] focus:border-[var(--nova-primary)] focus:ring-2 focus:ring-[rgba(139,92,246,0.12)]"
+                        />
+
+                      </div>
+
+                      {/* =================================================
+                          PHONE
+                      ================================================= */}
+
+                      <div>
+
+                        <label
+                          htmlFor="phone"
+                          className="mb-2 flex items-center gap-2 text-sm font-semibold text-[var(--nova-text)]"
+                        >
+                          <Phone size={14} />
+                          Mobile number
+                        </label>
+
+                        <input
+                          id="phone"
+                          name="phone"
+                          type="tel"
+                          inputMode="numeric"
+                          maxLength={10}
+                          value={
+                            shippingAddress.phone
+                          }
+                          onChange={
+                            handleAddressChange
+                          }
+                          placeholder="10-digit mobile number"
+                          autoComplete="tel"
+                          className="w-full rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-4 py-3 text-sm text-[var(--nova-text)] outline-none transition-all placeholder:text-[var(--nova-muted)] hover:border-[var(--nova-violet-light)] focus:border-[var(--nova-primary)] focus:ring-2 focus:ring-[rgba(139,92,246,0.12)]"
+                        />
+
+                      </div>
+
+                      {/* =================================================
+                          FULL ADDRESS
+                      ================================================= */}
+
+                      <div>
+
+                        <label
+                          htmlFor="address"
+                          className="mb-2 flex items-center gap-2 text-sm font-semibold text-[var(--nova-text)]"
+                        >
+                          <MapPin size={14} />
+                          Full address
+                        </label>
+
+                        <textarea
+                          id="address"
+                          name="address"
+                          rows={3}
+                          value={
+                            shippingAddress.address
+                          }
+                          onChange={
+                            handleAddressChange
+                          }
+                          placeholder="House number, street, area"
+                          autoComplete="street-address"
+                          className="w-full resize-none rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-4 py-3 text-sm text-[var(--nova-text)] outline-none transition-all placeholder:text-[var(--nova-muted)] hover:border-[var(--nova-violet-light)] focus:border-[var(--nova-primary)] focus:ring-2 focus:ring-[rgba(139,92,246,0.12)]"
+                        />
+
+                      </div>
+
+                      {/* =================================================
+                          LANDMARK
+                      ================================================= */}
+
+                      <div>
+
+                        <label
+                          htmlFor="addressLine2"
+                          className="mb-2 block text-sm font-semibold text-[var(--nova-text)]"
+                        >
+                          Landmark / Apartment
+
+                          <span className="ml-1 text-xs font-normal text-[var(--nova-muted)]">
+                            (optional)
+                          </span>
+
+                        </label>
+
+                        <input
+                          id="addressLine2"
+                          name="addressLine2"
+                          type="text"
+                          value={
+                            shippingAddress.addressLine2
+                          }
+                          onChange={
+                            handleAddressChange
+                          }
+                          placeholder="Apartment, landmark, etc."
+                          autoComplete="address-line2"
+                          className="w-full rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-4 py-3 text-sm text-[var(--nova-text)] outline-none transition-all placeholder:text-[var(--nova-muted)] hover:border-[var(--nova-violet-light)] focus:border-[var(--nova-primary)] focus:ring-2 focus:ring-[rgba(139,92,246,0.12)]"
+                        />
+
+                      </div>
+
+                      {/* =================================================
+                          CITY + STATE
+                      ================================================= */}
+
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+                        <div>
+
+                          <label
+                            htmlFor="city"
+                            className="mb-2 block text-sm font-semibold text-[var(--nova-text)]"
+                          >
+                            City
+                          </label>
+
+                          <input
+                            id="city"
+                            name="city"
+                            type="text"
+                            value={
+                              shippingAddress.city
+                            }
+                            onChange={
+                              handleAddressChange
+                            }
+                            placeholder="City"
+                            autoComplete="address-level2"
+                            className="w-full rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-4 py-3 text-sm text-[var(--nova-text)] outline-none transition-all placeholder:text-[var(--nova-muted)] hover:border-[var(--nova-violet-light)] focus:border-[var(--nova-primary)] focus:ring-2 focus:ring-[rgba(139,92,246,0.12)]"
+                          />
+
+                        </div>
+
+                        <div>
+
+                          <label
+                            htmlFor="state"
+                            className="mb-2 block text-sm font-semibold text-[var(--nova-text)]"
+                          >
+                            State
+                          </label>
+
+                          <input
+                            id="state"
+                            name="state"
+                            type="text"
+                            value={
+                              shippingAddress.state
+                            }
+                            onChange={
+                              handleAddressChange
+                            }
+                            placeholder="State"
+                            autoComplete="address-level1"
+                            className="w-full rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-4 py-3 text-sm text-[var(--nova-text)] outline-none transition-all placeholder:text-[var(--nova-muted)] hover:border-[var(--nova-violet-light)] focus:border-[var(--nova-primary)] focus:ring-2 focus:ring-[rgba(139,92,246,0.12)]"
+                          />
+
+                        </div>
+
+                      </div>
+
+                      {/* =================================================
+                          PIN CODE
+                      ================================================= */}
+
+                      <div>
+
+                        <label
+                          htmlFor="pincode"
+                          className="mb-2 block text-sm font-semibold text-[var(--nova-text)]"
+                        >
+                          PIN code
+                        </label>
+
+                        <input
+                          id="pincode"
+                          name="pincode"
+                          type="text"
+                          inputMode="numeric"
+                          maxLength={6}
+                          value={
+                            shippingAddress.pincode
+                          }
+                          onChange={
+                            handleAddressChange
+                          }
+                          placeholder="6-digit PIN code"
+                          autoComplete="postal-code"
+                          className="w-full rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-4 py-3 text-sm text-[var(--nova-text)] outline-none transition-all placeholder:text-[var(--nova-muted)] hover:border-[var(--nova-violet-light)] focus:border-[var(--nova-primary)] focus:ring-2 focus:ring-[rgba(139,92,246,0.12)]"
+                        />
+
+                        {useNewAddress && (
+
+                          <label className="mt-4 flex items-center gap-2 rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-3 py-2.5 text-sm text-[var(--nova-text)]">
+
+                            <input
+                              type="checkbox"
+                              checked={
+                                saveNewAddress
+                              }
+                              onChange={(e) =>
+                                setSaveNewAddress(
+                                  e.target.checked
+                                )
+                              }
+                            />
+
+                            Save this address to my profile
+
+                          </label>
+
+                        )}
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                )}
+
+              </div>
+
+            </div>
+
+            {/* =================================================
+                RIGHT COLUMN — ORDER SUMMARY
+            ================================================= */}
+
+            <aside className="h-fit rounded-2xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-5 shadow-[var(--shadow-md)] sm:p-6 lg:sticky lg:top-24">
+
+              <h2 className="text-xl font-bold tracking-tight text-[var(--nova-text)]">
+                Order summary
+              </h2>
+
+              {/* =================================================
+                  BILLING DETAILS
+              ================================================= */}
+
+              <div className="my-6 border-t border-[var(--nova-border)] pt-5">
+
+                <h3 className="mb-4 text-sm font-bold text-[var(--nova-text)]">
+                  Billing details
+                </h3>
+
+                {/* ITEMS */}
+
+                <div className="flex items-center justify-between text-sm">
+
+                  <span className="text-[var(--nova-muted)]">
+                    Items
+                  </span>
+
+                  <span className="font-semibold text-[var(--nova-text)]">
+                    {itemCount}
+                  </span>
+
+                </div>
+
+                {/* SUBTOTAL */}
+
+                <div className="mt-3 flex items-center justify-between text-sm">
+
+                  <span className="text-[var(--nova-muted)]">
+                    Subtotal
+                  </span>
+
+                  <span className="font-semibold text-[var(--nova-text)]">
+                    {formatPrice(total)}
+                  </span>
+
+                </div>
+
+                {/* DISCOUNT */}
+
+                <div className="mt-3 flex items-center justify-between text-sm">
+
+                  <span className="text-[var(--nova-muted)]">
+                    Discount
+                  </span>
+
+                  <span className="font-semibold text-[var(--nova-success)]">
+                    {formatPrice(0)}
+                  </span>
+
+                </div>
+
+                {/* DELIVERY */}
+
+                <div className="mt-3 flex items-center justify-between text-sm">
+
+                  <span className="text-[var(--nova-muted)]">
+                    Delivery
+                  </span>
+
+                  <span className="font-semibold text-[var(--nova-success)]">
+                    FREE
+                  </span>
+
+                </div>
+
+                <div className="my-5 border-t border-[var(--nova-border)]" />
+
+                {/* TOTAL */}
+
+                <div className="flex items-end justify-between gap-4 rounded-xl bg-[var(--nova-surface-soft)] p-4">
+
+                  <div>
+
+                    <p className="font-bold text-[var(--nova-text)]">
+                      Total
+                    </p>
+
+                    <p className="mt-1 text-xs text-[var(--nova-muted)]">
+                      Inclusive of delivery
+                    </p>
+
+                  </div>
+
+                  <span className="text-2xl font-bold tracking-tight text-[var(--nova-text)]">
+                    {formatPrice(total)}
+                  </span>
+
+                </div>
+
+              </div>
+
+              {/* =================================================
+                  CHECKOUT
+              ================================================= */}
+
+              {auth?.user ? (
+
+                <button
+                  type="button"
+                  disabled={!razorpayLoaded}
+                  onClick={handlePayment}
+                  className="w-full min-h-12 rounded-xl bg-[var(--nova-primary)] px-4 py-3 text-sm font-bold text-white shadow-[0_8px_20px_rgba(124,58,237,0.18)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(124,58,237,0.24)] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
+                >
+                  {!razorpayLoaded
+                    ? 'Loading payment...'
+                    : 'Proceed to payment'}
+                </button>
+
+              ) : (
+
+                <Link
+                  href={{
+                    pathname: '/signin',
+
+                    query: {
+                      returnUrl: '/cart',
+                    },
+                  }}
+                >
+
+                  <Button className="w-full">
+                    Sign in to checkout
+                  </Button>
+
+                </Link>
 
               )}
 
-            </div>
+              {/* =================================================
+                  SECURITY
+              ================================================= */}
+
+              <p className="mt-4 flex items-center justify-center gap-2 text-[11px] text-[var(--nova-muted)]">
+
+                <Lock size={12} />
+
+                Secure checkout
+
+              </p>
+
+            </aside>
 
           </div>
-
-        </div>
-
-      )}
-
-    </div>
-
-  </div>
-
-
-  {/* =================================================
-      RIGHT COLUMN — ORDER SUMMARY
-  ================================================= */}
-
-  <aside className="h-fit rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-6 lg:sticky lg:top-24">
-
-    <h2 className="text-xl font-semibold">
-      Order summary
-    </h2>
-
-
-    {/* =================================================
-        BILLING DETAILS
-    ================================================= */}
-
-    <div className="my-6 border-t border-[var(--nova-border)] pt-5">
-
-      <h3 className="mb-4 text-sm font-semibold">
-        Billing details
-      </h3>
-
-
-      {/* ITEMS */}
-
-      <div className="flex items-center justify-between text-sm">
-
-        <span className="text-[var(--nova-muted)]">
-          Items
-        </span>
-
-        <span>
-          {itemCount}
-        </span>
-
-      </div>
-
-
-      {/* SUBTOTAL */}
-
-      <div className="mt-3 flex items-center justify-between text-sm">
-
-        <span className="text-[var(--nova-muted)]">
-          Subtotal
-        </span>
-
-        <span>
-          {formatPrice(total)}
-        </span>
-
-      </div>
-
-
-      {/* DISCOUNT */}
-
-      <div className="mt-3 flex items-center justify-between text-sm">
-
-        <span className="text-[var(--nova-muted)]">
-          Discount
-        </span>
-
-        <span className="text-emerald-500">
-          {formatPrice(0)}
-        </span>
-
-      </div>
-
-
-      {/* DELIVERY */}
-
-      <div className="mt-3 flex items-center justify-between text-sm">
-
-        <span className="text-[var(--nova-muted)]">
-          Delivery
-        </span>
-
-        <span className="font-medium text-emerald-500">
-          FREE
-        </span>
-
-      </div>
-
-
-      <div className="my-5 border-t border-[var(--nova-border)]" />
-
-
-      {/* TOTAL */}
-
-      <div className="flex items-end justify-between">
-
-        <div>
-
-          <p className="font-semibold">
-            Total
-          </p>
-
-          <p className="mt-1 text-xs text-[var(--nova-muted)]">
-            Inclusive of delivery
-          </p>
-
-        </div>
-
-        <span className="text-2xl font-semibold">
-          {formatPrice(total)}
-        </span>
-
-      </div>
-
-    </div>
-
-
-    {/* =================================================
-        CHECKOUT
-    ================================================= */}
-
-    {auth?.user ? (
-
-      <button
-        type="button"
-        disabled={!razorpayLoaded}
-        onClick={handlePayment}
-        className="w-full rounded-lg bg-[var(--nova-blue)] px-4 py-3 text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-      >
-        {!razorpayLoaded
-          ? 'Loading payment...'
-          : 'Proceed to payment'}
-      </button>
-
-    ) : (
-
-      <Link
-        href={{
-          pathname: '/signin',
-
-          query: {
-            returnUrl: '/cart',
-          },
-        }}
-      >
-
-        <Button className="w-full">
-          Sign in to checkout
-        </Button>
-
-      </Link>
-
-    )}
-
-
-    {/* =================================================
-        SECURITY
-    ================================================= */}
-
-    <p className="mt-4 flex items-center justify-center gap-2 text-[11px] text-[var(--nova-muted)]">
-
-      <Lock size={12} />
-
-      Secure checkout
-
-    </p>
-
-  </aside>
-
-</div>
 
         </Container>
 
