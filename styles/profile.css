@@ -1,48 +1,214 @@
-.profile_page .avatar{
-    width: 150px;
-    height: 150px;
-    overflow: hidden;
-    position: relative;
-    margin: 15px auto;
-    border: 1px solid #ddd;
-    border-radius: 50%;
-    cursor: pointer;
+/* =========================================================
+   NOVACART PROFILE AVATAR
+   Soft Lavender + Premium Violet
+   UI ONLY — FUNCTIONALITY UNCHANGED
+   ========================================================= */
+
+.profile_page .avatar {
+  width: 150px;
+  height: 150px;
+
+  overflow: hidden;
+
+  position: relative;
+
+  margin: 20px auto;
+
+  background: var(--nova-surface);
+
+  border: 2px solid var(--nova-border);
+
+  border-radius: 50%;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 8px 28px rgba(124, 58, 237, 0.12);
+
+  transition:
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    transform 220ms ease;
 }
 
-.profile_page .avatar img{
-    width: 100%;
-    height: 100%;
-    display: block;
-    object-fit: cover;
+/* Premium hover */
+
+.profile_page .avatar:hover {
+  border-color: var(--nova-primary);
+
+  box-shadow:
+    0 0 0 4px rgba(139, 92, 246, 0.12),
+    0 12px 35px rgba(124, 58, 237, 0.2);
+
+  transform: translateY(-2px);
 }
 
-.profile_page .avatar span{
-    position: absolute;
-    bottom: -100%;
-    left: 0;
-    width: 100%;
-    height: 50%;
-    background: #fff8;
-    text-align: center;
-    font-weight: 400;
-    color: rgb(255, 140, 45);
-    transition: 0.3 ease-in-out;
+/* =========================================================
+   AVATAR IMAGE
+   ========================================================= */
+
+.profile_page .avatar img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+  object-position: center;
+
+  transition: transform 300ms ease;
 }
 
-.profile_page .avatar:hover span{
-    bottom: -15%;
+.profile_page .avatar:hover img {
+  transform: scale(1.04);
 }
 
-.profile_page #file_up{
-    position: absolute;
-    top:0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    cursor: pointer;
-}
-::-webkit-file-upload-button{
-    cursor: pointer;
+/* =========================================================
+   UPLOAD OVERLAY
+   ========================================================= */
+
+.profile_page .avatar span {
+  position: absolute;
+
+  bottom: -100%;
+  left: 0;
+
+  width: 100%;
+  height: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(13, 10, 22, 0.78);
+
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+
+  text-align: center;
+
+  font-weight: 600;
+  font-size: 13px;
+
+  color: var(--nova-violet-light);
+
+  border-top: 1px solid rgba(167, 139, 250, 0.18);
+
+  transition:
+    bottom 300ms ease-in-out,
+    background-color 200ms ease,
+    color 200ms ease;
 }
 
+/* Show upload overlay */
+
+.profile_page .avatar:hover span {
+  bottom: -15%;
+}
+
+/* =========================================================
+   FILE INPUT
+   Keep transparent so existing upload functionality works
+   ========================================================= */
+
+.profile_page #file_up {
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  opacity: 0;
+
+  cursor: pointer;
+
+  z-index: 5;
+}
+
+/* =========================================================
+   FILE INPUT BUTTON
+   ========================================================= */
+
+::-webkit-file-upload-button {
+  cursor: pointer;
+}
+
+/* =========================================================
+   DARK MODE
+   ========================================================= */
+
+.dark .profile_page .avatar {
+  background: var(--nova-surface);
+
+  border-color: var(--nova-border);
+
+  box-shadow:
+    0 10px 35px rgba(0, 0, 0, 0.3),
+    0 0 25px rgba(124, 58, 237, 0.08);
+}
+
+.dark .profile_page .avatar:hover {
+  border-color: var(--nova-primary);
+
+  box-shadow:
+    0 0 0 4px rgba(139, 92, 246, 0.14),
+    0 14px 40px rgba(124, 58, 237, 0.22);
+}
+
+.dark .profile_page .avatar span {
+  background: rgba(13, 10, 22, 0.86);
+
+  color: var(--nova-violet-light);
+
+  border-top-color: rgba(167, 139, 250, 0.2);
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 640px) {
+  .profile_page .avatar {
+    width: 120px;
+    height: 120px;
+
+    margin: 16px auto;
+  }
+
+  .profile_page .avatar span {
+    font-size: 12px;
+  }
+}
+
+/* =========================================================
+   SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 380px) {
+  .profile_page .avatar {
+    width: 110px;
+    height: 110px;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .profile_page .avatar,
+  .profile_page .avatar img,
+  .profile_page .avatar span {
+    transition: none;
+  }
+
+  .profile_page .avatar:hover {
+    transform: none;
+  }
+
+  .profile_page .avatar:hover img {
+    transform: none;
+  }
+}

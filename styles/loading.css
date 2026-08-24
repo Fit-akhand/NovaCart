@@ -1,24 +1,83 @@
-.loading{
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+  min-height: 160px;
+
+  color: var(--nova-primary, #8b5cf6);
 }
-.loading svg{
-    font-size: 5px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    animation: text 1s ease-in-out infinite;
+
+.loading svg {
+  font-size: 5px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+
+  color: var(--nova-primary, #8b5cf6);
+
+  filter:
+    drop-shadow(0 0 6px rgba(139, 92, 246, 0.25));
+
+  animation: text 1s ease-in-out infinite;
 }
-@keyframes text{
-    50%{ opacity: 0.1;}
+
+@keyframes text {
+  50% {
+    opacity: 0.1;
+  }
 }
-.loading polygon{
-    stroke-dasharray: 22;
-    stroke-dashoffset: 1;
-    animation: dash 4s cubic-bezier(0.455, 0.03, 0.515, 0.955)
+
+.loading polygon {
+  stroke: var(--nova-primary, #8b5cf6);
+
+  stroke-dasharray: 22;
+  stroke-dashoffset: 1;
+
+  filter:
+    drop-shadow(0 0 5px rgba(139, 92, 246, 0.25));
+
+  animation:
+    dash 4s cubic-bezier(0.455, 0.03, 0.515, 0.955)
     infinite alternate-reverse;
 }
-@keyframes dash{
-    to{stroke-dashoffset: 234;}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: 234;
+  }
+}
+
+/* =========================================================
+   DARK MODE
+   ========================================================= */
+
+.dark .loading {
+  color: var(--nova-violet-light, #a78bfa);
+}
+
+.dark .loading svg {
+  color: var(--nova-violet-light, #a78bfa);
+
+  filter:
+    drop-shadow(0 0 8px rgba(167, 139, 250, 0.35));
+}
+
+.dark .loading polygon {
+  stroke: var(--nova-violet-light, #a78bfa);
+
+  filter:
+    drop-shadow(0 0 7px rgba(167, 139, 250, 0.3));
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .loading svg,
+  .loading polygon {
+    animation: none;
+  }
 }

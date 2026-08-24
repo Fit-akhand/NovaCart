@@ -1,31 +1,311 @@
-.products{
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-    justify-content: center;
+/* =========================================================
+   NOVACART PRODUCT GRID
+   Soft Lavender + Premium Violet
+   UI ONLY — FUNCTIONALITY UNCHANGED
+   ========================================================= */
+
+.products {
+  display: grid;
+
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(290px, 1fr)
+  );
+
+  justify-content: center;
+
+  gap: 20px;
+
+  margin: 24px 0;
+}
+
+/* =========================================================
+   PRODUCT CARD
+   ========================================================= */
+
+.products .card {
+  width: 100%;
+  max-width: 360px;
+
+  margin: 0 auto;
+
+  overflow: hidden;
+
+  background: var(--nova-surface);
+
+  border: 1px solid var(--nova-border);
+
+  border-radius: var(--radius-lg);
+
+  box-shadow: var(--shadow-sm);
+
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    border-color 220ms ease,
+    background-color 220ms ease;
+}
+
+/* Premium hover */
+
+.products .card:hover {
+  transform: translateY(-4px);
+
+  border-color: var(--nova-violet-light);
+
+  box-shadow:
+    0 14px 35px rgba(124, 58, 237, 0.12);
+}
+
+/* =========================================================
+   PRODUCT IMAGE
+   ========================================================= */
+
+.products .card-img-top {
+  width: 100%;
+  height: 250px;
+
+  object-fit: cover;
+  object-position: center;
+
+  background: var(--nova-surface-soft);
+
+  transition:
+    transform 350ms ease,
+    filter 350ms ease;
+}
+
+/* Subtle image zoom */
+
+.products .card:hover .card-img-top {
+  transform: scale(1.025);
+}
+
+/* =========================================================
+   PRODUCT CONTENT
+   ========================================================= */
+
+.products .card-body {
+  padding: 16px;
+}
+
+/* =========================================================
+   PRODUCT TITLE
+   ========================================================= */
+
+.products .card-title {
+  margin-bottom: 8px;
+
+  color: var(--nova-text);
+
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   PRODUCT DESCRIPTION
+   ========================================================= */
+
+.products .card-text {
+  height: 70px;
+
+  margin-bottom: 12px;
+
+  color: var(--nova-muted);
+
+  font-size: 14px;
+  line-height: 1.6;
+
+  overflow: hidden;
+
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+/* =========================================================
+   DARK MODE
+   ========================================================= */
+
+.dark .products .card {
+  background: var(--nova-surface);
+
+  border-color: var(--nova-border);
+
+  box-shadow:
+    0 8px 30px rgba(0, 0, 0, 0.18);
+}
+
+.dark .products .card:hover {
+  border-color: rgba(167, 139, 250, 0.45);
+
+  box-shadow:
+    0 16px 40px rgba(124, 58, 237, 0.16);
+}
+
+.dark .products .card-img-top {
+  background: var(--nova-surface-soft);
+}
+
+/* =========================================================
+   PRODUCT DETAIL PAGE
+   ========================================================= */
+
+.detail_page .img-thumbnail {
+  border: 1px solid var(--nova-border);
+
+  border-radius: var(--radius-md);
+
+  background: var(--nova-surface);
+
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.detail_page .img-thumbnail:hover {
+  border-color: var(--nova-violet-light);
+
+  transform: translateY(-1px);
+}
+
+/* Active thumbnail */
+
+.detail_page .img-thumbnail.active {
+  border-color: var(--nova-primary);
+
+  padding: 2px;
+
+  box-shadow:
+    0 0 0 2px var(--nova-lavender),
+    0 6px 18px rgba(124, 58, 237, 0.15);
+}
+
+/* Dark mode active thumbnail */
+
+.dark .detail_page .img-thumbnail.active {
+  border-color: var(--nova-primary);
+
+  box-shadow:
+    0 0 0 2px rgba(139, 92, 246, 0.2),
+    0 6px 20px rgba(124, 58, 237, 0.2);
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1024px) {
+  .products {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    gap: 16px;
+
     margin: 20px 0;
+  }
+
+  .products .card {
+    max-width: none;
+  }
+
+  .products .card-img-top {
+    height: 220px;
+  }
 }
-.products .card{
-    margin: 10px auto;
-}
-.products .card-img-top{
-    height: 250px;
-    width: 100%;
-}
-.products .card-title{
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-.products .card-text{
-    height: 70px;
-    overflow: hidden;
-    -webkit-box-orient: vertical;
+
+/* =========================================================
+   MOBILE
+   IMPORTANT:
+   2 PRODUCTS PER ROW
+   ========================================================= */
+
+@media (max-width: 640px) {
+  .products {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 12px;
+
+    margin: 16px 0;
+  }
+
+  .products .card {
+    max-width: none;
+
+    margin: 0;
+
+    border-radius: var(--radius-md);
+  }
+
+  .products .card-img-top {
+    height: 180px;
+  }
+
+  .products .card-body {
+    padding: 12px;
+  }
+
+  .products .card-title {
+    font-size: 14px;
+  }
+
+  .products .card-text {
+    height: 58px;
+
+    font-size: 12px;
+    line-height: 1.5;
+
     -webkit-line-clamp: 3;
+  }
 }
 
+/* =========================================================
+   SMALL PHONES
+   ========================================================= */
 
-/* --------- Detail Product ----------- */
-.detail_page .img-thumbnail.active{
-    border-color: orangered;
-    padding: 2px;
+@media (max-width: 380px) {
+  .products {
+    gap: 10px;
+  }
+
+  .products .card-img-top {
+    height: 155px;
+  }
+
+  .products .card-body {
+    padding: 10px;
+  }
+
+  .products .card-title {
+    font-size: 13px;
+  }
+
+  .products .card-text {
+    font-size: 11px;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .products .card,
+  .products .card-img-top,
+  .detail_page .img-thumbnail {
+    transition: none;
+  }
+
+  .products .card:hover {
+    transform: none;
+  }
+
+  .products .card:hover .card-img-top {
+    transform: none;
+  }
 }

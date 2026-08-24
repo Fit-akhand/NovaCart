@@ -7,64 +7,169 @@
 @tailwind components;
 @tailwind utilities;
 
+/* =========================================================
+   NOVACART DESIGN SYSTEM
+   Soft Lavender + Premium Violet
+   UI ONLY — DO NOT CHANGE APPLICATION FUNCTIONALITY
+   ========================================================= */
+
 :root {
-  --nova-navy: #0A1F44;
-  --nova-blue: #2563FF;
-  --nova-light: #F5F7FB;
-  --nova-text: #111827;
+  /* ---------- Brand ---------- */
+  --nova-navy: #17132b;
+  --nova-blue: #7c3aed;
+  --nova-primary: #8b5cf6;
+  --nova-primary-hover: #7c3aed;
+  --nova-primary-active: #6d28d9;
 
-  --nova-bg: #F5F7FB;
-  --nova-surface: #FFFFFF;
-  --nova-surface-soft: #F8FAFC;
+  /* ---------- Lavender ---------- */
+  --nova-lavender: #ede9fe;
+  --nova-lavender-soft: #f5f3ff;
+  --nova-lavender-light: #faf9ff;
 
-  --nova-muted: #64748B;
-  --nova-border: #E2E8F0;
+  /* ---------- Light Theme ---------- */
+  --nova-light: #faf9ff;
+  --nova-bg: #faf9ff;
+  --nova-surface: #ffffff;
+  --nova-surface-soft: #f5f3ff;
 
-  --nova-success: #16A34A;
-  --nova-warning: #F59E0B;
-  --nova-danger: #EF4444;
+  /* ---------- Text ---------- */
+  --nova-text: #1f1933;
+  --nova-muted: #6b647a;
+  --nova-muted-light: #817890;
 
+  /* ---------- Borders ---------- */
+  --nova-border: #e8e3f0;
+  --nova-border-soft: #f0ecf5;
+
+  /* ---------- Status ---------- */
+  --nova-success: #16a34a;
+  --nova-warning: #f59e0b;
+  --nova-danger: #e11d48;
+
+  /* ---------- Accent ---------- */
+  --nova-violet-light: #a78bfa;
+  --nova-violet-soft: #c4b5fd;
+
+  /* ---------- Layout ---------- */
+  --navbar-height: 72px;
+
+  /* ---------- Radius ---------- */
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius-xl: 24px;
 
-  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
-  --shadow-md: 0 8px 30px rgba(15, 23, 42, 0.08);
+  /* ---------- Shadows ---------- */
+  --shadow-sm:
+    0 1px 2px rgba(31, 25, 51, 0.04);
 
-  --navbar-height: 72px;
+  --shadow-md:
+    0 8px 30px rgba(31, 25, 51, 0.08);
+
+  --shadow-lg:
+    0 20px 50px rgba(31, 25, 51, 0.12);
+
+  /* ---------- Compatibility ---------- */
   --radius: 12px;
 }
 
-:focus-visible {
-  outline: 2px solid var(--nova-blue);
-  outline-offset: 2px;
-}
+/* =========================================================
+   DARK MODE
+   Premium Purple / Lavender Atmosphere
+   ========================================================= */
 
-/* Dark theme */
 .dark {
-  --nova-bg: #0B1220;
-  --nova-surface: #111827;
-  --nova-surface-soft: #172033;
+  /* ---------- Main Background ---------- */
+  --nova-bg: #0d0a16;
 
-  --nova-text: #F8FAFC;
-  --nova-muted: #94A3B8;
-  --nova-border: #263449;
+  /* ---------- Surfaces ---------- */
+  --nova-surface: #171226;
+  --nova-surface-soft: #1d1730;
+
+  /* ---------- Brand ---------- */
+  --nova-navy: #161124;
+  --nova-blue: #8b5cf6;
+  --nova-primary: #8b5cf6;
+  --nova-primary-hover: #7c3aed;
+  --nova-primary-active: #6d28d9;
+
+  /* ---------- Lavender ---------- */
+  --nova-lavender: #c4b5fd;
+  --nova-lavender-soft: #241d38;
+  --nova-lavender-light: #211a32;
+
+  /* ---------- Text ---------- */
+  --nova-text: #f9f7ff;
+  --nova-muted: #b8b0c9;
+  --nova-muted-light: #817890;
+
+  /* ---------- Borders ---------- */
+  --nova-border: #2a2340;
+  --nova-border-soft: #211b32;
+
+  /* ---------- Status ---------- */
+  --nova-success: #4ade80;
+  --nova-warning: #fbbf24;
+  --nova-danger: #fb7185;
+
+  /* ---------- Accent ---------- */
+  --nova-violet-light: #a78bfa;
+  --nova-violet-soft: #c4b5fd;
+
+  /* ---------- Dark Shadows ---------- */
+  --shadow-sm:
+    0 1px 2px rgba(0, 0, 0, 0.25);
+
+  --shadow-md:
+    0 8px 30px rgba(0, 0, 0, 0.28);
+
+  --shadow-lg:
+    0 20px 50px rgba(0, 0, 0, 0.38);
 }
+
+/* =========================================================
+   GLOBAL RESET
+   ========================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   HTML
+   ========================================================= */
 
 html {
   width: 100%;
   min-height: 100%;
+
   overflow-x: hidden;
+
   background: var(--nova-bg);
   color: var(--nova-text);
+
+  scroll-behavior: smooth;
+
+  transition:
+    background-color 220ms ease,
+    color 220ms ease;
 }
+
+/* =========================================================
+   BODY
+   ========================================================= */
 
 body {
   min-height: 100vh;
+
   overflow-x: hidden;
 
+  margin: 0;
+
   font-family:
+    Inter,
     -apple-system,
     BlinkMacSystemFont,
     "Segoe UI",
@@ -79,27 +184,38 @@ body {
   color: var(--nova-text);
 
   transition:
-    background-color 180ms ease,
-    color 180ms ease;
+    background-color 220ms ease,
+    color 220ms ease;
 }
+
+/* =========================================================
+   NEXT.JS ROOT
+   ========================================================= */
 
 #__next {
   width: 100%;
   min-height: 100vh;
+
   background: var(--nova-bg);
   color: var(--nova-text);
+
+  transition:
+    background-color 220ms ease,
+    color 220ms ease;
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+/* =========================================================
+   LINKS
+   ========================================================= */
 
 a {
   color: inherit;
   text-decoration: none;
 }
+
+/* =========================================================
+   FORM ELEMENTS
+   ========================================================= */
 
 button,
 input,
@@ -108,8 +224,130 @@ select {
   font: inherit;
 }
 
+/* =========================================================
+   BUTTON
+   ========================================================= */
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* =========================================================
+   IMAGES
+   ========================================================= */
+
 img {
+  display: block;
+
   max-width: 100%;
+  height: auto;
+
   object-fit: cover;
   object-position: center;
+}
+
+/* =========================================================
+   FOCUS
+   ========================================================= */
+
+:focus-visible {
+  outline: 2px solid var(--nova-primary);
+  outline-offset: 3px;
+
+  border-radius: 6px;
+}
+
+/* =========================================================
+   TEXT SELECTION
+   ========================================================= */
+
+::selection {
+  background: var(--nova-primary);
+  color: #ffffff;
+}
+
+/* =========================================================
+   SCROLLBAR
+   Premium subtle scrollbar
+   ========================================================= */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--nova-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--nova-border);
+  border-radius: 999px;
+
+  transition: background 180ms ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--nova-primary);
+}
+
+/* =========================================================
+   DARK MODE SCROLLBAR
+   ========================================================= */
+
+.dark::-webkit-scrollbar-track {
+  background: var(--nova-bg);
+}
+
+.dark::-webkit-scrollbar-thumb {
+  background: #352b4f;
+}
+
+.dark::-webkit-scrollbar-thumb:hover {
+  background: var(--nova-primary);
+}
+
+/* =========================================================
+   MOBILE TOUCH
+   ========================================================= */
+
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* =========================================================
+   REDUCED MOTION
+   Accessibility
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 640px) {
+  :root {
+    --navbar-height: 64px;
+
+    --radius-lg: 14px;
+    --radius-xl: 20px;
+  }
 }
