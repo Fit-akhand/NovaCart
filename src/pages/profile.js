@@ -66,81 +66,41 @@ const Profile = () => {
   // INPUT CHANGE
   // ===============================
 
-  const handleChange = (e) => {
+ const changeAvatar = async (e) => {
 
-    const {
-      name,
-      value
-    } = e.target
+  const file = e.target.files[0]
 
-    setData((prev) => ({
-      ...prev,
-      [name]: value
-    }))
-
-    dispatch({
+  if (!file) {
+    return dispatch({
       type: 'NOTIFY',
-      payload: {}
+      payload: {
+        error: 'File does not exist.'
+      }
     })
   }
 
-
-  // ===============================
-  // AVATAR
-  // ===============================
-
-  const changeAvatar = (e) => {
-
-    const file = e.target.files[0]
-
-    if (!file) {
-
-      return dispatch({
-        type: 'NOTIFY',
-        payload: {
-          error: 'File does not exist.'
-        }
-      })
-    }
-
-
-    if (file.size > 1024 * 1024) {
-
-      return dispatch({
-        type: 'NOTIFY',
-        payload: {
-          error: 'The largest image size is 1mb.'
-        }
-      })
-    }
-
-
-    if (
-      file.type !== 'image/jpeg' &&
-      file.type !== 'image/png'
-    ) {
-
-      return dispatch({
-        type: 'NOTIFY',
-        payload: {
-          error: 'Image format is incorrect.'
-        }
-      })
-    }
-
-
-    setData((prev) => ({
-      ...prev,
-      avatar: file
-    }))
+  if (file.size > 1024 * 1024) {
+    return dispatch({
+      type: 'NOTIFY',
+      payload: {
+        error: 'The largest image size is 1mb.'
+      }
+    })
   }
 
+  if (
+    file.type !== 'image/jpeg' &&
+    file.type !== 'image/png'
+  ) {
+    return dispatch({
+      type: 'NOTIFY',
+      payload: {
+        error: 'Image format is incorrect.'
+      }
+    })
+  }
 
-  // ===============================
-  // UPDATE PASSWORD
-  // ===============================
-
-  const updatePassword = async () => {
+  try {
 
     dispatch({
       type: 'NOTIFY',
@@ -149,18 +109,32 @@ const Profile = () => {
       }
     })
 
+    const media = await imageUpload([file])
+
+    if (
+      !media ||
+      !media[0] ||
+      !media[0].url
+    ) {
+      return dispatch({
+        type: 'NOTIFY',
+        payload: {
+          error: 'Image upload failed.'
+        }
+      })
+    }
+
+    const avatarUrl = media[0].url
 
     const res = await patchData(
-      'user/resetPassword',
+      'user',
       {
-        password: data.password
+        avatar: avatarUrl
       },
       auth.token
     )
 
-
     if (res.err) {
-
       return dispatch({
         type: 'NOTIFY',
         payload: {
@@ -169,16 +143,105 @@ const Profile = () => {
       })
     }
 
+    dispatch({
+      type: 'AUTH',
+      payload: {
+        token: auth.token,
+        user: res.user
+      }
+    })
+
+    setData((prev) => ({
+      ...prev,
+      avatar: ''
+    }))
 
     dispatch({
       type: 'NOTIFY',
       payload: {
-        success: res.msg
+        success: 'Profile picture updated successfully.'
+      }
+    })
+
+  } catch (error) {
+
+    console.error(
+      'Avatar upload error:',
+      error
+    )
+
+    dispatch({
+      type: 'NOTIFY',
+      payload: {
+        error:
+          error?.message ||
+          'Unable to update profile picture.'
+      }
+    })
+  }
+}
+
+
+// ===============================
+// HANDLE INPUT CHANGE
+// ===============================
+
+const handleChange = (e) => {
+
+  const {
+    name,
+    value
+  } = e.target
+
+  setData((prev) => ({
+    ...prev,
+    [name]: value
+  }))
+}
+
+
+// ===============================
+// UPDATE PASSWORD
+// ===============================
+
+const updatePassword = async () => {
+
+  dispatch({
+    type: 'NOTIFY',
+    payload: {
+      loading: true
+    }
+  })
+
+
+  const res = await patchData(
+    'user',
+    {
+      password: data.password,
+      cf_password: data.cf_password
+    },
+    auth.token
+  )
+
+
+  if (res.err) {
+
+    return dispatch({
+      type: 'NOTIFY',
+      payload: {
+        error: res.err
       }
     })
   }
 
 
+  dispatch({
+    type: 'NOTIFY',
+    payload: {
+      success: res.msg
+    }
+  })
+}
   // ===============================
   // UPDATE USER INFORMATION
   // ===============================
@@ -211,8 +274,14 @@ const Profile = () => {
         ? media[0].url
         : auth.user.avatar
 
-    }
+    } 
 
+    console.log('========== PROFILE UPDATE ==========')
+    console.log('Selected file:', data.avatar)
+    console.log('Cloudinary media:', media)
+    console.log('Payload being sent:', payload)
+    console.log('Auth token exists:', !!auth.token)
+    console.log('====================================')
 
     const res = await patchData(
       'user',
@@ -220,6 +289,10 @@ const Profile = () => {
       auth.token
     )
 
+    console.log('========== API RESPONSE ==========')
+    console.log('User update response:', res)
+    console.log('Saved avatar:', res?.user?.avatar)
+    console.log('==================================')
 
     if (res.err) {
 
