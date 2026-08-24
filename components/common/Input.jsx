@@ -10,7 +10,10 @@ const Input = ({
       {label && (
         <label
           htmlFor={id}
-          className="mb-2 block text-sm font-medium text-[var(--nova-text)]"
+          className="
+            mb-2 block text-sm font-medium
+            text-[var(--nova-text)]
+          "
         >
           {label}
         </label>
@@ -24,21 +27,46 @@ const Input = ({
           px-4 text-sm
           text-[var(--nova-text)]
           outline-none
+
           placeholder:text-[var(--nova-muted)]
-          transition
+
+          transition-all duration-200 ease-out
+
           ${
             error
-              ? 'border-[var(--nova-danger)]'
-              : 'border-[var(--nova-border)] focus:border-[var(--nova-blue)]'
+              ? `
+                border-[var(--nova-danger)]
+                focus:border-[var(--nova-danger)]
+                focus:ring-2
+                focus:ring-[rgba(225,29,72,0.12)]
+              `
+              : `
+                border-[var(--nova-border)]
+                hover:border-[var(--nova-violet-light)]
+                focus:border-[var(--nova-primary)]
+                focus:ring-2
+                focus:ring-[rgba(139,92,246,0.14)]
+              `
           }
-          disabled:cursor-not-allowed disabled:opacity-70
+
+          disabled:cursor-not-allowed
+          disabled:opacity-70
+          disabled:bg-[var(--nova-surface-soft)]
+
           ${className}
         `}
         {...props}
       />
 
       {error && (
-        <p className="mt-1.5 text-xs text-[var(--nova-danger)]">
+        <p
+          className="
+            mt-1.5
+            text-xs
+            font-medium
+            text-[var(--nova-danger)]
+          "
+        >
           {error}
         </p>
       )}

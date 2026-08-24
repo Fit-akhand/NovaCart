@@ -11,26 +11,88 @@ const EmptyState = ({
       className={`
         flex min-h-[300px]
         flex-col items-center justify-center
-        rounded-2xl border border-dashed
+
+        rounded-2xl
+        border border-dashed
         border-[var(--nova-border)]
+
         bg-[var(--nova-surface)]
-        px-6 py-12 text-center
+
+        px-6 py-12
+        text-center
+
+        transition-colors
+        duration-200
+
+        hover:border-[var(--nova-violet-light)]
+
         ${className}
       `}
     >
-      <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--nova-surface-soft)] text-[var(--nova-muted)]">
-        <PackageOpen size={26} />
+      {/* Icon */}
+      <div
+        className="
+          mb-5
+          flex
+          h-16
+          w-16
+          items-center
+          justify-center
+
+          rounded-2xl
+
+          border
+          border-[color-mix(in_srgb,var(--nova-primary)_18%,transparent)]
+
+          bg-[var(--nova-lavender-soft)]
+
+          text-[var(--nova-primary)]
+
+          shadow-[0_8px_24px_rgba(124,58,237,0.08)]
+
+          transition-transform
+          duration-200
+
+          hover:scale-105
+        "
+      >
+        <PackageOpen
+          size={28}
+          strokeWidth={1.8}
+        />
       </div>
 
-      <h3 className="text-lg font-semibold text-[var(--nova-text)]">
+      {/* Title */}
+      <h3
+        className="
+          text-lg
+          font-semibold
+          tracking-[-0.01em]
+          text-[var(--nova-text)]
+        "
+      >
         {title}
       </h3>
 
-      <p className="mt-2 max-w-md text-sm text-[var(--nova-muted)]">
+      {/* Description */}
+      <p
+        className="
+          mt-2
+          max-w-md
+          text-sm
+          leading-6
+          text-[var(--nova-muted)]
+        "
+      >
         {description}
       </p>
 
-      {action && <div className="mt-5">{action}</div>}
+      {/* Action */}
+      {action && (
+        <div className="mt-6">
+          {action}
+        </div>
+      )}
     </div>
   )
 }

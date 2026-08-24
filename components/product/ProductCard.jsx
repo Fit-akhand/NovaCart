@@ -124,10 +124,29 @@ const ProductCard = ({ product, handleCheck }) => {
   return (
     <article
       className="
-        group relative flex h-full flex-col
-        overflow-hidden rounded-xl
-        border border-[var(--nova-border)]
+        group
+        relative
+        flex
+        h-full
+        flex-col
+        overflow-hidden
+
+        rounded-2xl
+
+        border
+        border-[var(--nova-border)]
+
         bg-[var(--nova-surface)]
+
+        shadow-[var(--shadow-sm)]
+
+        transition-all
+        duration-300
+        ease-out
+
+        hover:-translate-y-1
+        hover:border-[var(--nova-violet-light)]
+        hover:shadow-[0_16px_40px_rgba(124,58,237,0.14)]
       "
     >
 
@@ -140,9 +159,19 @@ const ProductCard = ({ product, handleCheck }) => {
           type="checkbox"
           checked={Boolean(product.checked)}
           className="
-            absolute z-10 ml-3 mt-3
-            h-4 w-4
-            accent-[var(--nova-blue)]
+            absolute
+            left-3
+            top-3
+            z-20
+
+            h-4
+            w-4
+
+            cursor-pointer
+
+            accent-[var(--nova-primary)]
+
+            rounded
           "
           onChange={() =>
             handleCheck(product._id)
@@ -157,8 +186,45 @@ const ProductCard = ({ product, handleCheck }) => {
 
       <Link
         href={`/product/${product._id}`}
-        className="relative block overflow-hidden"
+        className="
+          relative
+          block
+          overflow-hidden
+
+          bg-[var(--nova-surface-soft)]
+        "
       >
+        {/* Discount badge */}
+
+        {hasDiscount && (
+          <div
+            className="
+              absolute
+              left-3
+              top-3
+              z-10
+
+              rounded-full
+
+              bg-[var(--nova-danger)]
+
+              px-2.5
+              py-1
+
+              text-[10px]
+              font-bold
+              uppercase
+              tracking-wide
+
+              text-white
+
+              shadow-[0_4px_12px_rgba(225,29,72,0.2)]
+            "
+          >
+            {product.discountPercent}% OFF
+          </div>
+        )}
+
         <img
           src={image}
           alt={
@@ -167,9 +233,39 @@ const ProductCard = ({ product, handleCheck }) => {
           }
           onError={onImageError}
           className="
-            h-48 w-full object-cover
-            transition duration-300
-            group-hover:scale-[1.02]
+            h-48
+            w-full
+
+            object-cover
+
+            transition-transform
+            duration-500
+            ease-out
+
+            group-hover:scale-[1.04]
+          "
+        />
+
+        {/* Image bottom glow */}
+
+        <div
+          className="
+            pointer-events-none
+            absolute
+            inset-x-0
+            bottom-0
+            h-20
+
+            bg-gradient-to-t
+            from-black/10
+            to-transparent
+
+            opacity-0
+
+            transition-opacity
+            duration-300
+
+            group-hover:opacity-100
           "
         />
       </Link>
@@ -178,16 +274,29 @@ const ProductCard = ({ product, handleCheck }) => {
           PRODUCT CONTENT
       ===================================================== */}
 
-      <div className="flex flex-1 flex-col p-4">
+      <div
+        className="
+          flex
+          flex-1
+          flex-col
+
+          p-4
+        "
+      >
 
         {/* CATEGORY */}
 
         {categoryName && (
           <p
             className="
-              mb-1 text-xs uppercase
-              tracking-wide
-              text-[var(--nova-muted)]
+              mb-1.5
+
+              text-[10px]
+              font-semibold
+              uppercase
+              tracking-[0.12em]
+
+              text-[var(--nova-violet-light)]
             "
           >
             {categoryName}
@@ -198,12 +307,25 @@ const ProductCard = ({ product, handleCheck }) => {
 
         <Link
           href={`/product/${product._id}`}
+          className="block"
         >
           <h3
             className="
-              line-clamp-2 text-sm
-              font-semibold capitalize
+              line-clamp-2
+
+              min-h-[40px]
+
+              text-sm
+              font-semibold
+              capitalize
+              leading-5
+
               text-[var(--nova-text)]
+
+              transition-colors
+              duration-200
+
+              group-hover:text-[var(--nova-primary)]
             "
             title={product.title}
           >
@@ -215,21 +337,40 @@ const ProductCard = ({ product, handleCheck }) => {
             PRICE + STOCK
         ================================================= */}
 
-        <div className="mt-2 flex items-start justify-between gap-2">
+        <div
+          className="
+            mt-3
+            flex
+            items-start
+            justify-between
+            gap-2
+          "
+        >
 
           <div className="min-w-0">
 
             {hasDiscount ? (
-              <div className="flex flex-wrap items-center gap-2">
-
+              <div
+                className="
+                  flex
+                  flex-wrap
+                  items-center
+                  gap-x-2
+                  gap-y-1
+                "
+              >
                 <ProductPrice
                   price={displayPrice}
-                  className="text-xl font-bold"
+                  className="
+                    text-lg
+                    font-bold
+                    text-[var(--nova-text)]
+                  "
                 />
 
                 <span
                   className="
-                    text-sm
+                    text-xs
                     text-[var(--nova-muted)]
                     line-through
                   "
@@ -243,21 +384,15 @@ const ProductCard = ({ product, handleCheck }) => {
                     }
                   )}
                 </span>
-
-                <span
-                  className="
-                    text-sm font-semibold
-                    text-green-600
-                  "
-                >
-                  {product.discountPercent}% OFF
-                </span>
-
               </div>
             ) : (
               <ProductPrice
                 price={displayPrice}
-                className="text-xl font-bold"
+                className="
+                  text-lg
+                  font-bold
+                  text-[var(--nova-text)]
+                "
               />
             )}
 
@@ -281,7 +416,13 @@ const ProductCard = ({ product, handleCheck }) => {
             ACTIONS
         ================================================= */}
 
-        <div className="mt-4 flex gap-2">
+        <div
+          className="
+            mt-4
+            flex
+            gap-2
+          "
+        >
 
           {/* =================================================
               ADMIN
@@ -292,13 +433,28 @@ const ProductCard = ({ product, handleCheck }) => {
               <Link
                 href={`/create/${product._id}`}
                 className="
-                  flex-1 rounded-lg
-                  border border-[var(--nova-border)]
-                  px-3 py-2.5
-                  text-center text-sm
-                  font-medium
-                  hover:border-[var(--nova-blue)]
-                  hover:text-[var(--nova-blue)]
+                  flex-1
+
+                  rounded-xl
+
+                  border
+                  border-[var(--nova-border)]
+
+                  px-3
+                  py-2.5
+
+                  text-center
+                  text-sm
+                  font-semibold
+
+                  text-[var(--nova-text)]
+
+                  transition-all
+                  duration-200
+
+                  hover:border-[var(--nova-primary)]
+                  hover:bg-[var(--nova-lavender-soft)]
+                  hover:text-[var(--nova-primary)]
                 "
               >
                 Edit
@@ -307,12 +463,28 @@ const ProductCard = ({ product, handleCheck }) => {
               <button
                 type="button"
                 className="
-                  flex-1 rounded-lg
+                  flex-1
+
+                  rounded-xl
+
                   bg-[var(--nova-danger)]
-                  px-3 py-2.5
-                  text-sm font-medium
+
+                  px-3
+                  py-2.5
+
+                  text-sm
+                  font-semibold
                   text-white
+
+                  shadow-[0_4px_14px_rgba(225,29,72,0.12)]
+
+                  transition-all
+                  duration-200
+
                   hover:opacity-90
+                  hover:shadow-[0_8px_20px_rgba(225,29,72,0.18)]
+
+                  active:scale-[0.98]
                 "
                 onClick={() =>
                   dispatch({
@@ -341,13 +513,32 @@ const ProductCard = ({ product, handleCheck }) => {
               <Link
                 href={`/product/${product._id}`}
                 className="
-                  flex-1 rounded-lg
-                  border border-[var(--nova-border)]
-                  px-3 py-2.5
-                  text-center text-sm
-                  font-medium
-                  hover:border-[var(--nova-blue)]
-                  hover:text-[var(--nova-blue)]
+                  flex-1
+
+                  rounded-xl
+
+                  border
+                  border-[var(--nova-border)]
+
+                  bg-[var(--nova-surface)]
+
+                  px-3
+                  py-2.5
+
+                  text-center
+                  text-sm
+                  font-semibold
+
+                  text-[var(--nova-text)]
+
+                  transition-all
+                  duration-200
+
+                  hover:border-[var(--nova-primary)]
+                  hover:bg-[var(--nova-lavender-soft)]
+                  hover:text-[var(--nova-primary)]
+
+                  active:scale-[0.98]
                 "
               >
                 View
@@ -368,15 +559,32 @@ const ProductCard = ({ product, handleCheck }) => {
                     handleAddToCart
                   }
                   className="
-                    flex-1 rounded-lg
-                    bg-[var(--nova-blue)]
-                    px-3 py-2.5
-                    text-sm font-medium
+                    flex-1
+
+                    rounded-xl
+
+                    bg-[var(--nova-primary)]
+
+                    px-3
+                    py-2.5
+
+                    text-sm
+                    font-semibold
                     text-white
-                    transition
-                    hover:opacity-90
+
+                    shadow-[0_6px_18px_rgba(124,58,237,0.16)]
+
+                    transition-all
+                    duration-200
+
+                    hover:bg-[var(--nova-primary-hover)]
+                    hover:shadow-[0_8px_24px_rgba(124,58,237,0.24)]
+
+                    active:scale-[0.98]
+
                     disabled:cursor-not-allowed
                     disabled:opacity-40
+                    disabled:shadow-none
                   "
                 >
                   Add to cart
@@ -390,14 +598,22 @@ const ProductCard = ({ product, handleCheck }) => {
 
                 <div
                   className="
-                    flex flex-1
+                    flex
+                    flex-1
                     items-center
                     justify-center
                     overflow-hidden
-                    rounded-lg
-                    border border-[var(--nova-blue)]
-                    bg-[var(--nova-blue)]
+
+                    rounded-xl
+
+                    border
+                    border-[var(--nova-primary)]
+
+                    bg-[var(--nova-primary)]
+
                     text-white
+
+                    shadow-[0_6px_18px_rgba(124,58,237,0.16)]
                   "
                 >
 
@@ -413,14 +629,22 @@ const ProductCard = ({ product, handleCheck }) => {
                     }
                     aria-label={`Decrease ${product.title} quantity`}
                     className="
-                      flex h-full
+                      flex
+                      h-full
                       min-h-[42px]
                       w-10
+
                       items-center
                       justify-center
-                      text-lg font-semibold
-                      transition
+
+                      text-lg
+                      font-semibold
+
+                      transition-colors
+                      duration-150
+
                       hover:bg-black/10
+
                       disabled:cursor-not-allowed
                       disabled:opacity-40
                     "
@@ -432,13 +656,18 @@ const ProductCard = ({ product, handleCheck }) => {
 
                   <span
                     className="
-                      flex min-h-[42px]
+                      flex
+                      min-h-[42px]
                       min-w-[42px]
+
                       items-center
                       justify-center
+
                       border-x
                       border-white/20
-                      text-sm font-semibold
+
+                      text-sm
+                      font-semibold
                     "
                   >
                     {cartQuantity}
@@ -459,14 +688,22 @@ const ProductCard = ({ product, handleCheck }) => {
                     }
                     aria-label={`Increase ${product.title} quantity`}
                     className="
-                      flex h-full
+                      flex
+                      h-full
                       min-h-[42px]
                       w-10
+
                       items-center
                       justify-center
-                      text-lg font-semibold
-                      transition
+
+                      text-lg
+                      font-semibold
+
+                      transition-colors
+                      duration-150
+
                       hover:bg-black/10
+
                       disabled:cursor-not-allowed
                       disabled:opacity-40
                     "
