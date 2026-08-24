@@ -188,6 +188,82 @@ const Cart = () => {
   }, [auth?.user])
 
   // =========================================================
+// LOAD DEFAULT SAVED ADDRESS
+// =========================================================
+
+useEffect(() => {
+    if (!auth?.user || !auth?.token) {
+        return
+    }
+
+    const loadDefaultAddress = async () => {
+        try {
+            const res = await getData(
+                'address',
+                auth.token
+            )
+
+            if (res?.err) {
+                console.error(
+                    'Failed to load addresses:',
+                    res.err
+                )
+                return
+            }
+
+            const addresses = Array.isArray(
+                res?.addresses
+            )
+                ? res.addresses
+                : []
+
+            const defaultAddress =
+                addresses.find(
+                    (item) => item?.isDefault === true
+                ) || addresses[0]
+
+            if (!defaultAddress) {
+                return
+            }
+
+            setShippingAddress((current) => ({
+                ...current,
+
+                fullName:
+                    defaultAddress.fullName || '',
+
+                phone:
+                    defaultAddress.phone || '',
+
+                address:
+                    defaultAddress.address || '',
+
+                addressLine2:
+                    defaultAddress.addressLine2 ||
+                    defaultAddress.landmark ||
+                    '',
+
+                city:
+                    defaultAddress.city || '',
+
+                state:
+                    defaultAddress.state || '',
+
+                pincode:
+                    defaultAddress.pincode || '',
+            }))
+        } catch (error) {
+            console.error(
+                'Failed to load default address:',
+                error
+            )
+        }
+    }
+
+    loadDefaultAddress()
+}, [auth?.user, auth?.token])
+
+  // =========================================================
   // ADDRESS INPUT HANDLER
   // =========================================================
 
