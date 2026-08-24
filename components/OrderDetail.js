@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { formatPrice } from '@/lib/formatPrice'
-import PaypalBtn from './paypalBtn'
 import { patchData } from '@/lib/api-client'
 import { updateItem } from '../store/Actions'
 import Badge from './common/Badge'
@@ -87,7 +86,6 @@ const OrderDetail = ({ orderDetail, state, dispatch }) => {
           {!order.paid && auth.user.role !== 'admin' && (
             <div className="rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] p-5">
               <h2 className="mb-4 text-lg font-semibold">Total: {formatPrice(order.total)}</h2>
-              <PaypalBtn order={order} />
             </div>
           )}
         </div>
