@@ -187,16 +187,19 @@ const Cart = () => {
     )
   }, [auth?.user])
 
+const [savedAddresses, setSavedAddresses] = useState([])
+const [selectedAddressId, setSelectedAddressId] = useState(null)
+const [useNewAddress, setUseNewAddress] = useState(false)
+const [saveNewAddress, setSaveNewAddress] = useState(false)
+
   // =========================================================
 // LOAD DEFAULT SAVED ADDRESS
 // =========================================================
 
 useEffect(() => {
-    if (!auth?.user || !auth?.token) {
-        return
-    }
+    if (!auth?.user || !auth?.token) return
 
-    const loadDefaultAddress = async () => {
+    const loadAddresses = async () => {
         try {
             const res = await getData(
                 'address',
@@ -204,63 +207,52 @@ useEffect(() => {
             )
 
             if (res?.err) {
-                console.error(
-                    'Failed to load addresses:',
-                    res.err
-                )
+                console.error(res.err)
                 return
             }
 
-            const addresses = Array.isArray(
-                res?.addresses
-            )
+            const addresses = Array.isArray(res?.addresses)
                 ? res.addresses
                 : []
+
+            setSavedAddresses(addresses)
 
             const defaultAddress =
                 addresses.find(
                     (item) => item?.isDefault === true
                 ) || addresses[0]
 
-            if (!defaultAddress) {
-                return
+            if (defaultAddress) {
+                setSelectedAddressId(
+                    defaultAddress._id
+                )
+
+                setShippingAddress({
+                    fullName:
+                        defaultAddress.fullName || '',
+                    phone:
+                        defaultAddress.phone || '',
+                    address:
+                        defaultAddress.address || '',
+                    addressLine2:
+                        defaultAddress.landmark || '',
+                    city:
+                        defaultAddress.city || '',
+                    state:
+                        defaultAddress.state || '',
+                    pincode:
+                        defaultAddress.pincode || '',
+                })
             }
-
-            setShippingAddress((current) => ({
-                ...current,
-
-                fullName:
-                    defaultAddress.fullName || '',
-
-                phone:
-                    defaultAddress.phone || '',
-
-                address:
-                    defaultAddress.address || '',
-
-                addressLine2:
-                    defaultAddress.addressLine2 ||
-                    defaultAddress.landmark ||
-                    '',
-
-                city:
-                    defaultAddress.city || '',
-
-                state:
-                    defaultAddress.state || '',
-
-                pincode:
-                    defaultAddress.pincode || '',
-            }))
         } catch (error) {
             console.error(
-                'Failed to load default address:',
+                'Failed to load addresses:',
                 error
             )
         }
     }
 
-    loadDefaultAddress()
+    loadAddresses()
 }, [auth?.user, auth?.token])
 
   // =========================================================
@@ -282,6 +274,21 @@ useEffect(() => {
       })
     )
   }
+
+  const handleSelectAddress = (item) => {
+    setUseNewAddress(false)
+    setSelectedAddressId(item._id)
+
+    setShippingAddress({
+        fullName: item.fullName || '',
+        phone: item.phone || '',
+        address: item.address || '',
+        addressLine2: item.landmark || '',
+        city: item.city || '',
+        state: item.state || '',
+        pincode: item.pincode || '',
+    })
+}
 
   // =========================================================
   // CHECKOUT
@@ -365,6 +372,58 @@ const handlePayment = async () => {
                 '/cart'
             )}`
         )
+    }
+
+    // =====================================================
+    // SAVE NEW ADDRESS TO PROFILE
+    // =====================================================
+
+    if (useNewAddress && saveNewAddress) {
+        const addressResponse = await postData(
+            'address',
+            {
+                label: 'Home',
+                fullName: fullName.trim(),
+                phone: phone.trim(),
+                address: address.trim(),
+                city: city.trim(),
+                state: state.trim(),
+                pincode: pincode.trim(),
+                isDefault: savedAddresses.length === 0,
+            },
+            auth.token
+        )
+
+        if (addressResponse?.err) {
+            return dispatch({
+                type: 'NOTIFY',
+                payload: {
+                    error: addressResponse.err,
+                },
+            })
+        }
+
+        // Refresh saved addresses
+        const refreshed = await getData(
+            'address',
+            auth.token
+        )
+
+        if (Array.isArray(refreshed?.addresses)) {
+            setSavedAddresses(refreshed.addresses)
+
+            const newlySaved =
+                refreshed.addresses.find(
+                    (item) =>
+                        item.fullName === fullName.trim() &&
+                        item.phone === phone.trim() &&
+                        item.pincode === pincode.trim()
+                )
+
+            if (newlySaved) {
+                setSelectedAddressId(newlySaved._id)
+            }
+        }
     }
 
     // =========================================================
@@ -1057,6 +1116,79 @@ const handlePayment = async () => {
                 Order summary
               </h2>
 
+              {savedAddresses.length > 0 && (
+              <div className="mb-5 space-y-3">
+
+                  <h3 className="text-sm font-semibold">
+                      Saved addresses
+                  </h3>
+
+                  {savedAddresses.map((item) => (
+                      <button
+                          key={item._id}
+                          type="button"
+                          onClick={() =>
+                              handleSelectAddress(item)
+                          }
+                          className={`w-full rounded-xl border p-4 text-left ${
+                              selectedAddressId === item._id &&
+                              !useNewAddress
+                                  ? 'border-[var(--nova-blue)] bg-blue-50'
+                                  : 'border-gray-200 bg-white'
+                          }`}
+                      >
+                          <div className="flex justify-between">
+                              <span className="font-semibold">
+                                  {item.label || 'Address'}
+                              </span>
+
+                              {item.isDefault && (
+                                  <span className="text-xs font-medium text-blue-600">
+                                      Default
+                                  </span>
+                              )}
+                          </div>
+
+                          <p className="mt-1 text-sm">
+                              {item.fullName}
+                          </p>
+
+                          <p className="text-sm text-gray-500">
+                              {item.address}, {item.city},{' '}
+                              {item.state} - {item.pincode}
+                          </p>
+
+                          <p className="mt-1 text-xs text-gray-500">
+                              {item.phone}
+                          </p>
+                      </button>
+                  ))}
+
+                  <button
+                      type="button"
+                      onClick={() => {
+                          setUseNewAddress(true)
+                          setSaveNewAddress(false)
+                          setSelectedAddressId(null)
+
+                          setShippingAddress({
+                              fullName: '',
+                              phone: '',
+                              address: '',
+                              addressLine2: '',
+                              city: '',
+                              state: '',
+                              pincode: '',
+                          })
+                      }}
+                      className="w-full rounded-xl border border-dashed border-gray-300 p-4 text-sm font-medium"
+                  >
+                      + Use a new address
+                  </button>
+
+              </div>
+          )}
+
               {/* =================================================
                   DELIVERY INFORMATION
               ================================================= */}
@@ -1286,6 +1418,21 @@ const handlePayment = async () => {
                       autoComplete="postal-code"
                       className="w-full rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] px-4 py-3 text-sm outline-none transition focus:border-[var(--nova-blue)]"
                     />
+                                    {useNewAddress && (
+                    <label className="mt-4 flex items-center gap-2 text-sm">
+                        <input
+                            type="checkbox"
+                            checked={saveNewAddress}
+                            onChange={(e) =>
+                                setSaveNewAddress(
+                                    e.target.checked
+                                )
+                            }
+                        />
+
+                        Save this address to my profile
+                    </label>
+                )}
 
                   </div>
 

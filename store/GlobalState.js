@@ -344,181 +344,75 @@ export const DataProvider = ({
         let mounted = true
 
 
-        const restoreAuth =
-            async () => {
-
-                try {
-
-                    const response =
-                        await fetch(
-                            '/api/auth/accessToken',
-                            {
-                                method:
-                                    'GET',
-
-                                credentials:
-                                    'include',
-
-                                cache:
-                                    'no-store'
-                            }
-                        )
-
-
-                    if (
-                        !response.ok
-                    ) {
-
-                        if (mounted) {
-
-                            dispatch({
-                                type:
-                                    'AUTH',
-
-                                payload:
-                                    {}
-                            })
-                        }
-
-                        return
+        const restoreAuth = async () => {
+            try {
+                const response = await fetch(
+                    '/api/auth/accessToken',
+                    {
+                        method: 'GET',
+                        credentials: 'include',
+                        cache: 'no-store',
                     }
+                )
 
+                const data = await response
+                    .json()
+                    .catch(() => ({}))
 
-                    const data =
-                        await response
-                            .json()
-                            .catch(
-                                () => ({})
-                            )
+                const accessToken =
+                    data?.access_token || ''
 
+                const user =
+                    data?.user
 
-                    const accessToken =
-                        data?.access_token ||
-                        ''
+                // ================================================
+                // SUCCESS — REFRESH TOKEN IS VALID
+                // ================================================
 
-
-                    const user =
-                        data?.user
-
-
-                    if (
-                        mounted &&
-                        user?._id
-                    ) {
-
+                if (
+                    response.ok &&
+                    accessToken &&
+                    user
+                ) {
+                    if (mounted) {
                         dispatch({
-                            type:
-                                'AUTH',
-
+                            type: 'AUTH',
                             payload: {
                                 user,
-                                token:
-                                    accessToken
-                            }
-                        })
-
-                    } else {
-
-                        const userResponse =
-                            await fetch(
-                                '/api/user',
-                                {
-                                    method:
-                                        'GET',
-
-                                    credentials:
-                                        'include',
-
-                                    cache:
-                                        'no-store'
-                                }
-                            )
-
-
-                        if (
-                            !userResponse.ok
-                        ) {
-
-                            if (mounted) {
-
-                                dispatch({
-                                    type:
-                                        'AUTH',
-
-                                    payload:
-                                        {}
-                                })
-                            }
-
-                            return
-                        }
-
-
-                        const userData =
-                            await userResponse.json()
-
-
-                        const restoredUser =
-                            userData?.user ||
-                            userData
-
-
-                        if (
-                            mounted &&
-                            restoredUser?._id
-                        ) {
-
-                            dispatch({
-                                type:
-                                    'AUTH',
-
-                                payload: {
-                                    user:
-                                        restoredUser,
-
-                                    token:
-                                        accessToken
-                                }
-                            })
-
-                        } else {
-
-                            dispatch({
-                                type:
-                                    'AUTH',
-
-                                payload:
-                                    {}
-                            })
-                        }
-                    }
-
-                } catch (error) {
-
-                    console.error(
-                        'NovaCart auth restore failed:',
-                        error
-                    )
-
-
-                    if (mounted) {
-
-                        dispatch({
-                            type:
-                                'AUTH',
-
-                            payload:
-                                {}
+                                token: accessToken,
+                            },
                         })
                     }
 
-                } finally {
+                    return
+                }
 
-                    if (mounted) {
-                        setAuthReady(true)
-                    }
+                // ================================================
+                // NO VALID SESSION
+                // ================================================
+
+                if (mounted) {
+                    dispatch({
+                        type: 'AUTH',
+                        payload: {},
+                    })
+                }
+
+            } catch (error) {
+
+                console.error(
+                    'NovaCart auth restore failed:',
+                    error
+                )
+
+                if (mounted) {
+                    dispatch({
+                        type: 'AUTH',
+                        payload: {},
+                    })
                 }
             }
+        }
 
 
         restoreAuth()
