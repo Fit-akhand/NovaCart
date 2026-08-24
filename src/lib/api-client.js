@@ -10,16 +10,26 @@ const fetchOptions = {
     credentials: 'include',
 }
 
-export const getData = async (url, token) => {
-    const baseUrl = getBaseUrl()
+export const getData = async (
+    url,
+    token,
+    baseUrlOverride = null
+) => {
+    const baseUrl =
+        baseUrlOverride !== null
+            ? baseUrlOverride
+            : getBaseUrl()
 
-    const res = await fetch(`${baseUrl}/api/${url}`, {
-        method: 'GET',
-        headers: {
-            Authorization: token || '',
-        },
-        ...fetchOptions,
-    })
+    const res = await fetch(
+        `${baseUrl}/api/${url}`,
+        {
+            method: 'GET',
+            headers: {
+                Authorization: token || '',
+            },
+            ...fetchOptions,
+        }
+    )
 
     const data = await res.json()
     return data

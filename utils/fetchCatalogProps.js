@@ -1,6 +1,9 @@
 import { getData } from '@/lib/api-client'
 
-export async function fetchCatalogProps(query = {}) {
+export async function fetchCatalogProps(
+  query = {},
+  baseUrl = null
+) {
   const category = query.category || 'all'
   const sort = query.sort || ''
   const search = query.search || 'all'
@@ -13,7 +16,9 @@ export async function fetchCatalogProps(query = {}) {
         sort
       )}&title=${encodeURIComponent(
         search
-      )}`
+      )}`,
+      '',
+      baseUrl
     )
 
     return {

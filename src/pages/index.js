@@ -259,9 +259,25 @@ const Home = (props) => {
   )
 }
 
-export async function getServerSideProps({ query }) {
-  const props = await fetchCatalogProps(query)
-  return { props }
+export async function getServerSideProps({
+  query,
+  req,
+}) {
+  const protocol =
+    req.headers['x-forwarded-proto'] || 'http'
+
+  const host = req.headers.host
+
+  const baseUrl = `${protocol}://${host}`
+
+  const props = await fetchCatalogProps(
+    query,
+    baseUrl
+  )
+
+  return {
+    props,
+  }
 }
 
 export default Home
