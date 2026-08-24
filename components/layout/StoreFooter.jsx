@@ -8,7 +8,7 @@ const StoreFooter = () => {
   const heading = `
     mb-4
     text-sm
-    font-semibold
+    font-bold
     tracking-wide
     text-[var(--nova-text)]
   `
@@ -72,7 +72,7 @@ const StoreFooter = () => {
               mt-4
               max-w-sm
               text-sm
-              leading-6
+              leading-7
               text-[var(--nova-muted)]
             "
           >
@@ -81,7 +81,7 @@ const StoreFooter = () => {
             tracking.
           </p>
 
-          {/* Small brand accent */}
+          {/* Brand accent */}
 
           <div
             className="
@@ -90,8 +90,30 @@ const StoreFooter = () => {
               w-12
               rounded-full
               bg-[var(--nova-primary)]
+              shadow-[0_4px_12px_rgba(124,58,237,0.25)]
             "
           />
+
+          {/* Small trust message */}
+
+          <div
+            className="
+              mt-6
+              inline-flex
+              items-center
+              rounded-full
+              border
+              border-[var(--nova-border)]
+              bg-[var(--nova-lavender-soft)]
+              px-3
+              py-1.5
+              text-xs
+              font-medium
+              text-[var(--nova-primary)]
+            "
+          >
+            Secure shopping experience
+          </div>
         </div>
 
         {/* =====================================
@@ -207,7 +229,7 @@ const StoreFooter = () => {
           className="
             flex
             flex-col
-            gap-2
+            gap-3
             py-5
 
             text-xs
@@ -218,18 +240,20 @@ const StoreFooter = () => {
             sm:justify-between
           "
         >
+
           <p>
             © {year} NovaCart. All rights reserved.
           </p>
 
           <p
             className="
-              font-medium
+              font-semibold
               text-[var(--nova-violet-light)]
             "
           >
             Shop smarter. Live better.
           </p>
+
         </Container>
       </div>
     </footer>

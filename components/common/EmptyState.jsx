@@ -9,30 +9,44 @@ const EmptyState = ({
   return (
     <div
       className={`
-        flex min-h-[300px]
-        flex-col items-center justify-center
+        flex
+        min-h-[320px]
+        flex-col
+        items-center
+        justify-center
 
-        rounded-2xl
-        border border-dashed
+        rounded-3xl
+
+        border
+        border-dashed
         border-[var(--nova-border)]
 
         bg-[var(--nova-surface)]
 
-        px-6 py-12
+        px-6
+        py-14
+
         text-center
 
-        transition-colors
-        duration-200
+        shadow-[var(--shadow-sm)]
+
+        transition-all
+        duration-300
 
         hover:border-[var(--nova-violet-light)]
+        hover:shadow-[0_12px_30px_rgba(124,58,237,0.06)]
 
         ${className}
       `}
     >
-      {/* Icon */}
+      {/* =====================================================
+          ICON
+      ===================================================== */}
+
       <div
         className="
           mb-5
+
           flex
           h-16
           w-16
@@ -50,10 +64,11 @@ const EmptyState = ({
 
           shadow-[0_8px_24px_rgba(124,58,237,0.08)]
 
-          transition-transform
-          duration-200
+          transition-all
+          duration-300
 
           hover:scale-105
+          hover:shadow-[0_12px_30px_rgba(124,58,237,0.14)]
         "
       >
         <PackageOpen
@@ -62,34 +77,57 @@ const EmptyState = ({
         />
       </div>
 
-      {/* Title */}
+
+      {/* =====================================================
+          TITLE
+      ===================================================== */}
+
       <h3
         className="
           text-lg
-          font-semibold
-          tracking-[-0.01em]
+          font-bold
+          tracking-[-0.015em]
+
           text-[var(--nova-text)]
         "
       >
         {title}
       </h3>
 
-      {/* Description */}
+
+      {/* =====================================================
+          DESCRIPTION
+      ===================================================== */}
+
       <p
         className="
           mt-2
+
           max-w-md
+
           text-sm
           leading-6
+
           text-[var(--nova-muted)]
         "
       >
         {description}
       </p>
 
-      {/* Action */}
+
+      {/* =====================================================
+          ACTION
+      ===================================================== */}
+
       {action && (
-        <div className="mt-6">
+        <div
+          className="
+            mt-6
+            flex
+            items-center
+            justify-center
+          "
+        >
           {action}
         </div>
       )}

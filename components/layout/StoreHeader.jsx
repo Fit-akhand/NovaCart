@@ -26,7 +26,7 @@ const navLinkClass = `
   text-sm font-medium
   text-[var(--nova-text)]
   transition-all duration-200
-  hover:bg-[var(--nova-surface-soft)]
+  hover:bg-[var(--nova-lavender-soft)]
   hover:text-[var(--nova-primary)]
   active:scale-[0.98]
 `
@@ -427,6 +427,7 @@ const StoreHeader = () => {
                   focus:bg-[var(--nova-surface)]
                   focus:ring-2
                   focus:ring-[rgba(139,92,246,0.12)]
+                   shadow-[var(--shadow-sm)]
                 "
               />
 
@@ -505,7 +506,7 @@ const StoreHeader = () => {
                     leading-none
                     text-white
 
-                    shadow-[0_3px_10px_rgba(124,58,237,0.3)]
+                    shadow-[0_4px_12px_rgba(124,58,237,0.32)]
                   "
                 >
                   {cartCount > 99
@@ -564,6 +565,7 @@ const StoreHeader = () => {
                     hover:text-[var(--nova-primary)]
 
                     active:scale-[0.98]
+                    hover:shadow-[0_6px_18px_rgba(124,58,237,0.08)]
                   "
                 >
 
@@ -653,7 +655,7 @@ const StoreHeader = () => {
 
                       py-1.5
 
-                      shadow-[var(--shadow-lg)]
+                      shadow-[0_18px_45px_rgba(15,23,42,0.14)]
 
                       ring-1
                       ring-[rgba(139,92,246,0.05)]
@@ -892,7 +894,7 @@ const StoreHeader = () => {
 
                   transition-all duration-200
 
-                  hover:bg-[var(--nova-primary-hover)]
+                  hover:bg-[var(--nova-primary-dark)]
                   hover:shadow-[0_8px_24px_rgba(124,58,237,0.24)]
 
                   active:scale-[0.98]

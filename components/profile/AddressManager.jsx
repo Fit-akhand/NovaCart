@@ -211,7 +211,7 @@ const AddressManager = ({ token }) => {
 
     return (
 
-        <section className="rounded-3xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-5 shadow-[var(--shadow-sm)] sm:p-6">
+        <section className="rounded-3xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-5 shadow-[var(--shadow-md)] sm:p-6">
 
             <div className="flex flex-wrap items-center justify-between gap-4">
 
@@ -272,7 +272,7 @@ const AddressManager = ({ token }) => {
 
                 <form
                     onSubmit={handleSubmit}
-                    className="mt-6 rounded-2xl border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] p-4 sm:p-5"
+                    className="mt-6 rounded-2xl border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] p-4 shadow-[var(--shadow-sm)] sm:p-5"
                 >
 
                     <h3 className="mb-5 text-base font-bold tracking-tight text-[var(--nova-text)]">
@@ -472,7 +472,7 @@ const AddressManager = ({ token }) => {
 
                     <div
                         key={item._id}
-                        className="rounded-2xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-4 shadow-[var(--shadow-sm)] transition-all hover:-translate-y-0.5 hover:border-[var(--nova-violet-light)] hover:shadow-[var(--shadow-md)]"
+                        className="rounded-2xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-4 shadow-[var(--shadow-sm)] transition-all hover:-translate-y-0.5 hover:border-[var(--nova-violet-light)] hover:shadow-[0_14px_30px_rgba(124,58,237,0.10)]"
                     >
 
                         <div className="flex items-start justify-between gap-3">
@@ -487,7 +487,7 @@ const AddressManager = ({ token }) => {
 
                                     {item.isDefault && (
 
-                                        <span className="flex items-center gap-1 rounded-full bg-[var(--nova-surface-soft)] px-2 py-1 text-[10px] font-semibold text-[var(--nova-blue)]">
+                                        <span className="flex items-center gap-1 rounded-full bg-[var(--nova-lavender-soft)] px-2 py-1 text-[10px] font-bold text-[var(--nova-primary)]">
 
                                             <Check size={11} />
 
@@ -552,11 +552,11 @@ const AddressManager = ({ token }) => {
 
             {addresses.length === 0 && !showForm && (
 
-                <div className="mt-6 rounded-2xl border border-dashed border-[var(--nova-border)] bg-[var(--nova-surface-soft)] p-8 text-center">
+                <div className="mt-6 rounded-3xl border border-dashed border-[var(--nova-border)] bg-[var(--nova-surface-soft)] p-8 text-center shadow-[var(--shadow-sm)]">
 
                     <MapPin
                         size={25}
-                        className="mx-auto text-[var(--nova-muted)]"
+                        className="mx-auto text-[var(--nova-primary)]"
                     />
 
                     <p className="mt-3 text-sm font-medium">
