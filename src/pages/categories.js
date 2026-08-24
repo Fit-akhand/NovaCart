@@ -1049,7 +1049,7 @@ const Categories = () => {
               px-5
               py-7
 
-              shadow-[var(--shadow-sm)]
+              shadow-[var(--shadow-md)]
 
               sm:px-7
               sm:py-8
@@ -1070,7 +1070,7 @@ const Categories = () => {
 
                 rounded-full
 
-                bg-[rgba(139,92,246,0.10)]
+                bg-[rgba(139,92,246,0.12)]
 
                 blur-3xl
               "
@@ -1184,14 +1184,14 @@ const Categories = () => {
 
                           p-5
 
-                          shadow-[var(--shadow-sm)]
+                          shadow-[var(--shadow-md)]
 
                           transition-all
                           duration-200
 
                           hover:-translate-y-1
                           hover:border-[var(--nova-violet-light)]
-                          hover:shadow-[0_12px_30px_rgba(124,58,237,0.10)]
+                          hover:shadow-[0_16px_36px_rgba(124,58,237,0.13)]
 
                           sm:p-6
                         "
@@ -1354,14 +1354,14 @@ const Categories = () => {
 
                   overflow-hidden
 
-                  rounded-2xl
+                  rounded-3xl
 
                   border
                   border-[var(--nova-border)]
 
                   bg-[var(--nova-surface)]
 
-                  shadow-[var(--shadow-sm)]
+                  shadow-[var(--shadow-md)]
                 "
               >
 
@@ -1517,6 +1517,7 @@ const Categories = () => {
 
                         disabled:cursor-not-allowed
                         disabled:opacity-60
+                        shadow-[var(--shadow-sm)]
                       "
                     >
 
@@ -1608,6 +1609,7 @@ const Categories = () => {
 
                       <Button
                         onClick={saveCategory}
+                        className="shadow-[0_8px_20px_rgba(124,58,237,0.16)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(124,58,237,0.22)]"
                       >
                         {id
                           ? 'Update'
@@ -1771,6 +1773,7 @@ const Categories = () => {
 
                       focus:ring-2
                       focus:ring-[rgba(139,92,246,0.12)]
+                      shadow-[var(--shadow-sm)]
                     "
                   />
 
@@ -1786,14 +1789,14 @@ const Categories = () => {
                 className="
                   overflow-hidden
 
-                  rounded-2xl
+                  rounded-3xl
 
                   border
                   border-[var(--nova-border)]
 
                   bg-[var(--nova-surface)]
 
-                  shadow-[var(--shadow-sm)]
+                  shadow-[var(--shadow-md)]
                 "
               >
                 <AdminCategoryTree />

@@ -160,7 +160,7 @@ const Products = (props) => {
               px-5
               py-7
 
-              shadow-[var(--shadow-sm)]
+              shadow-[var(--shadow-md)]
 
               sm:px-7
               sm:py-8
@@ -181,7 +181,7 @@ const Products = (props) => {
 
                 rounded-full
 
-                bg-[rgba(139,92,246,0.1)]
+                bg-[rgba(139,92,246,0.12)]
 
                 blur-3xl
               "
@@ -299,14 +299,14 @@ const Products = (props) => {
 
               overflow-hidden
 
-              rounded-2xl
+              rounded-3xl
 
               border
               border-[var(--nova-border)]
 
               bg-[var(--nova-surface)]
 
-              shadow-[var(--shadow-sm)]
+              shadow-[var(--shadow-md)]
             "
           >
 
@@ -360,7 +360,7 @@ const Products = (props) => {
                   flex-col
                   gap-4
 
-                  rounded-2xl
+                  rounded-3xl
 
                   border
                   border-[var(--nova-border)]
@@ -488,6 +488,8 @@ const Products = (props) => {
 
                       transition-all
                       duration-200
+
+                      shadow-[0_6px_18px_rgba(239,68,68,0.14)]
 
                       hover:opacity-90
 

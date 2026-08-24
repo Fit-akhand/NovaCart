@@ -69,7 +69,7 @@ const DetailOrder = () => {
               font-semibold
               text-[var(--nova-text)]
 
-              shadow-[var(--shadow-sm)]
+              shadow-[var(--shadow-md)]
 
               transition-all
               duration-200
@@ -78,6 +78,7 @@ const DetailOrder = () => {
               hover:border-[var(--nova-violet-light)]
               hover:bg-[var(--nova-lavender-soft)]
               hover:text-[var(--nova-primary)]
+              hover:shadow-[0_8px_20px_rgba(124,58,237,0.10)]
             "
           >
             <ArrowLeft size={15} />
@@ -104,7 +105,7 @@ const DetailOrder = () => {
               px-5
               py-6
 
-              shadow-[var(--shadow-sm)]
+              shadow-[var(--shadow-md)]
 
               sm:px-7
               sm:py-7
@@ -126,7 +127,7 @@ const DetailOrder = () => {
 
                 rounded-full
 
-                bg-[rgba(139,92,246,0.10)]
+                bg-[rgba(139,92,246,0.12)]
 
                 blur-3xl
               "
@@ -299,7 +300,7 @@ const DetailOrder = () => {
                   items-center
                   gap-3
 
-                  rounded-2xl
+                  rounded-3xl
 
                   border
                   border-[var(--nova-border)]
@@ -308,7 +309,8 @@ const DetailOrder = () => {
 
                   p-4
 
-                  shadow-[var(--shadow-sm)]
+                  shadow-[var(--shadow-md)]
+                  transition-shadow duration-200 hover:shadow-[0_12px_28px_rgba(124,58,237,0.08)]
                 "
               >
 
@@ -375,7 +377,7 @@ const DetailOrder = () => {
                   items-center
                   gap-3
 
-                  rounded-2xl
+                  rounded-3xl
 
                   border
                   border-[var(--nova-border)]
@@ -384,7 +386,8 @@ const DetailOrder = () => {
 
                   p-4
 
-                  shadow-[var(--shadow-sm)]
+                  shadow-[var(--shadow-md)]
+                  transition-shadow duration-200 hover:shadow-[0_12px_28px_rgba(124,58,237,0.08)]
                 "
               >
 
@@ -456,7 +459,7 @@ const DetailOrder = () => {
               className="
                 overflow-hidden
 
-                rounded-2xl
+                rounded-3xl
 
                 border
                 border-[var(--nova-border)]
@@ -481,7 +484,7 @@ const DetailOrder = () => {
 
             <div
               className="
-                rounded-2xl
+                rounded-3xl
 
                 border
                 border-[var(--nova-border)]
@@ -490,7 +493,7 @@ const DetailOrder = () => {
 
                 p-8
 
-                shadow-[var(--shadow-sm)]
+                shadow-[var(--shadow-md)]
               "
             >
               <Loading

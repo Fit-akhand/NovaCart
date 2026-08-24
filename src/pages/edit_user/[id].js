@@ -144,7 +144,7 @@ const EditUser = () => {
         />
       </Head>
 
-      <main className="min-h-screen px-4 py-6 sm:px-6 lg:px-8">
+      <main className="min-h-screen bg-[var(--nova-bg)] px-4 py-6 sm:px-6 lg:px-8">
 
         <div className="mx-auto max-w-4xl">
 
@@ -157,7 +157,7 @@ const EditUser = () => {
             <button
               type="button"
               onClick={() => router.back()}
-              className="mb-6 inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-xs font-semibold text-gray-600 shadow-sm transition hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900"
+              className="mb-6 inline-flex items-center gap-2 rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-4 py-2.5 text-xs font-semibold text-[var(--nova-muted)] shadow-sm transition hover:border-gray-300 hover:bg-[var(--nova-surface-soft)] hover:text-[var(--nova-text)]"
             >
 
               <ArrowLeft size={15} />
@@ -169,17 +169,17 @@ const EditUser = () => {
 
             <div className="flex items-center gap-3">
 
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-black text-white">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--nova-lavender-soft)] text-[var(--nova-primary)]">
                 <UserCog size={19} />
               </div>
 
               <div>
 
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-400">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--nova-muted)]">
                   NovaCart Admin
                 </p>
 
-                <h1 className="mt-1 text-3xl font-semibold tracking-tight text-gray-950">
+                <h1 className="mt-1 text-3xl font-semibold tracking-tight text-[var(--nova-text)]">
                   Edit User
                 </h1>
 
@@ -187,7 +187,7 @@ const EditUser = () => {
 
             </div>
 
-            <p className="mt-3 max-w-xl text-sm text-gray-500">
+            <p className="mt-3 max-w-xl text-sm text-[var(--nova-muted)]">
               Manage account permissions and administrator
               access for this user.
             </p>
@@ -205,13 +205,13 @@ const EditUser = () => {
 
               {/* PROFILE */}
 
-              <section className="h-fit overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+              <section className="h-fit overflow-hidden rounded-3xl border border-[var(--nova-border)] bg-[var(--nova-surface)] shadow-[var(--shadow-md)]">
 
                 <div className="flex flex-col items-center p-7 text-center">
 
                   <div className="relative">
 
-                    <div className="h-24 w-24 overflow-hidden rounded-full border-4 border-white bg-gray-100 shadow-lg ring-1 ring-gray-200">
+                    <div className="h-24 w-24 overflow-hidden rounded-full border-4 border-white bg-[var(--nova-surface-soft)] shadow-lg ring-1 ring-gray-200">
 
                       {editUser.avatar ? (
 
@@ -226,7 +226,7 @@ const EditUser = () => {
                         <div className="flex h-full w-full items-center justify-center">
                           <User
                             size={30}
-                            className="text-gray-400"
+                            className="text-[var(--nova-muted)]"
                           />
                         </div>
 
@@ -237,7 +237,7 @@ const EditUser = () => {
 
                     {editUser.role === 'admin' && (
 
-                      <div className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full border-4 border-white bg-black text-white">
+                      <div className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full border-4 border-white bg-[var(--nova-primary)] text-white">
                         <ShieldCheck size={13} />
                       </div>
 
@@ -246,11 +246,11 @@ const EditUser = () => {
                   </div>
 
 
-                  <h2 className="mt-5 text-lg font-semibold text-gray-900">
+                  <h2 className="mt-5 text-lg font-semibold text-[var(--nova-text)]">
                     {editUser.name}
                   </h2>
 
-                  <div className="mt-2 flex items-center gap-1.5 text-xs text-gray-400">
+                  <div className="mt-2 flex items-center gap-1.5 text-xs text-[var(--nova-muted)]">
 
                     <Mail size={13} />
 
@@ -277,7 +277,7 @@ const EditUser = () => {
 
                     ) : (
 
-                      <span className="inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1.5 text-[10px] font-semibold text-gray-600">
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--nova-surface-soft)] px-3 py-1.5 text-[10px] font-semibold text-[var(--nova-muted)]">
 
                         <User size={12} />
 
@@ -292,13 +292,13 @@ const EditUser = () => {
                 </div>
 
 
-                <div className="border-t border-gray-100 px-6 py-4">
+                <div className="border-t border-[var(--nova-border)] px-6 py-4">
 
-                  <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                  <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-[var(--nova-muted)]">
                     User ID
                   </p>
 
-                  <p className="break-all font-mono text-[10px] text-gray-500">
+                  <p className="break-all font-mono text-[10px] text-[var(--nova-muted)]">
                     {editUser._id}
                   </p>
 
@@ -309,23 +309,23 @@ const EditUser = () => {
 
               {/* SETTINGS */}
 
-              <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+              <section className="overflow-hidden rounded-3xl border border-[var(--nova-border)] bg-[var(--nova-surface)] shadow-[var(--shadow-md)]">
 
-                <div className="border-b border-gray-100 px-6 py-5">
+                <div className="border-b border-[var(--nova-border)] px-6 py-5">
 
                   <div className="flex items-center gap-3">
 
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gray-100">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--nova-surface-soft)]">
                       <Shield size={17} />
                     </div>
 
                     <div>
 
-                      <h2 className="text-sm font-semibold text-gray-900">
+                      <h2 className="text-sm font-semibold text-[var(--nova-text)]">
                         Account Permissions
                       </h2>
 
-                      <p className="mt-0.5 text-xs text-gray-400">
+                      <p className="mt-0.5 text-xs text-[var(--nova-muted)]">
                         Control this user's access level.
                       </p>
 
@@ -344,8 +344,8 @@ const EditUser = () => {
                     htmlFor="isAdmin"
                     className={`group flex cursor-pointer items-center justify-between rounded-2xl border p-5 transition ${
                       checkAdmin
-                        ? 'border-gray-900 bg-gray-50'
-                        : 'border-gray-200 bg-white hover:border-gray-300'
+                        ? 'border-gray-900 bg-[var(--nova-surface-soft)]'
+                        : 'border-[var(--nova-border)] bg-[var(--nova-surface)] hover:border-gray-300'
                     }`}
                   >
 
@@ -354,8 +354,8 @@ const EditUser = () => {
                       <div
                         className={`flex h-11 w-11 items-center justify-center rounded-xl transition ${
                           checkAdmin
-                            ? 'bg-black text-white'
-                            : 'bg-gray-100 text-gray-500'
+                            ? 'bg-[var(--nova-primary)] text-white'
+                            : 'bg-[var(--nova-surface-soft)] text-[var(--nova-muted)]'
                         }`}
                       >
 
@@ -370,11 +370,11 @@ const EditUser = () => {
 
                       <div>
 
-                        <p className="text-sm font-semibold text-gray-900">
+                        <p className="text-sm font-semibold text-[var(--nova-text)]">
                           Administrator access
                         </p>
 
-                        <p className="mt-1 max-w-md text-xs leading-5 text-gray-400">
+                        <p className="mt-1 max-w-md text-xs leading-5 text-[var(--nova-muted)]">
 
                           {checkAdmin
                             ? 'This user can access administrator features.'
@@ -399,9 +399,9 @@ const EditUser = () => {
                         className="peer sr-only"
                       />
 
-                      <div className="h-6 w-11 rounded-full bg-gray-200 transition peer-checked:bg-black" />
+                      <div className="h-6 w-11 rounded-full bg-[var(--nova-border)] transition peer-checked:bg-[var(--nova-primary)]" />
 
-                      <div className="absolute left-1 top-1 h-4 w-4 rounded-full bg-white shadow-sm transition peer-checked:translate-x-5" />
+                      <div className="absolute left-1 top-1 h-4 w-4 rounded-full bg-[var(--nova-surface)] shadow-sm transition peer-checked:translate-x-5" />
 
                     </div>
 
@@ -410,22 +410,22 @@ const EditUser = () => {
 
                   {/* Warning */}
 
-                  <div className="mt-5 rounded-xl border border-amber-100 bg-amber-50 p-4">
+                  <div className="mt-5 rounded-xl border border-[rgba(245,158,11,0.20)] bg-[rgba(245,158,11,0.08)] p-4">
 
                     <div className="flex gap-3">
 
                       <Crown
                         size={17}
-                        className="mt-0.5 shrink-0 text-amber-500"
+                        className="mt-0.5 shrink-0 text-[var(--nova-warning)]"
                       />
 
                       <div>
 
-                        <p className="text-xs font-semibold text-amber-900">
+                        <p className="text-xs font-semibold text-[var(--nova-text)]">
                           Administrator permissions
                         </p>
 
-                        <p className="mt-1 text-[11px] leading-5 text-amber-700">
+                        <p className="mt-1 text-[11px] leading-5 text-[var(--nova-muted)]">
                           Administrators may have access to
                           products, users, orders and other
                           management features. Only grant this
@@ -446,7 +446,7 @@ const EditUser = () => {
                     <button
                       type="button"
                       onClick={() => router.back()}
-                      className="flex h-11 items-center justify-center gap-2 rounded-xl border border-gray-200 px-5 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
+                      className="flex h-11 items-center justify-center gap-2 rounded-xl border border-[var(--nova-border)] px-5 text-sm font-medium text-[var(--nova-muted)] transition hover:bg-[var(--nova-surface-soft)]"
                     >
                       <ArrowLeft size={15} />
                       Cancel
@@ -457,7 +457,7 @@ const EditUser = () => {
                       type="button"
                       onClick={handleSubmit}
                       disabled={notify?.loading}
-                      className="flex h-11 items-center justify-center gap-2 rounded-xl bg-black px-6 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="flex h-11 items-center justify-center gap-2 rounded-xl bg-[var(--nova-primary)] px-6 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(124,58,237,0.18)] transition hover:-translate-y-0.5 hover:bg-[var(--nova-primary-dark)] hover:shadow-[0_12px_28px_rgba(124,58,237,0.24)] disabled:cursor-not-allowed disabled:opacity-50"
                     >
 
                       {notify?.loading ? (
@@ -485,11 +485,11 @@ const EditUser = () => {
                 LOADING
             ================================================== */
 
-            <div className="rounded-2xl border border-gray-200 bg-white p-12 text-center shadow-sm">
+            <div className="rounded-2xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-12 text-center shadow-sm">
 
-              <div className="mx-auto mb-4 h-10 w-10 animate-pulse rounded-xl bg-gray-200" />
+              <div className="mx-auto mb-4 h-10 w-10 animate-pulse rounded-xl bg-[var(--nova-border)]" />
 
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-[var(--nova-muted)]">
                 Loading user...
               </p>
 
@@ -500,7 +500,7 @@ const EditUser = () => {
 
           {/* Footer */}
 
-          <div className="mt-6 flex items-center justify-center gap-2 text-[11px] text-gray-400">
+          <div className="mt-6 flex items-center justify-center gap-2 text-[11px] text-[var(--nova-muted)]">
 
             <ShieldCheck size={13} />
 

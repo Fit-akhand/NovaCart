@@ -524,7 +524,7 @@ const ProductsManager = () => {
         />
       </Head>
 
-      <main className="min-h-screen px-4 py-6 sm:px-6 lg:px-8">
+      <main className="min-h-screen bg-[var(--nova-bg)] px-4 py-6 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
 
           {/* =================================================
@@ -537,23 +537,23 @@ const ProductsManager = () => {
 
               <div className="mb-3 flex items-center gap-2">
 
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-black text-white">
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--nova-lavender-soft)] text-[var(--nova-primary)]">
                   <Package size={15} />
                 </div>
 
-                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-400">
+                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--nova-muted)]">
                   NovaCart Admin
                 </span>
 
               </div>
 
-              <h1 className="text-3xl font-semibold tracking-tight text-gray-950 sm:text-4xl">
+              <h1 className="text-3xl font-semibold tracking-tight text-[var(--nova-text)] sm:text-4xl">
                 {onEdit
                   ? 'Edit Product'
                   : 'Create Product'}
               </h1>
 
-              <p className="mt-2 text-sm text-gray-500">
+              <p className="mt-2 text-sm text-[var(--nova-muted)]">
                 {onEdit
                   ? 'Update product information, pricing and media.'
                   : 'Add a new product to your NovaCart catalog.'}
@@ -561,7 +561,7 @@ const ProductsManager = () => {
 
             </div>
 
-            <div className="flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-xs font-medium text-gray-600 shadow-sm">
+            <div className="flex items-center gap-2 rounded-full border border-[var(--nova-border)] bg-[var(--nova-surface)] px-4 py-2 text-xs font-semibold text-[var(--nova-text)] shadow-[var(--shadow-sm)] shadow-[var(--shadow-sm)]">
 
               <span className="h-2 w-2 rounded-full bg-green-500" />
 
@@ -591,23 +591,23 @@ const ProductsManager = () => {
                     BASIC INFORMATION
                 ================================================== */}
 
-                <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+                <section className="overflow-hidden rounded-3xl border border-[var(--nova-border)] bg-[var(--nova-surface)] shadow-[var(--shadow-md)]">
 
-                  <div className="border-b border-gray-100 px-6 py-5">
+                  <div className="border-b border-[var(--nova-border)] px-6 py-5">
 
                     <div className="flex items-center gap-3">
 
-                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gray-100">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--nova-lavender-soft)] text-[var(--nova-primary)]">
                         <Package size={17} />
                       </div>
 
                       <div>
 
-                        <h2 className="text-sm font-semibold text-gray-900">
+                        <h2 className="text-sm font-semibold text-[var(--nova-text)]">
                           Basic Information
                         </h2>
 
-                        <p className="mt-0.5 text-xs text-gray-400">
+                        <p className="mt-0.5 text-xs text-[var(--nova-muted)]">
                           Core information about your product.
                         </p>
 
@@ -627,7 +627,7 @@ const ProductsManager = () => {
 
                       <label
                         htmlFor="title"
-                        className="mb-2 block text-xs font-semibold text-gray-700"
+                        className="mb-2 block text-xs font-semibold text-[var(--nova-text)]"
                       >
                         Product Title
                       </label>
@@ -639,7 +639,7 @@ const ProductsManager = () => {
                         value={title}
                         placeholder="e.g. Premium Running Shoes"
                         onChange={handleChangeInput}
-                        className="h-12 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-900 focus:bg-white focus:ring-4 focus:ring-gray-900/5"
+                        className="h-12 w-full rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] px-4 text-sm text-[var(--nova-text)] outline-none transition placeholder:text-[var(--nova-muted)] focus:border-[var(--nova-primary)] focus:bg-[var(--nova-surface)] focus:ring-4 focus:ring-[rgba(139,92,246,0.10)]"
                       />
 
                     </div>
@@ -654,14 +654,14 @@ const ProductsManager = () => {
 
                         <label
                           htmlFor="price"
-                          className="mb-2 block text-xs font-semibold text-gray-700"
+                          className="mb-2 block text-xs font-semibold text-[var(--nova-text)]"
                         >
                           Price
                         </label>
 
                         <div className="relative">
 
-                          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-gray-400">
+                          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-[var(--nova-muted)]">
                             ₹
                           </span>
 
@@ -673,7 +673,7 @@ const ProductsManager = () => {
                             value={price}
                             placeholder="0.00"
                             onChange={handleChangeInput}
-                            className="h-12 w-full rounded-xl border border-gray-200 bg-gray-50 pl-10 pr-4 text-sm text-gray-900 outline-none transition focus:border-gray-900 focus:bg-white focus:ring-4 focus:ring-gray-900/5"
+                            className="h-12 w-full rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] pl-10 pr-4 text-sm text-[var(--nova-text)] outline-none transition focus:border-[var(--nova-primary)] focus:bg-[var(--nova-surface)] focus:ring-4 focus:ring-[rgba(139,92,246,0.10)]"
                           />
 
                         </div>
@@ -684,7 +684,7 @@ const ProductsManager = () => {
 
                         <label
                           htmlFor="inStock"
-                          className="mb-2 block text-xs font-semibold text-gray-700"
+                          className="mb-2 block text-xs font-semibold text-[var(--nova-text)]"
                         >
                           Stock Quantity
                         </label>
@@ -693,7 +693,7 @@ const ProductsManager = () => {
 
                           <Package
                             size={16}
-                            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                            className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--nova-muted)]"
                           />
 
                           <input
@@ -704,7 +704,7 @@ const ProductsManager = () => {
                             value={inStock}
                             placeholder="0"
                             onChange={handleChangeInput}
-                            className="h-12 w-full rounded-xl border border-gray-200 bg-gray-50 pl-10 pr-4 text-sm text-gray-900 outline-none transition focus:border-gray-900 focus:bg-white focus:ring-4 focus:ring-gray-900/5"
+                            className="h-12 w-full rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] pl-10 pr-4 text-sm text-[var(--nova-text)] outline-none transition focus:border-[var(--nova-primary)] focus:bg-[var(--nova-surface)] focus:ring-4 focus:ring-[rgba(139,92,246,0.10)]"
                           />
 
                         </div>
@@ -721,7 +721,7 @@ const ProductsManager = () => {
 
                       <label
                         htmlFor="category"
-                        className="mb-2 block text-xs font-semibold text-gray-700"
+                        className="mb-2 block text-xs font-semibold text-[var(--nova-text)]"
                       >
                         Category
                       </label>
@@ -730,7 +730,7 @@ const ProductsManager = () => {
 
                         <Tag
                           size={16}
-                          className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                          className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--nova-muted)]"
                         />
 
                         <select
@@ -738,7 +738,7 @@ const ProductsManager = () => {
                           id="category"
                           value={category || ''}
                           onChange={handleChangeInput}
-                          className="h-12 w-full appearance-none rounded-xl border border-gray-200 bg-gray-50 pl-10 pr-4 text-sm capitalize text-gray-900 outline-none transition focus:border-gray-900 focus:bg-white focus:ring-4 focus:ring-gray-900/5"
+                          className="h-12 w-full appearance-none rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] pl-10 pr-4 text-sm capitalize text-[var(--nova-text)] outline-none transition focus:border-[var(--nova-primary)] focus:bg-[var(--nova-surface)] focus:ring-4 focus:ring-[rgba(139,92,246,0.10)]"
                         >
 
                           <option value="">
@@ -770,7 +770,7 @@ const ProductsManager = () => {
 
                       <label
                         htmlFor="subcategory"
-                        className="mb-2 block text-xs font-semibold text-gray-700"
+                        className="mb-2 block text-xs font-semibold text-[var(--nova-text)]"
                       >
                         Subcategory
                       </label>
@@ -779,7 +779,7 @@ const ProductsManager = () => {
 
                         <Tag
                           size={16}
-                          className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                          className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--nova-muted)]"
                         />
 
                         <select
@@ -788,7 +788,7 @@ const ProductsManager = () => {
                           value={subcategory || ''}
                           onChange={handleChangeInput}
                           disabled={!category}
-                          className="h-12 w-full appearance-none rounded-xl border border-gray-200 bg-gray-50 pl-10 pr-4 text-sm capitalize text-gray-900 outline-none transition focus:border-gray-900 focus:bg-white focus:ring-4 focus:ring-gray-900/5 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="h-12 w-full appearance-none rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] pl-10 pr-4 text-sm capitalize text-[var(--nova-text)] outline-none transition focus:border-[var(--nova-primary)] focus:bg-[var(--nova-surface)] focus:ring-4 focus:ring-[rgba(139,92,246,0.10)] disabled:cursor-not-allowed disabled:opacity-50"
                         >
 
                           <option value="">
@@ -816,7 +816,7 @@ const ProductsManager = () => {
 
                       {category &&
                         subcategories.length === 0 && (
-                          <p className="mt-2 text-xs text-gray-400">
+                          <p className="mt-2 text-xs text-[var(--nova-muted)]">
                             No subcategories have been created for this category yet.
                           </p>
                         )}
@@ -831,23 +831,23 @@ const ProductsManager = () => {
                     DESCRIPTION
                 ================================================== */}
 
-                <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+                <section className="overflow-hidden rounded-3xl border border-[var(--nova-border)] bg-[var(--nova-surface)] shadow-[var(--shadow-md)]">
 
-                  <div className="border-b border-gray-100 px-6 py-5">
+                  <div className="border-b border-[var(--nova-border)] px-6 py-5">
 
                     <div className="flex items-center gap-3">
 
-                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gray-100">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--nova-lavender-soft)] text-[var(--nova-primary)]">
                         <FileText size={17} />
                       </div>
 
                       <div>
 
-                        <h2 className="text-sm font-semibold text-gray-900">
+                        <h2 className="text-sm font-semibold text-[var(--nova-text)]">
                           Product Details
                         </h2>
 
-                        <p className="mt-0.5 text-xs text-gray-400">
+                        <p className="mt-0.5 text-xs text-[var(--nova-muted)]">
                           Describe what makes this product special.
                         </p>
 
@@ -867,12 +867,12 @@ const ProductsManager = () => {
 
                         <label
                           htmlFor="description"
-                          className="text-xs font-semibold text-gray-700"
+                          className="text-xs font-semibold text-[var(--nova-text)]"
                         >
                           Short Description
                         </label>
 
-                        <span className="text-[10px] text-gray-400">
+                        <span className="text-[10px] text-[var(--nova-muted)]">
                           {description.length} characters
                         </span>
 
@@ -885,7 +885,7 @@ const ProductsManager = () => {
                         value={description}
                         placeholder="Write a short description..."
                         onChange={handleChangeInput}
-                        className="w-full resize-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm leading-6 text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-900 focus:bg-white focus:ring-4 focus:ring-gray-900/5"
+                        className="w-full resize-none rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--nova-text)] outline-none transition placeholder:text-[var(--nova-muted)] focus:border-[var(--nova-primary)] focus:bg-[var(--nova-surface)] focus:ring-4 focus:ring-[rgba(139,92,246,0.10)]"
                       />
 
                     </div>
@@ -898,12 +898,12 @@ const ProductsManager = () => {
 
                         <label
                           htmlFor="content"
-                          className="text-xs font-semibold text-gray-700"
+                          className="text-xs font-semibold text-[var(--nova-text)]"
                         >
                           Full Product Content
                         </label>
 
-                        <span className="text-[10px] text-gray-400">
+                        <span className="text-[10px] text-[var(--nova-muted)]">
                           {content.length} characters
                         </span>
 
@@ -916,7 +916,7 @@ const ProductsManager = () => {
                         value={content}
                         placeholder="Write detailed product information..."
                         onChange={handleChangeInput}
-                        className="w-full resize-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm leading-6 text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-900 focus:bg-white focus:ring-4 focus:ring-gray-900/5"
+                        className="w-full resize-none rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--nova-text)] outline-none transition placeholder:text-[var(--nova-muted)] focus:border-[var(--nova-primary)] focus:bg-[var(--nova-surface)] focus:ring-4 focus:ring-[rgba(139,92,246,0.10)]"
                       />
 
                     </div>
@@ -937,25 +937,25 @@ const ProductsManager = () => {
                     MEDIA
                 ================================================== */}
 
-                <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+                <section className="overflow-hidden rounded-3xl border border-[var(--nova-border)] bg-[var(--nova-surface)] shadow-[var(--shadow-md)]">
 
-                  <div className="border-b border-gray-100 px-6 py-5">
+                  <div className="border-b border-[var(--nova-border)] px-6 py-5">
 
                     <div className="flex items-center justify-between">
 
                       <div className="flex items-center gap-3">
 
-                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gray-100">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--nova-lavender-soft)] text-[var(--nova-primary)]">
                           <ImagePlus size={17} />
                         </div>
 
                         <div>
 
-                          <h2 className="text-sm font-semibold text-gray-900">
+                          <h2 className="text-sm font-semibold text-[var(--nova-text)]">
                             Product Images
                           </h2>
 
-                          <p className="mt-0.5 text-xs text-gray-400">
+                          <p className="mt-0.5 text-xs text-[var(--nova-muted)]">
                             {images.length}/5 images
                           </p>
 
@@ -973,27 +973,27 @@ const ProductsManager = () => {
 
                     <label
                       htmlFor="product-images"
-                      className="group flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-200 bg-gray-50 px-6 py-8 text-center transition hover:border-gray-400 hover:bg-white"
+                      className="group flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[var(--nova-border)] bg-[var(--nova-surface-soft)] px-6 py-8 text-center transition hover:border-[var(--nova-violet-light)] hover:bg-[var(--nova-surface)]"
                     >
 
-                      <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-white shadow-sm ring-1 ring-gray-100 transition group-hover:scale-105">
+                      <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--nova-surface)] shadow-[var(--shadow-sm)] ring-1 ring-gray-100 transition group-hover:scale-105">
 
                         <Upload
                           size={19}
-                          className="text-gray-500"
+                          className="text-[var(--nova-muted)]"
                         />
 
                       </div>
 
-                      <p className="text-sm font-semibold text-gray-900">
+                      <p className="text-sm font-semibold text-[var(--nova-text)]">
                         Upload product images
                       </p>
 
-                      <p className="mt-1 text-xs text-gray-400">
+                      <p className="mt-1 text-xs text-[var(--nova-muted)]">
                         PNG or JPG • Maximum 1MB each
                       </p>
 
-                      <p className="mt-2 text-[10px] text-gray-300">
+                      <p className="mt-2 text-[10px] text-[var(--nova-muted)]">
                         Up to 5 images
                       </p>
 
@@ -1029,7 +1029,7 @@ const ProductsManager = () => {
                             return (
                               <div
                                 key={index}
-                                className="group relative aspect-square overflow-hidden rounded-xl border border-gray-200 bg-gray-100"
+                                className="group relative aspect-square overflow-hidden rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface-soft)]"
                               >
 
                                 {imageSrc && (
@@ -1055,7 +1055,7 @@ const ProductsManager = () => {
                                       index
                                     )
                                   }
-                                  className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-lg bg-white/90 text-gray-600 opacity-0 shadow-sm backdrop-blur transition group-hover:opacity-100 hover:bg-red-500 hover:text-white"
+                                  className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--nova-surface)]/90 text-[var(--nova-muted)] opacity-0 shadow-[var(--shadow-sm)] backdrop-blur transition group-hover:opacity-100 hover:bg-red-500 hover:text-white"
                                 >
                                   <X size={14} />
                                 </button>
@@ -1077,23 +1077,23 @@ const ProductsManager = () => {
                     PUBLISH CARD
                 ================================================== */}
 
-                <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+                <section className="overflow-hidden rounded-3xl border border-[var(--nova-border)] bg-[var(--nova-surface)] shadow-[var(--shadow-md)]">
 
                   <div className="p-6">
 
                     <div className="mb-5 flex items-start gap-3">
 
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-green-50 text-green-600">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[color-mix(in_srgb,var(--nova-success)_10%,transparent)] text-[var(--nova-success)]">
                         <Check size={17} />
                       </div>
 
                       <div>
 
-                        <h3 className="text-sm font-semibold text-gray-900">
+                        <h3 className="text-sm font-semibold text-[var(--nova-text)]">
                           Ready to publish?
                         </h3>
 
-                        <p className="mt-1 text-xs leading-5 text-gray-400">
+                        <p className="mt-1 text-xs leading-5 text-[var(--nova-muted)]">
                           Make sure all product information and images are correct before saving.
                         </p>
 
@@ -1106,7 +1106,7 @@ const ProductsManager = () => {
                       disabled={
                         state.notify?.loading
                       }
-                      className="group flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-black px-5 text-sm font-semibold text-white transition hover:bg-gray-800 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
+                      className="group flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-black px-5 text-sm font-semibold text-white transition hover:bg-[var(--nova-primary-dark)] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
                     >
 
                       <Save size={16} />
@@ -1126,7 +1126,7 @@ const ProductsManager = () => {
                         onClick={() =>
                           router.push('/')
                         }
-                        className="mt-3 flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
+                        className="mt-3 flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-[var(--nova-border)] text-sm font-medium text-[var(--nova-muted)] transition hover:bg-[var(--nova-surface-soft)]"
                       >
 
                         <ArrowLeft size={15} />
@@ -1145,15 +1145,15 @@ const ProductsManager = () => {
                     PRODUCT PREVIEW
                 ================================================== */}
 
-                <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                <section className="rounded-2xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-6 shadow-[var(--shadow-sm)]">
 
-                  <p className="mb-4 text-[10px] font-semibold uppercase tracking-[0.18em] text-gray-400">
+                  <p className="mb-4 text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--nova-muted)]">
                     Quick Preview
                   </p>
 
                   <div className="flex gap-4">
 
-                    <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-gray-100">
+                    <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-[var(--nova-lavender-soft)] text-[var(--nova-primary)]">
 
                       {images[0] ? (
 
@@ -1175,7 +1175,7 @@ const ProductsManager = () => {
 
                           <ImagePlus
                             size={20}
-                            className="text-gray-300"
+                            className="text-[var(--nova-muted)]"
                           />
 
                         </div>
@@ -1186,17 +1186,17 @@ const ProductsManager = () => {
 
                     <div className="min-w-0">
 
-                      <p className="truncate text-sm font-semibold text-gray-900">
+                      <p className="truncate text-sm font-semibold text-[var(--nova-text)]">
                         {title ||
                           'Product title'}
                       </p>
 
-                      <p className="mt-1 line-clamp-2 text-xs leading-5 text-gray-400">
+                      <p className="mt-1 line-clamp-2 text-xs leading-5 text-[var(--nova-muted)]">
                         {description ||
                           'Your product description will appear here.'}
                       </p>
 
-                      <p className="mt-2 text-sm font-semibold text-gray-900">
+                      <p className="mt-2 text-sm font-semibold text-[var(--nova-text)]">
                         {formatPrice(price)}
                       </p>
 
@@ -1207,13 +1207,13 @@ const ProductsManager = () => {
                   {/* CATEGORY PREVIEW */}
 
                   {category && (
-                    <div className="mt-4 border-t border-gray-100 pt-4">
+                    <div className="mt-4 border-t border-[var(--nova-border)] pt-4">
 
-                      <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                      <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--nova-muted)]">
                         Category
                       </p>
 
-                      <p className="mt-1 text-xs font-medium text-gray-700">
+                      <p className="mt-1 text-xs font-medium text-[var(--nova-text)]">
 
                         {
                           parentCategories.find(
@@ -1225,7 +1225,7 @@ const ProductsManager = () => {
 
                         {subcategory && (
                           <>
-                            <span className="mx-1 text-gray-300">
+                            <span className="mx-1 text-[var(--nova-muted)]">
                               /
                             </span>
 

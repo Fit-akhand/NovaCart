@@ -213,7 +213,7 @@ const Users = () => {
         />
       </Head>
 
-      <main className="min-h-screen px-4 py-6 sm:px-6 lg:px-8">
+      <main className="min-h-screen bg-[var(--nova-bg)] px-4 py-6 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
 
           {/* =================================================
@@ -226,11 +226,11 @@ const Users = () => {
 
               <div className="mb-3 flex items-center gap-2">
 
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-black text-white">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--nova-lavender-soft)] text-[var(--nova-primary)]">
                   <UsersIcon size={15} />
                 </div>
 
-                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-400">
+                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--nova-muted)]">
                   {isSeller
                     ? 'NovaCart Seller'
                     : 'NovaCart Super Admin'}
@@ -238,11 +238,11 @@ const Users = () => {
 
               </div>
 
-              <h1 className="text-3xl font-semibold tracking-tight text-gray-950 sm:text-4xl">
+              <h1 className="text-3xl font-semibold tracking-tight text-[var(--nova-text)] sm:text-4xl">
                 {pageTitle}
               </h1>
 
-              <p className="mt-2 max-w-xl text-sm text-gray-500">
+              <p className="mt-2 max-w-xl text-sm text-[var(--nova-muted)]">
                 {pageDescription}
               </p>
 
@@ -254,13 +254,13 @@ const Users = () => {
 
             {isSeller ? (
 
-              <div className="rounded-2xl border border-gray-200 bg-white px-6 py-4 shadow-sm">
+              <div className="rounded-2xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-6 py-4 shadow-[var(--shadow-sm)]">
 
-                <p className="text-[11px] font-medium uppercase tracking-wider text-gray-400">
+                <p className="text-[11px] font-medium uppercase tracking-wider text-[var(--nova-muted)]">
                   My Customers
                 </p>
 
-                <p className="mt-1 text-2xl font-semibold text-gray-900">
+                <p className="mt-1 text-2xl font-semibold text-[var(--nova-text)]">
                   {users.length}
                 </p>
 
@@ -268,17 +268,17 @@ const Users = () => {
 
             ) : (
 
-              <div className="grid grid-cols-4 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+              <div className="grid grid-cols-4 overflow-hidden rounded-2xl border border-[var(--nova-border)] bg-[var(--nova-surface)] shadow-[var(--shadow-sm)]">
 
                 {/* TOTAL */}
 
                 <div className="px-5 py-4">
 
-                  <p className="text-[11px] font-medium uppercase tracking-wider text-gray-400">
+                  <p className="text-[11px] font-medium uppercase tracking-wider text-[var(--nova-muted)]">
                     Total
                   </p>
 
-                  <p className="mt-1 text-xl font-semibold text-gray-900">
+                  <p className="mt-1 text-xl font-semibold text-[var(--nova-text)]">
                     {users.length}
                   </p>
 
@@ -286,13 +286,13 @@ const Users = () => {
 
                 {/* CUSTOMERS */}
 
-                <div className="border-l border-gray-100 px-5 py-4">
+                <div className="border-l border-[var(--nova-border)] px-5 py-4">
 
-                  <p className="text-[11px] font-medium uppercase tracking-wider text-gray-400">
+                  <p className="text-[11px] font-medium uppercase tracking-wider text-[var(--nova-muted)]">
                     Customers
                   </p>
 
-                  <p className="mt-1 text-xl font-semibold text-gray-900">
+                  <p className="mt-1 text-xl font-semibold text-[var(--nova-text)]">
                     {customerCount}
                   </p>
 
@@ -300,13 +300,13 @@ const Users = () => {
 
                 {/* SELLERS */}
 
-                <div className="border-l border-gray-100 px-5 py-4">
+                <div className="border-l border-[var(--nova-border)] px-5 py-4">
 
-                  <p className="text-[11px] font-medium uppercase tracking-wider text-gray-400">
+                  <p className="text-[11px] font-medium uppercase tracking-wider text-[var(--nova-muted)]">
                     Sellers
                   </p>
 
-                  <p className="mt-1 text-xl font-semibold text-gray-900">
+                  <p className="mt-1 text-xl font-semibold text-[var(--nova-text)]">
                     {sellerCount}
                   </p>
 
@@ -314,13 +314,13 @@ const Users = () => {
 
                 {/* ADMINS */}
 
-                <div className="border-l border-gray-100 px-5 py-4">
+                <div className="border-l border-[var(--nova-border)] px-5 py-4">
 
-                  <p className="text-[11px] font-medium uppercase tracking-wider text-gray-400">
+                  <p className="text-[11px] font-medium uppercase tracking-wider text-[var(--nova-muted)]">
                     Admins
                   </p>
 
-                  <p className="mt-1 text-xl font-semibold text-gray-900">
+                  <p className="mt-1 text-xl font-semibold text-[var(--nova-text)]">
                     {adminCount}
                   </p>
 
@@ -335,23 +335,23 @@ const Users = () => {
               MAIN CARD
           ================================================= */}
 
-          <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+          <section className="overflow-hidden rounded-3xl border border-[var(--nova-border)] bg-[var(--nova-surface)] shadow-[var(--shadow-md)]">
 
             {/* =================================================
                 TOOLBAR
             ================================================= */}
 
-            <div className="flex flex-col gap-4 border-b border-gray-100 px-5 py-5 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex flex-col gap-4 border-b border-[var(--nova-border)] px-5 py-5 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
 
               <div>
 
-                <h2 className="text-base font-semibold text-gray-900">
+                <h2 className="text-base font-semibold text-[var(--nova-text)]">
                   {isSeller
                     ? 'My Customers'
                     : 'All Users'}
                 </h2>
 
-                <p className="mt-1 text-xs text-gray-400">
+                <p className="mt-1 text-xs text-[var(--nova-muted)]">
                   {filteredUsers.length}{' '}
                   user
                   {filteredUsers.length !== 1
@@ -368,7 +368,7 @@ const Users = () => {
 
                 <Search
                   size={17}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--nova-muted)]"
                 />
 
                 <input
@@ -380,7 +380,7 @@ const Users = () => {
                     )
                   }
                   placeholder="Search by name, email or ID..."
-                  className="h-11 w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-10 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-gray-900 focus:bg-white focus:ring-4 focus:ring-gray-900/5"
+                  className="h-11 w-full rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] pl-11 pr-10 text-sm text-[var(--nova-text)] outline-none transition-all duration-200 placeholder:text-[var(--nova-muted)] focus:border-[var(--nova-primary)] focus:bg-[var(--nova-surface)] focus:ring-4 focus:ring-[rgba(139,92,246,0.10)]"
                 />
 
                 {search && (
@@ -389,7 +389,7 @@ const Users = () => {
                     onClick={() =>
                       setSearch('')
                     }
-                    className="absolute right-3 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-200 hover:text-gray-900"
+                    className="absolute right-3 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-lg text-[var(--nova-muted)] transition hover:bg-gray-200 hover:text-[var(--nova-text)]"
                   >
                     <X size={14} />
                   </button>
@@ -409,28 +409,28 @@ const Users = () => {
 
                 <thead>
 
-                  <tr className="border-b border-gray-100 bg-gray-50/70">
+                  <tr className="border-b border-[var(--nova-border)] bg-[var(--nova-surface-soft)]">
 
-                    <th className="w-16 px-6 py-4 text-left text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                    <th className="w-16 px-6 py-4 text-left text-[10px] font-semibold uppercase tracking-wider text-[var(--nova-muted)]">
                       #
                     </th>
 
-                    <th className="px-4 py-4 text-left text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                    <th className="px-4 py-4 text-left text-[10px] font-semibold uppercase tracking-wider text-[var(--nova-muted)]">
                       User
                     </th>
 
-                    <th className="px-4 py-4 text-left text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                    <th className="px-4 py-4 text-left text-[10px] font-semibold uppercase tracking-wider text-[var(--nova-muted)]">
                       Email
                     </th>
 
                     {!isSeller && (
-                      <th className="px-4 py-4 text-left text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                      <th className="px-4 py-4 text-left text-[10px] font-semibold uppercase tracking-wider text-[var(--nova-muted)]">
                         Role
                       </th>
                     )}
 
                     {isSuperAdmin && (
-                      <th className="px-4 py-4 text-right text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                      <th className="px-4 py-4 text-right text-[10px] font-semibold uppercase tracking-wider text-[var(--nova-muted)]">
                         Actions
                       </th>
                     )}
@@ -439,7 +439,7 @@ const Users = () => {
 
                 </thead>
 
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-[var(--nova-border)]">
 
                   {filteredUsers.map(
                     (user, index) => {
@@ -460,12 +460,12 @@ const Users = () => {
 
                         <tr
                           key={user._id}
-                          className="group transition hover:bg-gray-50/70"
+                          className="group transition hover:bg-[var(--nova-surface-soft)]"
                         >
 
                           {/* NUMBER */}
 
-                          <td className="px-6 py-4 text-xs font-medium text-gray-300">
+                          <td className="px-6 py-4 text-xs font-medium text-[var(--nova-muted)]">
                             {String(
                               index + 1
                             ).padStart(
@@ -480,7 +480,7 @@ const Users = () => {
 
                             <div className="flex items-center gap-3">
 
-                              <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-gray-100">
+                              <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-[var(--nova-surface-soft)]">
 
                                 {user.avatar ? (
 
@@ -499,7 +499,7 @@ const Users = () => {
 
                                     <User
                                       size={17}
-                                      className="text-gray-400"
+                                      className="text-[var(--nova-muted)]"
                                     />
 
                                   </div>
@@ -510,12 +510,12 @@ const Users = () => {
 
                               <div className="min-w-0">
 
-                                <p className="truncate text-sm font-semibold text-gray-900">
+                                <p className="truncate text-sm font-semibold text-[var(--nova-text)]">
                                   {user.name ||
                                     'Unnamed User'}
                                 </p>
 
-                                <p className="mt-0.5 max-w-[220px] truncate font-mono text-[10px] text-gray-400">
+                                <p className="mt-0.5 max-w-[220px] truncate font-mono text-[10px] text-[var(--nova-muted)]">
                                   {user._id}
                                 </p>
 
@@ -529,11 +529,11 @@ const Users = () => {
 
                           <td className="px-4 py-4">
 
-                            <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <div className="flex items-center gap-2 text-sm text-[var(--nova-muted)]">
 
                               <Mail
                                 size={14}
-                                className="text-gray-300"
+                                className="text-[var(--nova-muted)]"
                               />
 
                               {user.email ||
@@ -552,7 +552,7 @@ const Users = () => {
                               {user.role ===
                               'admin' ? (
 
-                                <div className="inline-flex items-center gap-1.5 rounded-full bg-gray-900 px-3 py-1.5 text-[10px] font-semibold text-white">
+                                <div className="inline-flex items-center gap-1.5 rounded-full bg-[var(--nova-primary)] px-3 py-1.5 text-[10px] font-semibold text-white">
 
                                   {isRootAdmin ? (
                                     <ShieldCheck
@@ -573,7 +573,7 @@ const Users = () => {
                               ) : user.role ===
                                 'seller' ? (
 
-                                <div className="inline-flex items-center gap-1.5 rounded-full bg-blue-100 px-3 py-1.5 text-[10px] font-semibold text-blue-700">
+                                <div className="inline-flex items-center gap-1.5 rounded-full bg-[var(--nova-lavender-soft)] px-3 py-1.5 text-[10px] font-semibold text-[var(--nova-primary)]">
 
                                   <Shield
                                     size={12}
@@ -585,7 +585,7 @@ const Users = () => {
 
                               ) : (
 
-                                <div className="inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1.5 text-[10px] font-semibold text-gray-600">
+                                <div className="inline-flex items-center gap-1.5 rounded-full bg-[var(--nova-surface-soft)] px-3 py-1.5 text-[10px] font-semibold text-[var(--nova-muted)]">
 
                                   <User
                                     size={12}
@@ -616,7 +616,7 @@ const Users = () => {
                                     <Link
                                       href={`/edit_user/${user._id}`}
                                       title="Edit user"
-                                      className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-gray-900"
+                                      className="flex h-9 w-9 items-center justify-center rounded-lg text-[var(--nova-muted)] transition hover:bg-[var(--nova-surface-soft)] hover:text-[var(--nova-text)]"
                                     >
                                       <Edit3
                                         size={16}
@@ -631,7 +631,7 @@ const Users = () => {
                                           user
                                         )
                                       }
-                                      className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 transition hover:bg-red-50 hover:text-red-500"
+                                      className="flex h-9 w-9 items-center justify-center rounded-lg text-[var(--nova-muted)] transition hover:bg-[color-mix(in_srgb,var(--nova-danger)_8%,transparent)] hover:text-[var(--nova-danger)]"
                                     >
                                       <Trash2
                                         size={16}
@@ -642,7 +642,7 @@ const Users = () => {
 
                                 ) : (
 
-                                  <div className="flex h-9 items-center rounded-lg bg-gray-50 px-3 text-[10px] font-medium text-gray-400">
+                                  <div className="flex h-9 items-center rounded-lg bg-[var(--nova-surface-soft)] px-3 text-[10px] font-medium text-[var(--nova-muted)]">
                                     {isCurrentUser
                                       ? 'You'
                                       : 'Protected'}
@@ -672,7 +672,7 @@ const Users = () => {
                 MOBILE USERS
             ================================================= */}
 
-            <div className="divide-y divide-gray-100 md:hidden">
+            <div className="divide-y divide-[var(--nova-border)] md:hidden">
 
               {filteredUsers.map(
                 (user, index) => {
@@ -696,7 +696,7 @@ const Users = () => {
 
                         <div className="flex min-w-0 items-center gap-3">
 
-                          <div className="h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-gray-100">
+                          <div className="h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-[var(--nova-surface-soft)]">
 
                             {user.avatar ? (
 
@@ -715,7 +715,7 @@ const Users = () => {
 
                                 <User
                                   size={18}
-                                  className="text-gray-400"
+                                  className="text-[var(--nova-muted)]"
                                 />
 
                               </div>
@@ -726,12 +726,12 @@ const Users = () => {
 
                           <div className="min-w-0">
 
-                            <p className="truncate text-sm font-semibold text-gray-900">
+                            <p className="truncate text-sm font-semibold text-[var(--nova-text)]">
                               {user.name ||
                                 'Unnamed User'}
                             </p>
 
-                            <p className="mt-1 truncate text-xs text-gray-400">
+                            <p className="mt-1 truncate text-xs text-[var(--nova-muted)]">
                               {user.email ||
                                 'No email'}
                             </p>
@@ -740,7 +740,7 @@ const Users = () => {
 
                         </div>
 
-                        <span className="shrink-0 text-[10px] font-medium text-gray-300">
+                        <span className="shrink-0 text-[10px] font-medium text-[var(--nova-muted)]">
                           #{index + 1}
                         </span>
 
@@ -757,7 +757,7 @@ const Users = () => {
                             {user.role ===
                             'admin' ? (
 
-                              <span className="flex items-center gap-1.5 rounded-full bg-gray-900 px-3 py-1.5 text-[10px] font-semibold text-white">
+                              <span className="flex items-center gap-1.5 rounded-full bg-[var(--nova-primary)] px-3 py-1.5 text-[10px] font-semibold text-white">
 
                                 {user.root ? (
                                   <ShieldCheck
@@ -778,7 +778,7 @@ const Users = () => {
                             ) : user.role ===
                               'seller' ? (
 
-                              <span className="flex items-center gap-1.5 rounded-full bg-blue-100 px-3 py-1.5 text-[10px] font-semibold text-blue-700">
+                              <span className="flex items-center gap-1.5 rounded-full bg-[var(--nova-lavender-soft)] px-3 py-1.5 text-[10px] font-semibold text-[var(--nova-primary)]">
 
                                 <Shield
                                   size={12}
@@ -790,7 +790,7 @@ const Users = () => {
 
                             ) : (
 
-                              <span className="flex items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1.5 text-[10px] font-semibold text-gray-600">
+                              <span className="flex items-center gap-1.5 rounded-full bg-[var(--nova-surface-soft)] px-3 py-1.5 text-[10px] font-semibold text-[var(--nova-muted)]">
 
                                 <User
                                   size={12}
@@ -819,7 +819,7 @@ const Users = () => {
                                 <Link
                                   href={`/edit_user/${user._id}`}
                                   title="Edit user"
-                                  className="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-50 text-gray-500"
+                                  className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--nova-surface-soft)] text-[var(--nova-muted)]"
                                 >
                                   <Edit3
                                     size={16}
@@ -834,7 +834,7 @@ const Users = () => {
                                       user
                                     )
                                   }
-                                  className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-50 text-red-500"
+                                  className="flex h-9 w-9 items-center justify-center rounded-lg bg-[color-mix(in_srgb,var(--nova-danger)_8%,transparent)] text-[var(--nova-danger)]"
                                 >
                                   <Trash2
                                     size={16}
@@ -845,7 +845,7 @@ const Users = () => {
 
                             ) : (
 
-                              <span className="rounded-lg bg-gray-50 px-3 py-2 text-[10px] text-gray-400">
+                              <span className="rounded-lg bg-[var(--nova-surface-soft)] px-3 py-2 text-[10px] text-[var(--nova-muted)]">
                                 {isCurrentUser
                                   ? 'You'
                                   : 'Protected'}
@@ -875,16 +875,16 @@ const Users = () => {
 
               <div className="flex min-h-[320px] flex-col items-center justify-center px-6 text-center">
 
-                <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-100">
+                <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--nova-surface-soft)]">
 
                   <Search
                     size={27}
-                    className="text-gray-400"
+                    className="text-[var(--nova-muted)]"
                   />
 
                 </div>
 
-                <h3 className="text-base font-semibold text-gray-900">
+                <h3 className="text-base font-semibold text-[var(--nova-text)]">
 
                   {isSeller
                     ? 'No customers yet'
@@ -892,7 +892,7 @@ const Users = () => {
 
                 </h3>
 
-                <p className="mt-2 max-w-sm text-sm text-gray-400">
+                <p className="mt-2 max-w-sm text-sm text-[var(--nova-muted)]">
 
                   {isSeller
                     ? 'Customers who purchase your products will appear here.'
@@ -907,7 +907,7 @@ const Users = () => {
                     onClick={() =>
                       setSearch('')
                     }
-                    className="mt-5 flex items-center gap-2 rounded-xl bg-black px-5 py-2.5 text-xs font-semibold text-white transition hover:bg-gray-800"
+                    className="mt-5 flex items-center gap-2 rounded-xl bg-black px-5 py-2.5 text-xs font-semibold text-white transition hover:bg-[var(--nova-primary-dark)]"
                   >
 
                     <X size={13} />
@@ -928,7 +928,7 @@ const Users = () => {
               FOOTER
           ================================================= */}
 
-          <div className="mt-5 flex items-center justify-center gap-2 text-[11px] text-gray-400">
+          <div className="mt-5 flex items-center justify-center gap-2 text-[11px] text-[var(--nova-muted)]">
 
             <Check size={13} />
 
