@@ -426,6 +426,108 @@ export const DataProvider = ({
 
 
     // ========================================================
+    // LOAD USER ORDER HISTORY
+    // ========================================================
+
+    useEffect(() => {
+
+        if (
+            !auth?.user ||
+            !auth?.token
+        ) {
+            dispatch({
+                type: 'ADD_ORDERS',
+                payload: []
+            })
+
+            return
+        }
+
+        let mounted = true
+
+        const loadOrders = async () => {
+
+            try {
+
+                const response = await fetch(
+                    '/api/order',
+                    {
+                        method: 'GET',
+                        headers: {
+                            Authorization:
+                                `Bearer ${auth.token}`
+                        },
+                        credentials: 'include',
+                        cache: 'no-store'
+                    }
+                )
+
+                const data =
+                    await response.json()
+                        .catch(() => ({}))
+
+                if (!response.ok) {
+
+                    console.error(
+                        'NovaCart: failed to load orders',
+                        data
+                    )
+
+                    if (mounted) {
+                        dispatch({
+                            type: 'ADD_ORDERS',
+                            payload: []
+                        })
+                    }
+
+                    return
+                }
+
+                const orders =
+                    Array.isArray(data?.orders)
+                        ? data.orders
+                        : []
+
+                if (mounted) {
+
+                    dispatch({
+                        type: 'ADD_ORDERS',
+                        payload: orders
+                    })
+
+                }
+
+            } catch (error) {
+
+                console.error(
+                    'NovaCart: order history load failed:',
+                    error
+                )
+
+                if (mounted) {
+
+                    dispatch({
+                        type: 'ADD_ORDERS',
+                        payload: []
+                    })
+
+                }
+            }
+        }
+
+        loadOrders()
+
+        return () => {
+            mounted = false
+        }
+
+    }, [
+        auth?.user?._id,
+        auth?.token
+    ])
+
+
+    // ========================================================
     // LOAD CATEGORIES
     // ========================================================
 

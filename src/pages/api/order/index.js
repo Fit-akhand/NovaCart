@@ -488,7 +488,39 @@ const createOrder = async (req, res) => {
                     verifiedCart,
 
                 total:
-                    serverTotal
+                    serverTotal,
+
+                // ==========================================
+                // RAZORPAY PAYMENT INFORMATION
+                // ==========================================
+
+                razorpayOrderId:
+                    req.body.razorpayOrderId || null,
+
+                razorpayPaymentId:
+                    req.body.razorpayPaymentId || null,
+
+                razorpaySignature:
+                    req.body.razorpaySignature || null,
+
+                paymentId:
+                    req.body.razorpayPaymentId || null,
+
+                method:
+                    req.body.paymentMethod || 'razorpay',
+
+                paid:
+                    Boolean(req.body.paid),
+
+                paymentStatus:
+                    req.body.paid
+                        ? 'paid'
+                        : 'pending',
+
+                dateOfPayment:
+                    req.body.paid
+                        ? new Date()
+                        : null
 
             })
 

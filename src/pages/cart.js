@@ -192,6 +192,9 @@ const [selectedAddressId, setSelectedAddressId] = useState(null)
 const [useNewAddress, setUseNewAddress] = useState(false)
 const [saveNewAddress, setSaveNewAddress] = useState(false)
 
+const [showAddressForm, setShowAddressForm] = useState(false)
+const [addresses, setAddresses] = useState([])
+
   // =========================================================
 // LOAD DEFAULT SAVED ADDRESS
 // =========================================================
@@ -1083,507 +1086,604 @@ const handlePayment = async () => {
 
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_380px]">
 
+  {/* =================================================
+      LEFT COLUMN — CART + DELIVERY ADDRESS
+  ================================================= */}
+
+  <div className="min-w-0 space-y-6">
+
+    {/* =================================================
+        CART ITEMS
+    ================================================= */}
+
+    <div className="overflow-hidden rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)]">
+
+      <div className="divide-y divide-[var(--nova-border)]">
+
+        {cart.map(
+          (item) => (
+            <CartItem
+              key={item._id}
+              item={item}
+              dispatch={dispatch}
+              cart={cart}
+            />
+          )
+        )}
+
+      </div>
+
+    </div>
+
+
+    {/* =================================================
+        DELIVERY ADDRESS
+    ================================================= */}
+
+    <div className="rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-6">
+
+      <div className="mb-5">
+
+        <h2 className="text-xl font-semibold">
+          Delivery address
+        </h2>
+
+        <p className="mt-1 text-sm text-[var(--nova-muted)]">
+          Select a saved address or add a new delivery address.
+        </p>
+
+      </div>
+
+
+      {/* =================================================
+          SAVED ADDRESSES
+      ================================================= */}
+
+      {savedAddresses.length > 0 && (
+
+        <div className="space-y-3">
+
+          <h3 className="text-sm font-semibold">
+            Saved addresses
+          </h3>
+
+
+          {savedAddresses.map((item) => (
+
+            <button
+              key={item._id}
+              type="button"
+              onClick={() =>
+                handleSelectAddress(item)
+              }
+              className={`w-full rounded-xl border p-4 text-left transition-all duration-200 ${
+                selectedAddressId === item._id &&
+                !useNewAddress
+                  ? 'border-[var(--nova-blue)] bg-blue-50 shadow-md ring-1 ring-[var(--nova-blue)]'
+                  : 'border-gray-200 bg-white hover:border-[var(--nova-blue)] hover:bg-blue-50/40 hover:shadow-sm'
+              }`}
+            >
+
+              <div className="flex items-start justify-between gap-4">
+
+                <div className="min-w-0">
+
+                  <h3 className="text-sm font-semibold text-gray-900">
+                    {item.label || 'Home'}
+                  </h3>
+
+                  <p className="mt-2 text-sm font-medium text-gray-800">
+                    {item.fullName}
+                  </p>
+
+                  <p className="mt-2 text-sm leading-6 text-gray-600">
+                    {item.address}, {item.city}, {item.state} - {item.pincode}
+                  </p>
+
+                  <p className="mt-2 text-sm text-gray-600">
+                    {item.phone}
+                  </p>
+
+                </div>
+
+
+                <div className="flex shrink-0 flex-col items-end gap-2">
+
+                  {item.isDefault && (
+
+                    <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
+                      Default
+                    </span>
+
+                  )}
+
+
+                  {selectedAddressId === item._id &&
+                    !useNewAddress && (
+
+                      <span className="rounded-full bg-[var(--nova-blue)] px-3 py-1 text-xs font-semibold text-white">
+                        Selected
+                      </span>
+
+                  )}
+
+                </div>
+
+              </div>
+
+            </button>
+
+          ))}
+
+        </div>
+
+      )}
+
+
+      {/* =================================================
+          ADD NEW ADDRESS
+      ================================================= */}
+
+      <button
+        type="button"
+        onClick={() => {
+          setShowAddressForm(true)
+          setUseNewAddress(true)
+          setSelectedAddressId(null)
+        }}
+        className="mt-5 flex items-center gap-2 text-sm font-semibold text-blue-600 transition hover:text-blue-700"
+      >
+        + Add New Address
+      </button>
+
+
+      {/* =================================================
+          DELIVERY INFORMATION FORM
+      ================================================= */}
+
+      {showAddressForm && (
+
+        <div className="mt-5 rounded-2xl border border-gray-200 bg-white p-5">
+
+          <div className="mb-5">
+
+            <h3 className="text-sm font-semibold">
+              Delivery information
+            </h3>
+
+            <p className="mt-1 text-xs text-[var(--nova-muted)]">
+              Enter the complete address for delivery.
+            </p>
+
+          </div>
+
+
+          <div className="space-y-4">
+
             {/* =================================================
-                CART ITEMS
+                FULL NAME
             ================================================= */}
 
-            <div className="overflow-hidden rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)]">
+            <div>
 
-              <div className="divide-y divide-[var(--nova-border)]">
+              <label
+                htmlFor="fullName"
+                className="mb-2 flex items-center gap-2 text-sm font-medium"
+              >
+                <User size={14} />
+                Full name
+              </label>
 
-                {cart.map(
-                  (item) => (
-                    <CartItem
-                      key={item._id}
-                      item={item}
-                      dispatch={dispatch}
-                      cart={cart}
-                    />
-                  )
-                )}
+              <input
+                id="fullName"
+                name="fullName"
+                type="text"
+                value={
+                  shippingAddress.fullName
+                }
+                onChange={
+                  handleAddressChange
+                }
+                placeholder="Enter your full name"
+                autoComplete="name"
+                className="w-full rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] px-4 py-3 text-sm outline-none transition focus:border-[var(--nova-blue)]"
+              />
+
+            </div>
+
+
+            {/* =================================================
+                PHONE
+            ================================================= */}
+
+            <div>
+
+              <label
+                htmlFor="phone"
+                className="mb-2 flex items-center gap-2 text-sm font-medium"
+              >
+                <Phone size={14} />
+                Mobile number
+              </label>
+
+              <input
+                id="phone"
+                name="phone"
+                type="tel"
+                inputMode="numeric"
+                maxLength={10}
+                value={
+                  shippingAddress.phone
+                }
+                onChange={
+                  handleAddressChange
+                }
+                placeholder="10-digit mobile number"
+                autoComplete="tel"
+                className="w-full rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] px-4 py-3 text-sm outline-none transition focus:border-[var(--nova-blue)]"
+              />
+
+            </div>
+
+
+            {/* =================================================
+                FULL ADDRESS
+            ================================================= */}
+
+            <div>
+
+              <label
+                htmlFor="address"
+                className="mb-2 flex items-center gap-2 text-sm font-medium"
+              >
+                <MapPin size={14} />
+                Full address
+              </label>
+
+              <textarea
+                id="address"
+                name="address"
+                rows={3}
+                value={
+                  shippingAddress.address
+                }
+                onChange={
+                  handleAddressChange
+                }
+                placeholder="House number, street, area"
+                autoComplete="street-address"
+                className="w-full resize-none rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] px-4 py-3 text-sm outline-none transition focus:border-[var(--nova-blue)]"
+              />
+
+            </div>
+
+
+            {/* =================================================
+                LANDMARK
+            ================================================= */}
+
+            <div>
+
+              <label
+                htmlFor="addressLine2"
+                className="mb-2 block text-sm font-medium"
+              >
+
+                Landmark / Apartment
+
+                <span className="ml-1 text-xs text-[var(--nova-muted)]">
+                  (optional)
+                </span>
+
+              </label>
+
+              <input
+                id="addressLine2"
+                name="addressLine2"
+                type="text"
+                value={
+                  shippingAddress.addressLine2
+                }
+                onChange={
+                  handleAddressChange
+                }
+                placeholder="Apartment, landmark, etc."
+                autoComplete="address-line2"
+                className="w-full rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] px-4 py-3 text-sm outline-none transition focus:border-[var(--nova-blue)]"
+              />
+
+            </div>
+
+
+            {/* =================================================
+                CITY + STATE
+            ================================================= */}
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+              <div>
+
+                <label
+                  htmlFor="city"
+                  className="mb-2 block text-sm font-medium"
+                >
+                  City
+                </label>
+
+                <input
+                  id="city"
+                  name="city"
+                  type="text"
+                  value={
+                    shippingAddress.city
+                  }
+                  onChange={
+                    handleAddressChange
+                  }
+                  placeholder="City"
+                  autoComplete="address-level2"
+                  className="w-full rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] px-4 py-3 text-sm outline-none transition focus:border-[var(--nova-blue)]"
+                />
+
+              </div>
+
+
+              <div>
+
+                <label
+                  htmlFor="state"
+                  className="mb-2 block text-sm font-medium"
+                >
+                  State
+                </label>
+
+                <input
+                  id="state"
+                  name="state"
+                  type="text"
+                  value={
+                    shippingAddress.state
+                  }
+                  onChange={
+                    handleAddressChange
+                  }
+                  placeholder="State"
+                  autoComplete="address-level1"
+                  className="w-full rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] px-4 py-3 text-sm outline-none transition focus:border-[var(--nova-blue)]"
+                />
 
               </div>
 
             </div>
 
+
             {/* =================================================
-                BILLING / CHECKOUT
+                PIN CODE
             ================================================= */}
 
-            <aside className="h-fit rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-6 lg:sticky lg:top-24">
-
-              <h2 className="text-xl font-semibold">
-                Order summary
-              </h2>
-
-              {savedAddresses.length > 0 && (
-              <div className="mb-5 space-y-3">
-
-                  <h3 className="text-sm font-semibold">
-                      Saved addresses
-                  </h3>
-
-                  {savedAddresses.map((item) => (
-                      <button
-                          key={item._id}
-                          type="button"
-                          onClick={() =>
-                              handleSelectAddress(item)
-                          }
-                          className={`w-full rounded-xl border p-4 text-left ${
-                              selectedAddressId === item._id &&
-                              !useNewAddress
-                                  ? 'border-[var(--nova-blue)] bg-blue-50'
-                                  : 'border-gray-200 bg-white'
-                          }`}
-                      >
-                          <div className="flex justify-between">
-                              <span className="font-semibold">
-                                  {item.label || 'Address'}
-                              </span>
-
-                              {item.isDefault && (
-                                  <span className="text-xs font-medium text-blue-600">
-                                      Default
-                                  </span>
-                              )}
-                          </div>
-
-                          <p className="mt-1 text-sm">
-                              {item.fullName}
-                          </p>
-
-                          <p className="text-sm text-gray-500">
-                              {item.address}, {item.city},{' '}
-                              {item.state} - {item.pincode}
-                          </p>
-
-                          <p className="mt-1 text-xs text-gray-500">
-                              {item.phone}
-                          </p>
-                      </button>
-                  ))}
-
-                  <button
-                      type="button"
-                      onClick={() => {
-                          setUseNewAddress(true)
-                          setSaveNewAddress(false)
-                          setSelectedAddressId(null)
-
-                          setShippingAddress({
-                              fullName: '',
-                              phone: '',
-                              address: '',
-                              addressLine2: '',
-                              city: '',
-                              state: '',
-                              pincode: '',
-                          })
-                      }}
-                      className="w-full rounded-xl border border-dashed border-gray-300 p-4 text-sm font-medium"
-                  >
-                      + Use a new address
-                  </button>
-
-              </div>
-          )}
-
-              {/* =================================================
-                  DELIVERY INFORMATION
-              ================================================= */}
-
-              <div className="mt-6">
-
-                <div className="mb-4">
-
-                  <h3 className="text-sm font-semibold">
-                    Delivery information
-                  </h3>
-
-                  <p className="mt-1 text-xs text-[var(--nova-muted)]">
-                    Enter the complete address for delivery.
-                  </p>
-
-                </div>
-
-                <div className="space-y-4">
-
-                  {/* FULL NAME */}
-
-                  <div>
-
-                    <label
-                      htmlFor="fullName"
-                      className="mb-2 flex items-center gap-2 text-sm font-medium"
-                    >
-                      <User size={14} />
-
-                      Full name
-                    </label>
-
-                    <input
-                      id="fullName"
-                      name="fullName"
-                      type="text"
-                      value={
-                        shippingAddress.fullName
-                      }
-                      onChange={
-                        handleAddressChange
-                      }
-                      placeholder="Enter your full name"
-                      autoComplete="name"
-                      className="w-full rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] px-4 py-3 text-sm outline-none transition focus:border-[var(--nova-blue)]"
-                    />
-
-                  </div>
-
-                  {/* PHONE */}
-
-                  <div>
-
-                    <label
-                      htmlFor="phone"
-                      className="mb-2 flex items-center gap-2 text-sm font-medium"
-                    >
-                      <Phone size={14} />
-
-                      Mobile number
-                    </label>
-
-                    <input
-                      id="phone"
-                      name="phone"
-                      type="tel"
-                      inputMode="numeric"
-                      maxLength={10}
-                      value={
-                        shippingAddress.phone
-                      }
-                      onChange={
-                        handleAddressChange
-                      }
-                      placeholder="10-digit mobile number"
-                      autoComplete="tel"
-                      className="w-full rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] px-4 py-3 text-sm outline-none transition focus:border-[var(--nova-blue)]"
-                    />
-
-                  </div>
-
-                  {/* FULL ADDRESS */}
-
-                  <div>
-
-                    <label
-                      htmlFor="address"
-                      className="mb-2 flex items-center gap-2 text-sm font-medium"
-                    >
-                      <MapPin size={14} />
-
-                      Full address
-                    </label>
-
-                    <textarea
-                      id="address"
-                      name="address"
-                      rows={3}
-                      value={
-                        shippingAddress.address
-                      }
-                      onChange={
-                        handleAddressChange
-                      }
-                      placeholder="House number, street, area"
-                      autoComplete="street-address"
-                      className="w-full resize-none rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] px-4 py-3 text-sm outline-none transition focus:border-[var(--nova-blue)]"
-                    />
-
-                  </div>
-
-                  {/* LANDMARK */}
-
-                  <div>
-
-                    <label
-                      htmlFor="addressLine2"
-                      className="mb-2 block text-sm font-medium"
-                    >
-                      Landmark / Apartment
-
-                      <span className="ml-1 text-xs text-[var(--nova-muted)]">
-                        (optional)
-                      </span>
-                    </label>
-
-                    <input
-                      id="addressLine2"
-                      name="addressLine2"
-                      type="text"
-                      value={
-                        shippingAddress.addressLine2
-                      }
-                      onChange={
-                        handleAddressChange
-                      }
-                      placeholder="Apartment, landmark, etc."
-                      autoComplete="address-line2"
-                      className="w-full rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] px-4 py-3 text-sm outline-none transition focus:border-[var(--nova-blue)]"
-                    />
-
-                  </div>
-
-                  {/* CITY + STATE */}
-
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-
-                    <div>
-
-                      <label
-                        htmlFor="city"
-                        className="mb-2 block text-sm font-medium"
-                      >
-                        City
-                      </label>
-
-                      <input
-                        id="city"
-                        name="city"
-                        type="text"
-                        value={
-                          shippingAddress.city
-                        }
-                        onChange={
-                          handleAddressChange
-                        }
-                        placeholder="City"
-                        autoComplete="address-level2"
-                        className="w-full rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] px-4 py-3 text-sm outline-none transition focus:border-[var(--nova-blue)]"
-                      />
-
-                    </div>
-
-                    <div>
-
-                      <label
-                        htmlFor="state"
-                        className="mb-2 block text-sm font-medium"
-                      >
-                        State
-                      </label>
-
-                      <input
-                        id="state"
-                        name="state"
-                        type="text"
-                        value={
-                          shippingAddress.state
-                        }
-                        onChange={
-                          handleAddressChange
-                        }
-                        placeholder="State"
-                        autoComplete="address-level1"
-                        className="w-full rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] px-4 py-3 text-sm outline-none transition focus:border-[var(--nova-blue)]"
-                      />
-
-                    </div>
-
-                  </div>
-
-                  {/* PIN CODE */}
-
-                  <div>
-
-                    <label
-                      htmlFor="pincode"
-                      className="mb-2 block text-sm font-medium"
-                    >
-                      PIN code
-                    </label>
-
-                    <input
-                      id="pincode"
-                      name="pincode"
-                      type="text"
-                      inputMode="numeric"
-                      maxLength={6}
-                      value={
-                        shippingAddress.pincode
-                      }
-                      onChange={
-                        handleAddressChange
-                      }
-                      placeholder="6-digit PIN code"
-                      autoComplete="postal-code"
-                      className="w-full rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] px-4 py-3 text-sm outline-none transition focus:border-[var(--nova-blue)]"
-                    />
-                                    {useNewAddress && (
-                    <label className="mt-4 flex items-center gap-2 text-sm">
-                        <input
-                            type="checkbox"
-                            checked={saveNewAddress}
-                            onChange={(e) =>
-                                setSaveNewAddress(
-                                    e.target.checked
-                                )
-                            }
-                        />
-
-                        Save this address to my profile
-                    </label>
-                )}
-
-                  </div>
-
-                </div>
-
-              </div>
-
-              {/* =================================================
-                  BILLING DETAILS
-              ================================================= */}
-
-              <div className="my-6 border-t border-[var(--nova-border)] pt-5">
-
-                <h3 className="mb-4 text-sm font-semibold">
-                  Billing details
-                </h3>
-
-                {/* ITEMS */}
-
-                <div className="flex items-center justify-between text-sm">
-
-                  <span className="text-[var(--nova-muted)]">
-                    Items
-                  </span>
-
-                  <span>
-                    {itemCount}
-                  </span>
-
-                </div>
-
-                {/* SUBTOTAL */}
-
-                <div className="mt-3 flex items-center justify-between text-sm">
-
-                  <span className="text-[var(--nova-muted)]">
-                    Subtotal
-                  </span>
-
-                  <span>
-                    {formatPrice(total)}
-                  </span>
-
-                </div>
-
-                {/* DISCOUNT */}
-
-                <div className="mt-3 flex items-center justify-between text-sm">
-
-                  <span className="text-[var(--nova-muted)]">
-                    Discount
-                  </span>
-
-                  <span className="text-emerald-500">
-                    {formatPrice(0)}
-                  </span>
-
-                </div>
-
-                {/* DELIVERY */}
-
-                <div className="mt-3 flex items-center justify-between text-sm">
-
-                  <span className="text-[var(--nova-muted)]">
-                    Delivery
-                  </span>
-
-                  <span className="font-medium text-emerald-500">
-                    FREE
-                  </span>
-
-                </div>
-
-                <div className="my-5 border-t border-[var(--nova-border)]" />
-
-                {/* TOTAL */}
-
-                <div className="flex items-end justify-between">
-
-                  <div>
-
-                    <p className="font-semibold">
-                      Total
-                    </p>
-
-                    <p className="mt-1 text-xs text-[var(--nova-muted)]">
-                      Inclusive of delivery
-                    </p>
-
-                  </div>
-
-                  <span className="text-2xl font-semibold">
-                    {formatPrice(total)}
-                  </span>
-
-                </div>
-
-              </div>
-
-              {/* =================================================
-                  CHECKOUT
-              ================================================= */}
-
-              {auth?.user ? (
-
-                <button
-                    type="button"
-                    disabled={!razorpayLoaded}
-                    onClick={handlePayment}
-                    className="w-full rounded-lg bg-[var(--nova-blue)] px-4 py-3 text-white"
-                >
-                    {!razorpayLoaded
-                        ? 'Loading payment...'
-                        : 'Proceed to payment'}
-                </button>
-
-              ) : (
-
-                <Link
-                  href={{
-                    pathname:
-                      '/signin',
-
-                    query: {
-                      returnUrl:
-                        '/cart',
-                    },
-                  }}
-                >
-                  <Button className="w-full">
-                    Sign in to checkout
-                  </Button>
-                </Link>
+            <div>
+
+              <label
+                htmlFor="pincode"
+                className="mb-2 block text-sm font-medium"
+              >
+                PIN code
+              </label>
+
+              <input
+                id="pincode"
+                name="pincode"
+                type="text"
+                inputMode="numeric"
+                maxLength={6}
+                value={
+                  shippingAddress.pincode
+                }
+                onChange={
+                  handleAddressChange
+                }
+                placeholder="6-digit PIN code"
+                autoComplete="postal-code"
+                className="w-full rounded-lg border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] px-4 py-3 text-sm outline-none transition focus:border-[var(--nova-blue)]"
+              />
+
+
+              {useNewAddress && (
+
+                <label className="mt-4 flex items-center gap-2 text-sm">
+
+                  <input
+                    type="checkbox"
+                    checked={saveNewAddress}
+                    onChange={(e) =>
+                      setSaveNewAddress(
+                        e.target.checked
+                      )
+                    }
+                  />
+
+                  Save this address to my profile
+
+                </label>
 
               )}
 
-              {/* =================================================
-                  SECURITY
-              ================================================= */}
-
-              <p className="mt-4 flex items-center justify-center gap-2 text-[11px] text-[var(--nova-muted)]">
-
-                <Lock size={12} />
-
-                Secure checkout
-
-              </p>
-
-            </aside>
+            </div>
 
           </div>
+
+        </div>
+
+      )}
+
+    </div>
+
+  </div>
+
+
+  {/* =================================================
+      RIGHT COLUMN — ORDER SUMMARY
+  ================================================= */}
+
+  <aside className="h-fit rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-6 lg:sticky lg:top-24">
+
+    <h2 className="text-xl font-semibold">
+      Order summary
+    </h2>
+
+
+    {/* =================================================
+        BILLING DETAILS
+    ================================================= */}
+
+    <div className="my-6 border-t border-[var(--nova-border)] pt-5">
+
+      <h3 className="mb-4 text-sm font-semibold">
+        Billing details
+      </h3>
+
+
+      {/* ITEMS */}
+
+      <div className="flex items-center justify-between text-sm">
+
+        <span className="text-[var(--nova-muted)]">
+          Items
+        </span>
+
+        <span>
+          {itemCount}
+        </span>
+
+      </div>
+
+
+      {/* SUBTOTAL */}
+
+      <div className="mt-3 flex items-center justify-between text-sm">
+
+        <span className="text-[var(--nova-muted)]">
+          Subtotal
+        </span>
+
+        <span>
+          {formatPrice(total)}
+        </span>
+
+      </div>
+
+
+      {/* DISCOUNT */}
+
+      <div className="mt-3 flex items-center justify-between text-sm">
+
+        <span className="text-[var(--nova-muted)]">
+          Discount
+        </span>
+
+        <span className="text-emerald-500">
+          {formatPrice(0)}
+        </span>
+
+      </div>
+
+
+      {/* DELIVERY */}
+
+      <div className="mt-3 flex items-center justify-between text-sm">
+
+        <span className="text-[var(--nova-muted)]">
+          Delivery
+        </span>
+
+        <span className="font-medium text-emerald-500">
+          FREE
+        </span>
+
+      </div>
+
+
+      <div className="my-5 border-t border-[var(--nova-border)]" />
+
+
+      {/* TOTAL */}
+
+      <div className="flex items-end justify-between">
+
+        <div>
+
+          <p className="font-semibold">
+            Total
+          </p>
+
+          <p className="mt-1 text-xs text-[var(--nova-muted)]">
+            Inclusive of delivery
+          </p>
+
+        </div>
+
+        <span className="text-2xl font-semibold">
+          {formatPrice(total)}
+        </span>
+
+      </div>
+
+    </div>
+
+
+    {/* =================================================
+        CHECKOUT
+    ================================================= */}
+
+    {auth?.user ? (
+
+      <button
+        type="button"
+        disabled={!razorpayLoaded}
+        onClick={handlePayment}
+        className="w-full rounded-lg bg-[var(--nova-blue)] px-4 py-3 text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        {!razorpayLoaded
+          ? 'Loading payment...'
+          : 'Proceed to payment'}
+      </button>
+
+    ) : (
+
+      <Link
+        href={{
+          pathname: '/signin',
+
+          query: {
+            returnUrl: '/cart',
+          },
+        }}
+      >
+
+        <Button className="w-full">
+          Sign in to checkout
+        </Button>
+
+      </Link>
+
+    )}
+
+
+    {/* =================================================
+        SECURITY
+    ================================================= */}
+
+    <p className="mt-4 flex items-center justify-center gap-2 text-[11px] text-[var(--nova-muted)]">
+
+      <Lock size={12} />
+
+      Secure checkout
+
+    </p>
+
+  </aside>
+
+</div>
 
         </Container>
 
