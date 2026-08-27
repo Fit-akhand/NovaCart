@@ -13,6 +13,7 @@ import Badge from '../../components/common/Badge'
 import EmptyState from '../../components/common/EmptyState'
 import AddressManager from '../../components/profile/AddressManager'
 import AuthGuard from '../../components/common/AuthGuard'
+import { useRouter } from 'next/router'
 
 import {
   Camera,
@@ -24,6 +25,7 @@ import {
 
 
 const Profile = () => {
+  const router = useRouter()
 
   const [data, setData] = useState({
     avatar: '',
@@ -380,59 +382,81 @@ const updatePassword = async () => {
   }
 
 
-  // ===============================
-  // LOGOUT
-  // ===============================
+// ===============================
+// LOGOUT
+// ===============================
 
-  const handleLogout = async () => {
+const handleLogout = async () => {
 
-    try {
+  try {
 
-      await postData(
-        'auth/logout',
-        null,
-        auth?.token
-      )
+    sessionStorage.setItem(
+        '__novacart_logout',
+        'true'
+    )
 
+    const res = await postData(
+      'auth/logout',
+      null,
+      auth?.token
+    )
 
-      localStorage.removeItem(
-        'firstLogin'
-      )
+    if (res?.err) {
 
-
-      dispatch({
-        type: 'AUTH',
-        payload: {}
-      })
-
-
-      dispatch({
-        type: 'ADD_ORDERS',
-        payload: []
-      })
-
-
-      dispatch({
-        type: 'ADD_USERS',
-        payload: []
-      })
-
-
-      window.location.href = '/'
-
-
-    } catch (error) {
-
-      dispatch({
+      return dispatch({
         type: 'NOTIFY',
         payload: {
-          error:
-            error.message ||
-            'Logout failed.'
+          error: res.err
         }
       })
     }
+
+
+    // Clear client authentication state
+    dispatch({
+      type: 'AUTH',
+      payload: {}
+    })
+
+
+    // Clear user-specific state
+    dispatch({
+      type: 'ADD_ORDERS',
+      payload: []
+    })
+
+    dispatch({
+      type: 'ADD_USERS',
+      payload: []
+    })
+
+
+    // Clear login marker
+    localStorage.removeItem(
+      'firstLogin'
+    )
+
+
+    // Go home
+    router.push('/')
+
+  } catch (error) {
+
+    console.error(
+      'Logout error:',
+      error
+    )
+
+    dispatch({
+      type: 'NOTIFY',
+      payload: {
+        error:
+          error.message ||
+          'Logout failed.'
+      }
+    })
   }
+}
 
 
   // ===============================

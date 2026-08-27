@@ -664,194 +664,382 @@ const Home = (props) => {
         </section>
 
         {/* =================================================
-            FEATURED CATEGORIES
-        ================================================= */}
+                FEATURED CATEGORIES
+            ================================================= */}
 
-        {categories?.length > 0 && (
-          <section className="py-12 sm:py-16">
+            {categories?.length > 0 && (
+              <section className="py-12 sm:py-16">
 
-            <Container>
+                <Container>
 
-              <div
-                className="
-                  mb-7
-                  flex
-                  items-end
-                  justify-between
-                  gap-4
-                "
-              >
-                <div>
+                  {/* SECTION HEADER */}
 
-                  <p
+                  <div
                     className="
-                      text-xs
-                      font-semibold
-                      uppercase
-                      tracking-[0.18em]
-
-                      text-[var(--nova-primary)]
+                      mb-7
+                      flex
+                      items-end
+                      justify-between
+                      gap-4
                     "
                   >
-                    Explore
-                  </p>
 
-                  <h2
-                    className="
-                      mt-1
-                      text-2xl
-                      font-bold
-                      tracking-tight
-
-                      text-[var(--nova-text)]
-
-                      sm:text-3xl
-                    "
-                  >
-                    Featured categories
-                  </h2>
-
-                </div>
-
-                <Link
-                  href="/categories"
-                  className="
-                    inline-flex
-                    items-center
-                    gap-1
-
-                    text-sm
-                    font-semibold
-
-                    text-[var(--nova-primary)]
-
-                    transition-all
-                    duration-200
-
-                    hover:gap-2
-                  "
-                >
-                  View all
-                  <ArrowRight size={15} />
-                </Link>
-
-              </div>
-
-              <div
-                className="
-                  grid
-                  grid-cols-2
-                  gap-3
-
-                  sm:grid-cols-3
-                  sm:gap-4
-
-                  lg:grid-cols-4
-                "
-              >
-                {categories
-                  .slice(0, 8)
-                  .map((category) => (
-                    <Link
-                      key={category._id}
-                      href={`/products?category=${category._id}`}
-                      className="
-                        group
-
-                        relative
-                        overflow-hidden
-
-                        rounded-2xl
-
-                        border
-                        border-[var(--nova-border)]
-
-                        bg-[var(--nova-surface)]
-
-                        p-4
-                        sm:p-5
-
-                        transition-all
-                        duration-200
-
-                        hover:-translate-y-1
-                        hover:border-[var(--nova-violet-light)]
-                        hover:bg-[var(--nova-surface-soft)]
-                        hover:shadow-[0_12px_30px_rgba(124,58,237,0.1)]
-                      "
-                    >
-
-                      <div
-                        className="
-                          mb-5
-                          flex
-                          h-10
-                          w-10
-                          items-center
-                          justify-center
-
-                          rounded-xl
-
-                          bg-[var(--nova-lavender-soft)]
-
-                          text-[var(--nova-primary)]
-
-                          transition-transform
-                          duration-200
-
-                          group-hover:scale-105
-                        "
-                      >
-                        <ShoppingBag size={18} />
-                      </div>
+                    <div>
 
                       <p
                         className="
+                          text-xs
                           font-semibold
-                          capitalize
+                          uppercase
+                          tracking-[0.18em]
+
+                          text-[var(--nova-primary)]
+                        "
+                      >
+                        Explore
+                      </p>
+
+                      <h2
+                        className="
+                          mt-1
+                          text-2xl
+                          font-bold
+                          tracking-tight
 
                           text-[var(--nova-text)]
 
-                          group-hover:text-[var(--nova-primary)]
+                          sm:text-3xl
                         "
                       >
-                        {category.name}
-                      </p>
+                        Featured categories
+                      </h2>
 
                       <p
                         className="
                           mt-1
-                          text-xs
+                          text-sm
                           text-[var(--nova-muted)]
                         "
                       >
-                        Shop this category
+                        Discover products by category
                       </p>
 
-                      <ArrowRight
-                        size={15}
-                        className="
-                          absolute
-                          bottom-5
-                          right-5
+                    </div>
 
-                          text-[var(--nova-muted)]
+                    <Link
+                      href="/categories"
+                      className="
+                        inline-flex
+                        shrink-0
+                        items-center
+                        gap-1
 
-                          transition-all
-                          duration-200
+                        text-sm
+                        font-semibold
 
-                          group-hover:translate-x-1
-                          group-hover:text-[var(--nova-primary)]
-                        "
-                      />
+                        text-[var(--nova-primary)]
 
+                        transition-all
+                        duration-200
+
+                        hover:gap-2
+                      "
+                    >
+                      View all
+                      <ArrowRight size={15} />
                     </Link>
-                  ))}
-              </div>
 
-            </Container>
-          </section>
-        )}
+                  </div>
+
+
+                  {/* CATEGORY GRID */}
+
+                  <div
+                    className="
+                      grid
+                      grid-cols-2
+                      gap-4
+
+                      sm:grid-cols-3
+
+                      lg:grid-cols-4
+                    "
+                  >
+
+                    {categories
+                      .filter(
+                        (category) =>
+                          !category.parentCategory &&
+                          category.isActive !== false
+                      )
+                      .slice(0, 8)
+                      .map((category) => (
+
+                        <Link
+                          key={category._id}
+                          href={`/products?category=${category._id}`}
+                          className="
+                            group
+                            relative
+                            overflow-hidden
+
+                            rounded-2xl
+
+                            border
+                            border-[var(--nova-border)]
+
+                            bg-[var(--nova-surface)]
+
+                            transition-all
+                            duration-300
+
+                            hover:-translate-y-1
+
+                            hover:border-[var(--nova-violet-light)]
+
+                            hover:shadow-[0_14px_35px_rgba(124,58,237,0.12)]
+                          "
+                        >
+
+                          {/* ================================
+                              IMAGE
+                          ================================= */}
+
+                          <div
+                            className="
+                              relative
+
+                              aspect-[4/3]
+
+                              overflow-hidden
+
+                              bg-[var(--nova-surface-soft)]
+                            "
+                          >
+
+                            {category.image ? (
+
+                              <img
+                                src={category.image}
+                                alt={category.name}
+                                className="
+                                  h-full
+                                  w-full
+
+                                  object-cover
+
+                                  transition-transform
+                                  duration-500
+
+                                  group-hover:scale-105
+                                "
+                              />
+
+                            ) : (
+
+                              /* FALLBACK */
+
+                              <div
+                                className="
+                                  flex
+                                  h-full
+                                  w-full
+
+                                  items-center
+                                  justify-center
+
+                                  bg-[var(--nova-lavender-soft)]
+
+                                  text-[var(--nova-primary)]
+                                "
+                              >
+                                <ShoppingBag
+                                  size={38}
+                                  strokeWidth={1.5}
+                                />
+                              </div>
+
+                            )}
+
+
+                            {/* IMAGE OVERLAY */}
+
+                            <div
+                              className="
+                                pointer-events-none
+                                absolute
+                                inset-0
+
+                                bg-gradient-to-t
+                                from-black/35
+                                via-transparent
+                                to-transparent
+                              "
+                            />
+
+
+                            {/* DISCOUNT BADGE */}
+
+                            {category.discountActive &&
+                              Number(
+                                category.discountPercent
+                              ) > 0 && (
+
+                                <div
+                                  className="
+                                    absolute
+                                    left-3
+                                    top-3
+
+                                    rounded-full
+
+                                    bg-[var(--nova-primary)]
+
+                                    px-2.5
+                                    py-1
+
+                                    text-[10px]
+                                    font-bold
+
+                                    text-white
+
+                                    shadow-lg
+                                  "
+                                >
+                                  Up to{' '}
+                                  {Number(
+                                    category.discountPercent
+                                  )}
+                                  % OFF
+                                </div>
+
+                              )}
+
+                          </div>
+
+
+                          {/* ================================
+                              CATEGORY INFORMATION
+                          ================================= */}
+
+                          <div
+                            className="
+                              p-4
+                              sm:p-5
+                            "
+                          >
+
+                            <div
+                              className="
+                                flex
+                                items-start
+                                justify-between
+                                gap-3
+                              "
+                            >
+
+                              <div className="min-w-0">
+
+                                <p
+                                  className="
+                                    truncate
+
+                                    text-sm
+                                    font-semibold
+                                    capitalize
+
+                                    text-[var(--nova-text)]
+
+                                    transition-colors
+                                    duration-200
+
+                                    group-hover:text-[var(--nova-primary)]
+                                  "
+                                >
+                                  {category.name}
+                                </p>
+
+                                <p
+                                  className="
+                                    mt-1
+
+                                    text-xs
+
+                                    text-[var(--nova-muted)]
+                                  "
+                                >
+                                  Shop this category
+                                </p>
+
+                              </div>
+
+
+                              <div
+                                className="
+                                  flex
+                                  h-8
+                                  w-8
+                                  shrink-0
+
+                                  items-center
+                                  justify-center
+
+                                  rounded-full
+
+                                  bg-[var(--nova-lavender-soft)]
+
+                                  text-[var(--nova-primary)]
+
+                                  transition-transform
+                                  duration-200
+
+                                  group-hover:translate-x-1
+                                "
+                              >
+                                <ArrowRight size={14} />
+                              </div>
+
+                            </div>
+
+
+                            {/* DISCOUNT TEXT */}
+
+                            {category.discountActive &&
+                              Number(
+                                category.discountPercent
+                              ) > 0 && (
+
+                                <p
+                                  className="
+                                    mt-3
+
+                                    text-xs
+                                    font-semibold
+
+                                    text-[var(--nova-primary)]
+                                  "
+                                >
+                                  Save up to{' '}
+                                  {Number(
+                                    category.discountPercent
+                                  )}
+                                  % on selected products
+                                </p>
+
+                              )}
+
+                          </div>
+
+                        </Link>
+
+                      ))}
+
+                  </div>
+
+                </Container>
+
+              </section>
+            )}
 
         {/* =================================================
             PRODUCT BROWSE

@@ -320,15 +320,25 @@ const Signin = () => {
             </Head>
 
 
-            <main className="min-h-screen bg-[var(--nova-bg)]">
+            <main
+            className="
+                min-h-screen
+                bg-[var(--nova-bg)]
+
+                lg:h-screen
+                lg:overflow-hidden
+            "
+            >
 
                 <div
-                    className="
-                        mx-auto
-                        flex
-                        min-h-screen
-                        max-w-[1500px]
-                    "
+                className="
+                    mx-auto
+                    flex
+                    min-h-screen
+                    max-w-[1500px]
+
+                    lg:h-screen
+                "
                 >
 
 
@@ -704,18 +714,22 @@ const Signin = () => {
                     ================================================= */}
 
                     <section
-                        className="
-                            flex
-                            flex-1
-                            items-center
-                            justify-center
+                    className="
+                        relative
+                        flex
+                        flex-1
+                        items-center
+                        justify-center
 
-                            px-5
-                            py-8
+                        px-5
+                        py-6
 
-                            sm:px-8
-                            sm:py-10
-                        "
+                        sm:px-8
+                        lg:px-12
+
+                        lg:h-full
+                        lg:overflow-hidden
+                    "
                     >
 
                         <div
@@ -731,19 +745,16 @@ const Signin = () => {
                             ================================================= */}
 
                             <div
-                                className="
-                                    mb-8
-                                    flex
-                                    items-center
-                                    justify-between
-                                "
+                            className="
+                                mb-8
+                                flex
+                                items-center
+                                justify-between
+                            "
                             >
-
-                                <BrandLogo
-                                    size="md"
-                                />
-
-                                <ThemeToggle />
+                            <div className="lg:hidden">
+                                <BrandLogo size="md" />
+                            </div>
 
                             </div>
 
@@ -768,6 +779,9 @@ const Signin = () => {
                                     sm:p-8
                                 "
                             >
+                            <div className="flex justify-end">
+                            <ThemeToggle />
+                            </div>
 
                                 {/* =================================================
                                     HEADING

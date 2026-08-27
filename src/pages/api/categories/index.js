@@ -96,7 +96,8 @@ const createCategory = async (req, res) => {
 
         const {
             name,
-            parentCategory
+            parentCategory,
+            image
         } = req.body
 
         // ======================================
@@ -228,19 +229,24 @@ const createCategory = async (req, res) => {
         // ======================================
 
         const newCategory =
-            new Categories({
+        new Categories({
 
-                name: cleanName,
+            name: cleanName,
 
-                slug,
+            slug,
 
-                parentCategory:
-                    parent
-                        ? parent._id
-                        : null,
+            image:
+                typeof image === 'string'
+                    ? image.trim()
+                    : '',
 
-                isActive: true
-            })
+            parentCategory:
+                parent
+                    ? parent._id
+                    : null,
+
+            isActive: true
+        })
 
         await newCategory.save()
 
