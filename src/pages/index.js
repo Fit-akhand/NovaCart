@@ -26,6 +26,8 @@ const Home = (props) => {
   const [products, setProducts] = useState(
     props.products || []
   )
+  const [heroes, setHeroes] = useState([])
+  const [heroIndex, setHeroIndex] = useState(0)
 
   const [isCheck, setIsCheck] = useState(false)
 
@@ -39,6 +41,100 @@ const Home = (props) => {
   useEffect(() => {
     setProducts(props.products || [])
   }, [props.products])
+
+  // =====================================================
+  // LOAD HOMEPAGE HERO BANNERS
+  // =====================================================
+
+  useEffect(() => {
+
+    let mounted = true
+
+    const loadHeroes = async () => {
+
+      try {
+
+        const response = await fetch(
+          '/api/heroes',
+          {
+            method: 'GET',
+            credentials: 'include',
+            cache: 'no-store',
+          }
+        )
+
+        const data =
+          await response.json()
+
+        if (!response.ok) {
+          throw new Error(
+            data?.err ||
+            'Failed to load hero banners.'
+          )
+        }
+
+        if (!mounted) {
+          return
+        }
+
+        const activeHeroes =
+          Array.isArray(data?.heroes)
+            ? data.heroes.filter(
+                hero =>
+                  hero &&
+                  hero.isActive &&
+                  hero.image
+              )
+            : []
+
+        setHeroes(activeHeroes)
+
+      } catch (error) {
+
+        console.error(
+          'NovaCart hero banners load failed:',
+          error
+        )
+
+        if (mounted) {
+          setHeroes([])
+        }
+
+      }
+
+    }
+
+    loadHeroes()
+
+    return () => {
+      mounted = false
+    }
+
+  }, [])
+  // =====================================================
+// HERO AUTO SLIDER
+// =====================================================
+
+useEffect(() => {
+
+  if (heroes.length <= 1) {
+    return
+  }
+
+  const interval = setInterval(() => {
+
+    setHeroIndex(
+      previous =>
+        (previous + 1) % heroes.length
+    )
+
+  }, 5000)
+
+  return () => {
+    clearInterval(interval)
+  }
+
+}, [heroes.length])
 
   /* =====================================================
      ADMIN PRODUCT SELECTION
@@ -133,536 +229,353 @@ const Home = (props) => {
             HERO
         ================================================= */}
 
-        <section
-          className="
-            relative
-            overflow-hidden
+        {/* =================================================
+                DYNAMIC HERO BANNER
+            ================================================= */}
 
-            border-b
-            border-[var(--nova-border)]
+            {heroes.length > 0 && (
+              <section className="py-5 sm:py-7 lg:py-8">
 
-            bg-[var(--nova-bg)]
-          "
-        >
-
-          {/* Decorative violet glow */}
-
-          <div
-            className="
-              pointer-events-none
-              absolute
-              -right-32
-              -top-32
-
-              h-80
-              w-80
-
-              rounded-full
-
-              bg-[rgba(139,92,246,0.12)]
-
-              blur-3xl
-            "
-          />
-
-          <div
-            className="
-              pointer-events-none
-              absolute
-              -bottom-40
-              left-1/3
-
-              h-80
-              w-80
-
-              rounded-full
-
-              bg-[rgba(167,139,250,0.08)]
-
-              blur-3xl
-            "
-          />
-
-          <Container
-            className="
-              relative
-              grid
-              items-center
-              gap-10
-
-              py-14
-
-              sm:py-16
-
-              lg:grid-cols-[1.15fr_0.85fr]
-              lg:gap-16
-              lg:py-24
-            "
-          >
-
-            {/* HERO CONTENT */}
-
-            <div>
-
-              <div
-                className="
-                  mb-5
-                  inline-flex
-                  items-center
-                  gap-2
-
-                  rounded-full
-
-                  border
-                  border-[rgba(139,92,246,0.2)]
-
-                  bg-[var(--nova-lavender-soft)]
-
-                  px-3
-                  py-1.5
-
-                  text-xs
-                  font-semibold
-                  tracking-wide
-
-                  text-[var(--nova-primary)]
-                "
-              >
-                <Sparkles size={14} />
-
-                CURATED FOR YOU
-              </div>
-
-              <h1
-                className="
-                  max-w-3xl
-
-                  text-4xl
-                  font-bold
-                  leading-[1.05]
-                  tracking-[-0.04em]
-
-                  text-[var(--nova-text)]
-
-                  sm:text-5xl
-
-                  lg:text-6xl
-                  xl:text-7xl
-                "
-              >
-                Shop smarter.
-                <br />
-
-                <span
-                  className="
-                    text-[var(--nova-primary)]
-                  "
-                >
-                  Live better.
-                </span>
-              </h1>
-
-              <p
-                className="
-                  mt-6
-                  max-w-xl
-
-                  text-base
-                  leading-7
-
-                  text-[var(--nova-muted)]
-
-                  sm:text-lg
-                "
-              >
-                Discover products selected for
-                everyday life. Browse the catalog,
-                track orders, and check out securely.
-              </p>
-
-              {/* HERO ACTIONS */}
-
-              <div
-                className="
-                  mt-8
-                  flex
-                  flex-wrap
-                  gap-3
-                "
-              >
-
-                <Link
-                  href="/products"
-                  className="
-                    inline-flex
-                    min-h-11
-                    items-center
-                    justify-center
-                    gap-2
-
-                    rounded-xl
-
-                    bg-[var(--nova-primary)]
-
-                    px-5
-                    py-3
-
-                    text-sm
-                    font-semibold
-                    text-white
-
-                    shadow-[0_8px_24px_rgba(124,58,237,0.2)]
-
-                    transition-all
-                    duration-200
-
-                    hover:bg-[var(--nova-primary-hover)]
-                    hover:shadow-[0_12px_30px_rgba(124,58,237,0.28)]
-
-                    active:scale-[0.98]
-                  "
-                >
-                  Shop now
-
-                  <ArrowRight size={16} />
-                </Link>
-
-                <Link
-                  href="/categories"
-                  className="
-                    inline-flex
-                    min-h-11
-                    items-center
-                    justify-center
-
-                    rounded-xl
-
-                    border
-                    border-[var(--nova-border)]
-
-                    bg-[var(--nova-surface)]
-
-                    px-5
-                    py-3
-
-                    text-sm
-                    font-semibold
-
-                    text-[var(--nova-text)]
-
-                    transition-all
-                    duration-200
-
-                    hover:border-[var(--nova-violet-light)]
-                    hover:bg-[var(--nova-surface-soft)]
-                    hover:text-[var(--nova-primary)]
-
-                    active:scale-[0.98]
-                  "
-                >
-                  Explore categories
-                </Link>
-
-              </div>
-
-              {/* TRUST POINTS */}
-
-              <div
-                className="
-                  mt-8
-                  flex
-                  flex-wrap
-                  gap-x-6
-                  gap-y-3
-                "
-              >
-
-                <div
-                  className="
-                    flex
-                    items-center
-                    gap-2
-
-                    text-xs
-                    font-medium
-
-                    text-[var(--nova-muted)]
-                  "
-                >
-                  <ShieldCheck
-                    size={16}
-                    className="text-[var(--nova-primary)]"
-                  />
-
-                  Secure checkout
-                </div>
-
-                <div
-                  className="
-                    flex
-                    items-center
-                    gap-2
-
-                    text-xs
-                    font-medium
-
-                    text-[var(--nova-muted)]
-                  "
-                >
-                  <Truck
-                    size={16}
-                    className="text-[var(--nova-primary)]"
-                  />
-
-                  Reliable delivery
-                </div>
-
-                <div
-                  className="
-                    flex
-                    items-center
-                    gap-2
-
-                    text-xs
-                    font-medium
-
-                    text-[var(--nova-muted)]
-                  "
-                >
-                  <Package
-                    size={16}
-                    className="text-[var(--nova-primary)]"
-                  />
-
-                  Order tracking
-                </div>
-
-              </div>
-            </div>
-
-            {/* HERO INFORMATION CARD */}
-
-            <div
-              className="
-                relative
-
-                overflow-hidden
-
-                rounded-3xl
-
-                border
-                border-[var(--nova-border)]
-
-                bg-[var(--nova-surface)]
-
-                p-5
-
-                shadow-[var(--shadow-lg)]
-
-                sm:p-7
-              "
-            >
-
-              {/* Inner glow */}
-
-              <div
-                className="
-                  pointer-events-none
-                  absolute
-                  -right-16
-                  -top-16
-
-                  h-48
-                  w-48
-
-                  rounded-full
-
-                  bg-[rgba(139,92,246,0.12)]
-
-                  blur-3xl
-                "
-              />
-
-              <div className="relative">
-
-                <div
-                  className="
-                    flex
-                    items-center
-                    justify-between
-                  "
-                >
-                  <div>
-
-                    <p
-                      className="
-                        text-xs
-                        font-semibold
-                        uppercase
-                        tracking-[0.16em]
-
-                        text-[var(--nova-muted)]
-                      "
-                    >
-                      NovaCart
-                    </p>
-
-                    <p
-                      className="
-                        mt-2
-                        text-2xl
-                        font-bold
-                        tracking-tight
-
-                        text-[var(--nova-text)]
-                      "
-                    >
-                      {props.result || 0}
-                    </p>
-
-                    <p
-                      className="
-                        text-sm
-                        text-[var(--nova-muted)]
-                      "
-                    >
-                      products in catalog
-                    </p>
-
-                  </div>
+                <Container>
 
                   <div
                     className="
-                      flex
-                      h-12
-                      w-12
-                      items-center
-                      justify-center
+                      relative
+                      overflow-hidden
 
                       rounded-2xl
-
-                      bg-[var(--nova-lavender-soft)]
-
-                      text-[var(--nova-primary)]
-                    "
-                  >
-                    <ShoppingBag size={22} />
-                  </div>
-                </div>
-
-                <p
-                  className="
-                    mt-6
-
-                    text-sm
-                    leading-6
-
-                    text-[var(--nova-muted)]
-                  "
-                >
-                  Search, filter by category,
-                  and sort by price or popularity.
-                </p>
-
-                <div
-                  className="
-                    mt-6
-                    grid
-                    grid-cols-2
-                    gap-3
-                  "
-                >
-
-                  <div
-                    className="
-                      rounded-2xl
+                      sm:rounded-3xl
 
                       border
                       border-[var(--nova-border)]
 
-                      bg-[var(--nova-surface-soft)]
+                      bg-[var(--nova-surface)]
 
-                      p-4
+                      shadow-[var(--shadow-lg)]
                     "
                   >
-                    <ShieldCheck
-                      size={19}
-                      className="
-                        mb-3
-                        text-[var(--nova-primary)]
-                      "
-                    />
 
-                    <p
+                    {/* HERO IMAGE */}
+
+                    <div
                       className="
-                        text-sm
-                        font-semibold
-                        text-[var(--nova-text)]
+                        relative
+
+                        aspect-[16/7]
+
+                        min-h-[360px]
+
+                        overflow-hidden
+
+                        sm:min-h-[400px]
+
+                        lg:min-h-[500px]
                       "
                     >
-                      Secure
-                    </p>
 
-                    <p
-                      className="
-                        mt-1
-                        text-xs
-                        text-[var(--nova-muted)]
-                      "
-                    >
-                      Checkout
-                    </p>
+                      <img
+                        src={heroes[heroIndex].image}
+                        alt={
+                          heroes[heroIndex].title ||
+                          'NovaCart hero banner'
+                        }
+                        className="
+                          absolute
+                          inset-0
+
+                          h-full
+                          w-full
+
+                          object-cover
+                        "
+                      />
+
+                      {/* LEFT OVERLAY */}
+
+                      <div
+                        className="
+                          absolute
+                          inset-0
+
+                          bg-gradient-to-r
+                          from-black/60
+                          via-black/25
+                          to-transparent
+                        "
+                      />
+
+                      {/* HERO CONTENT */}
+
+                      <div
+                        className="
+                          absolute
+                          inset-y-0
+                          left-0
+
+                          flex
+                          w-full
+                          max-w-2xl
+
+                          items-center
+
+                          px-6
+                          py-8
+
+                          sm:px-10
+                          lg:px-14
+                        "
+                      >
+
+                        <div>
+
+                          {heroes[heroIndex].title && (
+                            <h1
+                              className="
+                                max-w-xl
+
+                                text-3xl
+                                font-bold
+                                leading-tight
+                                tracking-tight
+
+                                text-white
+
+                                sm:text-4xl
+
+                                lg:text-5xl
+                              "
+                            >
+                              {heroes[heroIndex].title}
+                            </h1>
+                          )}
+
+                          {heroes[heroIndex].subtitle && (
+                            <p
+                              className="
+                                mt-4
+
+                                max-w-lg
+
+                                text-sm
+                                leading-6
+
+                                text-white/90
+
+                                sm:text-base
+                                sm:leading-7
+                              "
+                            >
+                              {heroes[heroIndex].subtitle}
+                            </p>
+                          )}
+
+                          {heroes[heroIndex].buttonLink && (
+                            <Link
+                              href={
+                                heroes[heroIndex].buttonLink
+                              }
+                              className="
+                                mt-6
+
+                                inline-flex
+
+                                min-h-11
+
+                                items-center
+                                justify-center
+
+                                gap-2
+
+                                rounded-xl
+
+                                bg-white
+
+                                px-5
+                                py-3
+
+                                text-sm
+                                font-semibold
+
+                                text-[var(--nova-primary)]
+
+                                shadow-lg
+
+                                transition-all
+                                duration-200
+
+                                hover:-translate-y-0.5
+                                hover:bg-[var(--nova-surface-soft)]
+
+                                active:scale-[0.98]
+                              "
+                            >
+                              {heroes[heroIndex].buttonText ||
+                                'Shop Now'}
+
+                              <ArrowRight size={16} />
+                            </Link>
+                          )}
+
+                        </div>
+
+                      </div>
+
+                      {/* PREVIOUS */}
+
+                      {heroes.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setHeroIndex(
+                              previous =>
+                                previous === 0
+                                  ? heroes.length - 1
+                                  : previous - 1
+                            )
+                          }
+                          aria-label="Previous hero banner"
+                          className="
+                            absolute
+                            left-3
+                            top-1/2
+
+                            flex
+                            h-10
+                            w-10
+
+                            -translate-y-1/2
+
+                            items-center
+                            justify-center
+
+                            rounded-full
+
+                            bg-white/90
+
+                            text-[var(--nova-text)]
+
+                            shadow-md
+
+                            backdrop-blur
+
+                            transition-all
+                            duration-200
+
+                            hover:bg-white
+
+                            sm:left-5
+                          "
+                        >
+                          ←
+                        </button>
+                      )}
+
+                      {/* NEXT */}
+
+                      {heroes.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setHeroIndex(
+                              previous =>
+                                (previous + 1) %
+                                heroes.length
+                            )
+                          }
+                          aria-label="Next hero banner"
+                          className="
+                            absolute
+                            right-3
+                            top-1/2
+
+                            flex
+                            h-10
+                            w-10
+
+                            -translate-y-1/2
+
+                            items-center
+                            justify-center
+
+                            rounded-full
+
+                            bg-white/90
+
+                            text-[var(--nova-text)]
+
+                            shadow-md
+
+                            backdrop-blur
+
+                            transition-all
+                            duration-200
+
+                            hover:bg-white
+
+                            sm:right-5
+                          "
+                        >
+                          →
+                        </button>
+                      )}
+
+                      {/* DOTS */}
+
+                      {heroes.length > 1 && (
+                        <div
+                          className="
+                            absolute
+                            bottom-5
+                            left-1/2
+
+                            flex
+
+                            -translate-x-1/2
+
+                            items-center
+                            gap-2
+                          "
+                        >
+
+                          {heroes.map(
+                            (hero, index) => (
+                              <button
+                                key={hero._id}
+                                type="button"
+                                onClick={() =>
+                                  setHeroIndex(index)
+                                }
+                                aria-label={`Go to hero banner ${
+                                  index + 1
+                                }`}
+                                className={`
+                                  h-2
+                                  rounded-full
+
+                                  transition-all
+                                  duration-200
+
+                                  ${
+                                    index === heroIndex
+                                      ? 'w-7 bg-white'
+                                      : 'w-2 bg-white/60'
+                                  }
+                                `}
+                              />
+                            )
+                          )}
+
+                        </div>
+                      )}
+
+                    </div>
+
                   </div>
 
-                  <div
-                    className="
-                      rounded-2xl
+                </Container>
 
-                      border
-                      border-[var(--nova-border)]
-
-                      bg-[var(--nova-surface-soft)]
-
-                      p-4
-                    "
-                  >
-                    <Package
-                      size={19}
-                      className="
-                        mb-3
-                        text-[var(--nova-primary)]
-                      "
-                    />
-
-                    <p
-                      className="
-                        text-sm
-                        font-semibold
-                        text-[var(--nova-text)]
-                      "
-                    >
-                      Track
-                    </p>
-
-                    <p
-                      className="
-                        mt-1
-                        text-xs
-                        text-[var(--nova-muted)]
-                      "
-                    >
-                      Your orders
-                    </p>
-                  </div>
-
-                </div>
-
-              </div>
-            </div>
-
-          </Container>
-        </section>
-
+              </section>
+            )}
         {/* =================================================
                 FEATURED CATEGORIES
             ================================================= */}
