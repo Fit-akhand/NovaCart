@@ -52,6 +52,7 @@
 
   /* ---------- Layout ---------- */
   --navbar-height: 72px;
+  --content-max-width: 1440px;
 
   /* ---------- Radius ---------- */
   --radius-sm: 8px;
@@ -60,14 +61,9 @@
   --radius-xl: 24px;
 
   /* ---------- Shadows ---------- */
-  --shadow-sm:
-    0 1px 2px rgba(31, 25, 51, 0.04);
-
-  --shadow-md:
-    0 8px 30px rgba(31, 25, 51, 0.08);
-
-  --shadow-lg:
-    0 20px 50px rgba(31, 25, 51, 0.12);
+  --shadow-sm: 0 1px 2px rgba(31, 25, 51, 0.04);
+  --shadow-md: 0 8px 30px rgba(31, 25, 51, 0.08);
+  --shadow-lg: 0 20px 50px rgba(31, 25, 51, 0.12);
 
   /* ---------- Compatibility ---------- */
   --radius: 12px;
@@ -75,56 +71,40 @@
 
 /* =========================================================
    DARK MODE
-   Premium Purple / Lavender Atmosphere
    ========================================================= */
 
 .dark {
-  /* ---------- Main Background ---------- */
   --nova-bg: #0d0a16;
-
-  /* ---------- Surfaces ---------- */
   --nova-surface: #171226;
   --nova-surface-soft: #1d1730;
 
-  /* ---------- Brand ---------- */
   --nova-navy: #161124;
   --nova-blue: #8b5cf6;
   --nova-primary: #8b5cf6;
   --nova-primary-hover: #7c3aed;
   --nova-primary-active: #6d28d9;
 
-  /* ---------- Lavender ---------- */
   --nova-lavender: #c4b5fd;
   --nova-lavender-soft: #241d38;
   --nova-lavender-light: #211a32;
 
-  /* ---------- Text ---------- */
   --nova-text: #f9f7ff;
   --nova-muted: #b8b0c9;
   --nova-muted-light: #817890;
 
-  /* ---------- Borders ---------- */
   --nova-border: #2a2340;
   --nova-border-soft: #211b32;
 
-  /* ---------- Status ---------- */
   --nova-success: #4ade80;
   --nova-warning: #fbbf24;
   --nova-danger: #fb7185;
 
-  /* ---------- Accent ---------- */
   --nova-violet-light: #a78bfa;
   --nova-violet-soft: #c4b5fd;
 
-  /* ---------- Dark Shadows ---------- */
-  --shadow-sm:
-    0 1px 2px rgba(0, 0, 0, 0.25);
-
-  --shadow-md:
-    0 8px 30px rgba(0, 0, 0, 0.28);
-
-  --shadow-lg:
-    0 20px 50px rgba(0, 0, 0, 0.38);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.28);
+  --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.38);
 }
 
 /* =========================================================
@@ -137,37 +117,26 @@
   box-sizing: border-box;
 }
 
-/* =========================================================
-   HTML
-   ========================================================= */
-
 html {
   width: 100%;
   min-height: 100%;
-
   overflow-x: hidden;
-
   background: var(--nova-bg);
   color: var(--nova-text);
-
   scroll-behavior: smooth;
-
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
   transition:
     background-color 220ms ease,
     color 220ms ease;
 }
 
-/* =========================================================
-   BODY
-   ========================================================= */
-
 body {
   min-height: 100vh;
-
-  overflow-x: hidden;
-
   margin: 0;
-
+  overflow-x: hidden;
+  background: var(--nova-bg);
+  color: var(--nova-text);
   font-family:
     Inter,
     -apple-system,
@@ -179,43 +148,36 @@ body {
     Cantarell,
     "Helvetica Neue",
     sans-serif;
-
-  background: var(--nova-bg);
-  color: var(--nova-text);
-
   transition:
     background-color 220ms ease,
     color 220ms ease;
 }
 
-/* =========================================================
-   NEXT.JS ROOT
-   ========================================================= */
+/* Prevent accidental horizontal overflow from long content. */
+body,
+#__next {
+  max-width: 100%;
+}
 
 #__next {
   width: 100%;
   min-height: 100vh;
-
+  overflow-x: clip;
   background: var(--nova-bg);
   color: var(--nova-text);
-
   transition:
     background-color 220ms ease,
     color 220ms ease;
 }
 
 /* =========================================================
-   LINKS
+   LINKS / FORMS / BUTTONS
    ========================================================= */
 
 a {
   color: inherit;
   text-decoration: none;
 }
-
-/* =========================================================
-   FORM ELEMENTS
-   ========================================================= */
 
 button,
 input,
@@ -224,26 +186,39 @@ select {
   font: inherit;
 }
 
-/* =========================================================
-   BUTTON
-   ========================================================= */
-
 button {
   -webkit-tap-highlight-color: transparent;
 }
 
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
 /* =========================================================
-   IMAGES
+   MEDIA
    ========================================================= */
 
-img {
+img,
+svg,
+video,
+canvas {
   display: block;
-
   max-width: 100%;
-  height: auto;
+}
 
+img {
+  height: auto;
   object-fit: cover;
   object-position: center;
+}
+
+/* Keep media inside cards/containers. */
+iframe {
+  max-width: 100%;
 }
 
 /* =========================================================
@@ -253,7 +228,6 @@ img {
 :focus-visible {
   outline: 2px solid var(--nova-primary);
   outline-offset: 3px;
-
   border-radius: 6px;
 }
 
@@ -268,7 +242,6 @@ img {
 
 /* =========================================================
    SCROLLBAR
-   Premium subtle scrollbar
    ========================================================= */
 
 ::-webkit-scrollbar {
@@ -283,17 +256,12 @@ img {
 ::-webkit-scrollbar-thumb {
   background: var(--nova-border);
   border-radius: 999px;
-
   transition: background 180ms ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--nova-primary);
 }
-
-/* =========================================================
-   DARK MODE SCROLLBAR
-   ========================================================= */
 
 .dark::-webkit-scrollbar-track {
   background: var(--nova-bg);
@@ -308,20 +276,55 @@ img {
 }
 
 /* =========================================================
-   MOBILE TOUCH
+   RESPONSIVE SAFETY
+   Prevent common flex/grid children from forcing overflow.
    ========================================================= */
 
-button,
-a,
-input,
-select,
-textarea {
-  -webkit-tap-highlight-color: transparent;
+.min-w-0,
+main,
+section,
+article,
+header,
+footer,
+nav,
+form {
+  max-width: 100%;
+}
+
+@media (max-width: 640px) {
+  :root {
+    --navbar-height: 64px;
+    --radius-lg: 14px;
+    --radius-xl: 20px;
+  }
+
+  /*
+    Keep mobile pages compact without globally forcing
+    every component to a smaller size.
+  */
+  h1,
+  h2,
+  h3,
+  h4,
+  p {
+    overflow-wrap: anywhere;
+  }
+
+  /*
+    Prevent long product names, IDs, emails and URLs from
+    pushing cards/layouts horizontally.
+  */
+  a,
+  button,
+  input,
+  select,
+  textarea {
+    max-width: 100%;
+  }
 }
 
 /* =========================================================
    REDUCED MOTION
-   Accessibility
    ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
@@ -336,18 +339,5 @@ textarea {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
-  }
-}
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
-
-@media (max-width: 640px) {
-  :root {
-    --navbar-height: 64px;
-
-    --radius-lg: 14px;
-    --radius-xl: 20px;
   }
 }

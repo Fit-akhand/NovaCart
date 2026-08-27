@@ -133,9 +133,9 @@ const Products = (props) => {
         className="
           min-h-screen
           bg-[var(--nova-bg)]
-          py-8
-          sm:py-10
-          lg:py-12
+          py-5
+          sm:py-8
+          lg:py-10
         "
       >
         <Container>
@@ -147,23 +147,24 @@ const Products = (props) => {
           <section
             className="
               relative
-              mb-7
+              mb-5
               overflow-hidden
 
-              rounded-3xl
+              rounded-2xl
+              sm:rounded-3xl
 
               border
               border-[var(--nova-border)]
 
               bg-[var(--nova-surface)]
 
-              px-5
-              py-7
+              px-4
+              py-5
 
               shadow-[var(--shadow-md)]
 
               sm:px-7
-              sm:py-8
+              sm:py-7
             "
           >
 
@@ -203,10 +204,10 @@ const Products = (props) => {
 
                   bg-[var(--nova-lavender-soft)]
 
-                  px-3
-                  py-1.5
+                  px-2.5
+                  py-1
 
-                  text-xs
+                  text-[10px]
                   font-semibold
 
                   text-[var(--nova-primary)]
@@ -219,13 +220,13 @@ const Products = (props) => {
 
               <h1
                 className="
-                  text-3xl
+                  text-2xl
                   font-bold
                   tracking-[-0.03em]
 
                   text-[var(--nova-text)]
 
-                  sm:text-4xl
+                  sm:text-3xl
                 "
               >
                 Explore products
@@ -233,7 +234,7 @@ const Products = (props) => {
 
               <p
                 className="
-                  mt-2
+                  mt-1.5
                   max-w-2xl
 
                   text-sm
@@ -241,7 +242,7 @@ const Products = (props) => {
 
                   text-[var(--nova-muted)]
 
-                  sm:text-base
+                  sm:text-sm
                 "
               >
                 Search, filter, and sort the
@@ -253,7 +254,7 @@ const Products = (props) => {
 
               <div
                 className="
-                  mt-5
+                  mt-4
                   inline-flex
                   items-center
 
@@ -295,11 +296,12 @@ const Products = (props) => {
 
           <section
             className="
-              mb-6
+              mb-5
 
               overflow-hidden
 
-              rounded-3xl
+              rounded-2xl
+              sm:rounded-3xl
 
               border
               border-[var(--nova-border)]
@@ -320,7 +322,7 @@ const Products = (props) => {
                 border-[var(--nova-border)]
 
                 px-4
-                py-3
+                py-2.5
 
                 text-sm
                 font-semibold
@@ -338,7 +340,7 @@ const Products = (props) => {
               Filter & sort
             </div>
 
-            <div className="p-3 sm:p-5">
+            <div className="p-2.5 sm:p-4">
               <ProductFilters
                 state={state}
               />
@@ -354,24 +356,26 @@ const Products = (props) => {
             auth.user.role === 'admin' && (
               <section
                 className="
-                  mb-6
+                  mb-5
 
                   flex
                   flex-col
-                  gap-4
+                  gap-3
 
-                  rounded-3xl
+                  rounded-2xl
+                  sm:rounded-3xl
 
                   border
                   border-[var(--nova-border)]
 
                   bg-[var(--nova-surface)]
 
-                  p-4
+                  p-3
 
                   shadow-[var(--shadow-sm)]
 
                   sm:flex-row
+                  sm:p-4
                   sm:items-center
                   sm:justify-between
                 "
@@ -408,9 +412,13 @@ const Products = (props) => {
                 <div
                   className="
                     flex
+                    w-full
                     flex-wrap
                     items-center
-                    gap-3
+                    gap-2
+
+                    sm:w-auto
+                    sm:gap-3
                   "
                 >
 
@@ -431,7 +439,7 @@ const Products = (props) => {
                       bg-[var(--nova-surface-soft)]
 
                       px-3
-                      py-2.5
+                      py-2
 
                       text-sm
                       font-medium
@@ -473,16 +481,20 @@ const Products = (props) => {
                     className="
                       inline-flex
                       min-h-11
+                      min-w-0
                       items-center
+                      justify-center
                       gap-2
 
                       rounded-xl
 
                       bg-[var(--nova-danger)]
 
-                      px-4
+                      px-3
 
                       text-sm
+
+                      sm:px-4
                       font-semibold
                       text-white
 
@@ -534,11 +546,16 @@ const Products = (props) => {
 
               <div
                 className="
-                  mb-5
+                  mb-4
                   flex
-                  items-end
+                  flex-col
+                  items-start
                   justify-between
-                  gap-4
+                  gap-2
+
+                  sm:flex-row
+                  sm:items-end
+                  sm:gap-4
                 "
               >
 
@@ -560,13 +577,13 @@ const Products = (props) => {
                   <h2
                     className="
                       mt-1
-                      text-xl
+                      text-lg
                       font-bold
                       tracking-tight
 
                       text-[var(--nova-text)]
 
-                      sm:text-2xl
+                      sm:text-xl
                     "
                   >
                     All products
@@ -603,7 +620,7 @@ const Products = (props) => {
 
           <div
             className="
-              mt-8
+              mt-6
               flex
               justify-center
             "

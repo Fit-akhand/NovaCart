@@ -28,39 +28,23 @@ const ProductFilters = ({ state }) => {
     router.query.category,
   ])
 
-  /* =====================================================
-     COMMON FIELD STYLE
-     Used by search, category and sort.
-  ===================================================== */
-
   const fieldClass = `
     h-11
     w-full
     min-w-0
-
     rounded-xl
-
     border
     border-[var(--nova-border)]
-
     bg-[var(--nova-surface)]
-
     px-3
-
     text-sm
     text-[var(--nova-text)]
-
     outline-none
-
     transition-all
     duration-200
-
     placeholder:text-[var(--nova-muted)]
-
     hover:border-[var(--nova-violet-light)]
-
     focus:border-[var(--nova-primary)]
-
     focus:ring-2
     focus:ring-[rgba(139,92,246,0.12)]
   `
@@ -70,30 +54,23 @@ const ProductFilters = ({ state }) => {
       className="
         grid
         grid-cols-1
-        gap-4
-
+        gap-3
         md:grid-cols-12
         md:gap-3
       "
     >
+      {/* SEARCH */}
 
-      {/* =================================================
-          SEARCH
-      ================================================= */}
-
-      <div className="md:col-span-5">
-
+      <div className="min-w-0 md:col-span-5">
         <label
           htmlFor="product-search"
           className="
-            mb-2
+            mb-1.5
             block
-
-            text-xs
+            text-[11px]
             font-semibold
             uppercase
-            tracking-wide
-
+            tracking-[0.08em]
             text-[var(--nova-muted)]
           "
         >
@@ -101,22 +78,16 @@ const ProductFilters = ({ state }) => {
         </label>
 
         <div className="relative w-full">
-
-          {/* Search icon */}
-
           <Search
-            size={17}
+            size={16}
             strokeWidth={2}
             className="
               pointer-events-none
-
               absolute
-              left-3.5
+              left-3
               top-1/2
               z-10
-
               -translate-y-1/2
-
               text-[var(--nova-muted)]
             "
           />
@@ -127,8 +98,7 @@ const ProductFilters = ({ state }) => {
             autoComplete="off"
             value={search}
             onChange={(event) => {
-              const value =
-                event.target.value
+              const value = event.target.value
 
               setSearch(value)
 
@@ -142,32 +112,25 @@ const ProductFilters = ({ state }) => {
             placeholder="Search products..."
             className={`
               ${fieldClass}
-
-              pl-11
-              pr-10
+              pl-10
+              pr-4
             `}
           />
-
         </div>
       </div>
 
-      {/* =================================================
-          CATEGORY
-      ================================================= */}
+      {/* CATEGORY */}
 
-      <div className="md:col-span-4">
-
+      <div className="min-w-0 md:col-span-4">
         <label
           htmlFor="product-category"
           className="
-            mb-2
+            mb-1.5
             block
-
-            text-xs
+            text-[11px]
             font-semibold
             uppercase
-            tracking-wide
-
+            tracking-[0.08em]
             text-[var(--nova-muted)]
           "
         >
@@ -178,21 +141,16 @@ const ProductFilters = ({ state }) => {
           id="product-category"
           className={`
             ${fieldClass}
-
-            capitalize
-
             cursor-pointer
+            capitalize
           `}
           value={category}
           onChange={(event) => {
-            setCategory(
-              event.target.value
-            )
+            setCategory(event.target.value)
 
             filterSearch({
               router,
-              category:
-                event.target.value,
+              category: event.target.value,
             })
           }}
         >
@@ -205,8 +163,7 @@ const ProductFilters = ({ state }) => {
               (item) =>
                 item &&
                 item._id &&
-                typeof item.name ===
-                  'string'
+                typeof item.name === 'string'
             )
             .map((item) => (
               <option
@@ -217,26 +174,20 @@ const ProductFilters = ({ state }) => {
               </option>
             ))}
         </select>
-
       </div>
 
-      {/* =================================================
-          SORT
-      ================================================= */}
+      {/* SORT */}
 
-      <div className="md:col-span-3">
-
+      <div className="min-w-0 md:col-span-3">
         <label
           htmlFor="product-sort"
           className="
-            mb-2
+            mb-1.5
             block
-
-            text-xs
+            text-[11px]
             font-semibold
             uppercase
-            tracking-wide
-
+            tracking-[0.08em]
             text-[var(--nova-muted)]
           "
         >
@@ -247,14 +198,11 @@ const ProductFilters = ({ state }) => {
           id="product-sort"
           className={`
             ${fieldClass}
-
             cursor-pointer
           `}
           value={sort}
           onChange={(event) => {
-            setSort(
-              event.target.value
-            )
+            setSort(event.target.value)
 
             filterSearch({
               router,
@@ -282,9 +230,7 @@ const ProductFilters = ({ state }) => {
             Price: Low-High
           </option>
         </select>
-
       </div>
-
     </div>
   )
 }
