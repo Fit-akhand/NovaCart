@@ -7,6 +7,7 @@ import {
   ShoppingBag,
   Users,
   Store,
+  Images,
   X,
 } from 'lucide-react'
 
@@ -33,6 +34,11 @@ const links = [
         href: '/categories',
         label: 'Categories',
         icon: FolderTree
+    },
+     {
+        href: '/admin/heroes',
+        label: 'Hero Banners',
+        icon: Images
     },
 
     {

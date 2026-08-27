@@ -15,7 +15,6 @@ export const DataContext = createContext()
 // ============================================================
 
 const GUEST_CART_KEY = '__novacart_guest_cart'
-const LOGOUT_KEY = '__novacart_logout'
 
 const getUserCartKey = (userId) =>
     `__novacart_cart_${userId}`
@@ -328,6 +327,10 @@ export const DataProvider = ({
         useRef(false)
 
 
+// ========================================================
+// RESTORE AUTH
+// ========================================================
+
 useEffect(() => {
 
     if (
@@ -341,14 +344,6 @@ useEffect(() => {
 
     const restoreAuth = async () => {
 
-        if (
-            sessionStorage.getItem(
-                '__novacart_logout'
-            ) === 'true'
-        ) {
-            return
-        }
-
         try {
 
             const response = await fetch(
@@ -360,14 +355,10 @@ useEffect(() => {
                 }
             )
 
-            const data = await response
-                .json()
-                .catch(() => ({}))
-
-            // =================================================
-            // IMPORTANT
-            // COMPONENT MAY HAVE UNMOUNTED
-            // =================================================
+            const data =
+                await response
+                    .json()
+                    .catch(() => ({}))
 
             if (!mounted) {
                 return
@@ -380,7 +371,7 @@ useEffect(() => {
                 data?.user
 
             // ================================================
-            // SUCCESS — REFRESH TOKEN IS VALID
+            // VALID SESSION
             // ================================================
 
             if (
@@ -411,10 +402,6 @@ useEffect(() => {
 
         } catch (error) {
 
-            // ================================================
-            // IGNORE IF COMPONENT UNMOUNTED
-            // ================================================
-
             if (!mounted) {
                 return
             }
@@ -428,15 +415,20 @@ useEffect(() => {
                 type: 'AUTH',
                 payload: {},
             })
+
+        } finally {
+
+            if (mounted) {
+                setAuthReady(true)
+            }
+
         }
     }
 
     restoreAuth()
 
     return () => {
-
         mounted = false
-
     }
 
 }, [])
