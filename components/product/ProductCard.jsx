@@ -132,6 +132,7 @@ const ProductCard = ({ product, handleCheck }) => {
         overflow-hidden
 
         rounded-2xl
+        sm:rounded-2xl
 
         border
         border-[var(--nova-border)]
@@ -233,8 +234,9 @@ const ProductCard = ({ product, handleCheck }) => {
           }
           onError={onImageError}
           className="
-            h-48
+            h-40
             w-full
+            sm:h-48
 
             object-cover
 
@@ -280,7 +282,8 @@ const ProductCard = ({ product, handleCheck }) => {
           flex-1
           flex-col
 
-          p-4
+          p-3
+          sm:p-4
         "
       >
 
@@ -312,8 +315,8 @@ const ProductCard = ({ product, handleCheck }) => {
           <h3
             className="
               line-clamp-2
-
               min-h-[40px]
+              min-w-0
 
               text-sm
               font-semibold
@@ -341,9 +344,12 @@ const ProductCard = ({ product, handleCheck }) => {
           className="
             mt-3
             flex
-            items-start
-            justify-between
+            min-w-0
+            flex-col
             gap-2
+            sm:flex-row
+            sm:items-start
+            sm:justify-between
           "
         >
 
@@ -353,6 +359,7 @@ const ProductCard = ({ product, handleCheck }) => {
               <div
                 className="
                   flex
+                  min-w-0
                   flex-wrap
                   items-center
                   gap-x-2
@@ -419,8 +426,10 @@ const ProductCard = ({ product, handleCheck }) => {
         <div
           className="
             mt-4
-            flex
+            grid
+            grid-cols-2
             gap-2
+            sm:flex
           "
         >
 
@@ -433,6 +442,7 @@ const ProductCard = ({ product, handleCheck }) => {
               <Link
                 href={`/create/${product._id}`}
                 className="
+                  min-w-0
                   flex-1
 
                   rounded-xl
@@ -444,8 +454,10 @@ const ProductCard = ({ product, handleCheck }) => {
                   py-2.5
 
                   text-center
-                  text-sm
+                  text-xs
                   font-semibold
+                  leading-5
+                  sm:text-sm
 
                   text-[var(--nova-text)]
 
@@ -463,6 +475,7 @@ const ProductCard = ({ product, handleCheck }) => {
               <button
                 type="button"
                 className="
+                  min-w-0
                   flex-1
 
                   rounded-xl
@@ -513,6 +526,7 @@ const ProductCard = ({ product, handleCheck }) => {
               <Link
                 href={`/product/${product._id}`}
                 className="
+                  min-w-0
                   flex-1
 
                   rounded-xl
@@ -526,8 +540,10 @@ const ProductCard = ({ product, handleCheck }) => {
                   py-2.5
 
                   text-center
-                  text-sm
+                  text-xs
                   font-semibold
+                  leading-5
+                  sm:text-sm
 
                   text-[var(--nova-text)]
 
@@ -559,6 +575,7 @@ const ProductCard = ({ product, handleCheck }) => {
                     handleAddToCart
                   }
                   className="
+                    min-w-0
                     flex-1
 
                     rounded-xl
@@ -599,6 +616,7 @@ const ProductCard = ({ product, handleCheck }) => {
                 <div
                   className="
                     flex
+                    min-w-0
                     flex-1
                     items-center
                     justify-center
