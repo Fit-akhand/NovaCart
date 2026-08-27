@@ -244,7 +244,7 @@ const StoreHeader = () => {
               LOGO
           ===================================== */}
 
-          <div className="shrink-0">
+          <div className="min-w-0 shrink-0">
             <BrandLogo />
           </div>
 
@@ -478,7 +478,7 @@ const StoreHeader = () => {
                 transition-all duration-200
 
                 hover:border-[var(--nova-border)]
-                hover:bg-[var(--nova-surface-soft)]
+                hover:bg-[var(--nova-lavender-soft)]
                 hover:text-[var(--nova-primary)]
 
                 active:scale-95
@@ -591,7 +591,7 @@ const StoreHeader = () => {
                       border
                       border-[var(--nova-violet-light)]
 
-                      bg-[var(--nova-lavender)]
+                      bg-[var(--nova-lavender-soft)]
 
                       text-[var(--nova-primary)]
 

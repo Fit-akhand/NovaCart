@@ -263,7 +263,7 @@ useEffect(() => {
 
                         aspect-[16/7]
 
-                        min-h-[360px]
+                        min-h-[330px]
 
                         overflow-hidden
 
@@ -318,10 +318,11 @@ useEffect(() => {
 
                           items-center
 
-                          px-6
-                          py-8
+                          px-5
+                          py-7
 
                           sm:px-10
+                          sm:py-8
                           lg:px-14
                         "
                       >
@@ -589,11 +590,17 @@ useEffect(() => {
 
                   <div
                     className="
-                      mb-7
+                      mb-6
                       flex
-                      items-end
+                      flex-col
+                      items-start
                       justify-between
-                      gap-4
+                      gap-3
+
+                      sm:mb-7
+                      sm:flex-row
+                      sm:items-end
+                      sm:gap-4
                     "
                   >
 
@@ -671,11 +678,13 @@ useEffect(() => {
                     className="
                       grid
                       grid-cols-2
-                      gap-4
+                      gap-3
 
                       sm:grid-cols-3
+                      sm:gap-4
 
                       lg:grid-cols-4
+                      lg:gap-5
                     "
                   >
 
@@ -722,9 +731,11 @@ useEffect(() => {
                             className="
                               relative
 
-                              aspect-[4/3]
+                              aspect-[5/4]
 
                               overflow-hidden
+
+                              sm:aspect-[4/3]
 
                               bg-[var(--nova-surface-soft)]
                             "
@@ -837,7 +848,7 @@ useEffect(() => {
 
                           <div
                             className="
-                              p-4
+                              p-3
                               sm:p-5
                             "
                           >
@@ -889,9 +900,10 @@ useEffect(() => {
 
                               <div
                                 className="
-                                  flex
+                                  hidden
                                   h-8
                                   w-8
+                                  sm:flex
                                   shrink-0
 
                                   items-center
@@ -981,7 +993,7 @@ useEffect(() => {
 
                 bg-[var(--nova-surface)]
 
-                p-3
+                p-2.5
                 sm:p-4
 
                 shadow-[var(--shadow-sm)]
@@ -1011,7 +1023,8 @@ useEffect(() => {
 
                     bg-[var(--nova-surface)]
 
-                    p-4
+                    p-3
+                    sm:p-4
 
                     shadow-[var(--shadow-sm)]
 
@@ -1054,9 +1067,13 @@ useEffect(() => {
                   <div
                     className="
                       flex
+                      w-full
                       flex-wrap
                       items-center
-                      gap-3
+                      gap-2
+
+                      sm:w-auto
+                      sm:gap-3
                     "
                   >
 
@@ -1119,10 +1136,15 @@ useEffect(() => {
 
                         bg-[var(--nova-danger)]
 
-                        px-4
+                        flex-1
+                        px-3
                         py-2
 
+                        text-center
                         text-xs
+
+                        sm:flex-none
+                        sm:px-4
                         font-semibold
                         text-white
 
@@ -1262,11 +1284,17 @@ useEffect(() => {
 
               <div
                 className="
-                  mb-7
+                  mb-6
                   flex
-                  items-end
+                  flex-col
+                  items-start
                   justify-between
-                  gap-4
+                  gap-3
+
+                  sm:mb-7
+                  sm:flex-row
+                  sm:items-end
+                  sm:gap-4
                 "
               >
 
@@ -1379,6 +1407,7 @@ useEffect(() => {
                 gap-3
 
                 sm:grid-cols-2
+                sm:gap-4
 
                 lg:grid-cols-4
               "
@@ -1418,7 +1447,8 @@ useEffect(() => {
 
                     bg-[var(--nova-surface)]
 
-                    p-5
+                    p-4
+                    sm:p-5
 
                     transition-all
                     duration-200

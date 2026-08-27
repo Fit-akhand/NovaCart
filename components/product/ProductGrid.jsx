@@ -8,6 +8,7 @@ const ProductGrid = ({
     <div
       className="
         grid
+        min-w-0
 
         grid-cols-2
         gap-3
@@ -16,16 +17,23 @@ const ProductGrid = ({
         sm:gap-5
 
         lg:grid-cols-3
+        lg:gap-6
 
         xl:grid-cols-4
       "
     >
       {products.map((product) => (
-        <ProductCard
+        <div
           key={product._id}
-          product={product}
-          handleCheck={handleCheck}
-        />
+          className="
+            min-w-0
+          "
+        >
+          <ProductCard
+            product={product}
+            handleCheck={handleCheck}
+          />
+        </div>
       ))}
     </div>
   )

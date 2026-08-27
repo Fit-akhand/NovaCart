@@ -211,19 +211,19 @@ const AddressManager = ({ token }) => {
 
     return (
 
-        <section className="rounded-3xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-5 shadow-[var(--shadow-md)] sm:p-6">
+        <section className="rounded-2xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-4 shadow-[var(--shadow-md)] sm:rounded-3xl sm:p-6">
 
-            <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 
                 <div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex min-w-0 items-center gap-2">
 
                         <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--nova-lavender-soft)] text-[var(--nova-primary)]">
                             <MapPin size={18} />
                         </span>
 
-                        <h2 className="text-lg font-bold tracking-tight text-[var(--nova-text)]">
+                        <h2 className="min-w-0 text-lg font-bold tracking-tight text-[var(--nova-text)]">
                             Saved Addresses
                         </h2>
 
@@ -239,7 +239,7 @@ const AddressManager = ({ token }) => {
                 <button
                     type="button"
                     onClick={openCreate}
-                    className="flex items-center gap-2 rounded-xl bg-[var(--nova-primary)] px-4 py-2.5 text-sm font-bold text-white shadow-[0_8px_20px_rgba(124,58,237,0.16)] transition-all hover:-translate-y-0.5 hover:shadow-[0_12px_26px_rgba(124,58,237,0.22)]"
+                    className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[var(--nova-primary)] px-4 py-2.5 text-sm font-bold text-white shadow-[0_8px_20px_rgba(124,58,237,0.16)] transition-all hover:-translate-y-0.5 hover:shadow-[0_12px_26px_rgba(124,58,237,0.22)] sm:w-auto"
                 >
                     <Plus size={16} />
                     Add Address
@@ -272,7 +272,7 @@ const AddressManager = ({ token }) => {
 
                 <form
                     onSubmit={handleSubmit}
-                    className="mt-6 rounded-2xl border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] p-4 shadow-[var(--shadow-sm)] sm:p-5"
+                    className="mt-5 rounded-2xl border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] p-3 shadow-[var(--shadow-sm)] sm:mt-6 sm:p-5"
                 >
 
                     <h3 className="mb-5 text-base font-bold tracking-tight text-[var(--nova-text)]">
@@ -282,7 +282,7 @@ const AddressManager = ({ token }) => {
                     </h3>
 
 
-                    <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
 
                         <div>
 
@@ -420,7 +420,7 @@ const AddressManager = ({ token }) => {
                     </div>
 
 
-                    <label className="mt-4 flex items-center gap-2 rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-3 py-2.5 text-sm text-[var(--nova-text)]">
+                    <label className="mt-4 flex items-start gap-2 rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-3 py-2.5 text-sm text-[var(--nova-text)] sm:items-center">
 
                         <input
                             type="checkbox"
@@ -434,12 +434,12 @@ const AddressManager = ({ token }) => {
                     </label>
 
 
-                    <div className="mt-5 flex flex-wrap gap-3">
+                    <div className="mt-5 grid grid-cols-1 gap-2.5 sm:flex sm:flex-wrap sm:gap-3">
 
                         <button
                             type="submit"
                             disabled={loading}
-                            className="rounded-xl bg-[var(--nova-primary)] px-5 py-2.5 text-sm font-bold text-white shadow-[0_8px_20px_rgba(124,58,237,0.16)] transition-all hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+                            className="min-h-11 rounded-xl bg-[var(--nova-primary)] px-5 py-2.5 text-sm font-bold text-white shadow-[0_8px_20px_rgba(124,58,237,0.16)] transition-all hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
                         >
                             {loading
                                 ? 'Saving...'
@@ -452,7 +452,7 @@ const AddressManager = ({ token }) => {
                         <button
                             type="button"
                             onClick={() => setShowForm(false)}
-                            className="rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-5 py-2.5 text-sm font-bold text-[var(--nova-text)] transition-all hover:border-[var(--nova-violet-light)] hover:bg-[var(--nova-surface-soft)]"
+                            className="min-h-11 rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-5 py-2.5 text-sm font-bold text-[var(--nova-text)] transition-all hover:border-[var(--nova-violet-light)] hover:bg-[var(--nova-surface-soft)]"
                         >
                             Cancel
                         </button>
@@ -466,22 +466,22 @@ const AddressManager = ({ token }) => {
 
             {/* ADDRESS LIST */}
 
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            <div className="mt-5 grid gap-3 sm:mt-6 sm:grid-cols-2 sm:gap-4">
 
                 {addresses.map(item => (
 
                     <div
                         key={item._id}
-                        className="rounded-2xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-4 shadow-[var(--shadow-sm)] transition-all hover:-translate-y-0.5 hover:border-[var(--nova-violet-light)] hover:shadow-[0_14px_30px_rgba(124,58,237,0.10)]"
+                        className="rounded-2xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-3.5 shadow-[var(--shadow-sm)] transition-all hover:-translate-y-0.5 hover:border-[var(--nova-violet-light)] hover:shadow-[0_14px_30px_rgba(124,58,237,0.10)] sm:p-4"
                     >
 
-                        <div className="flex items-start justify-between gap-3">
+                        <div className="flex min-w-0 items-start justify-between gap-3">
 
                             <div>
 
-                                <div className="flex items-center gap-2">
+                                <div className="flex min-w-0 items-center gap-2">
 
-                                    <h3 className="font-semibold">
+                                    <h3 className="truncate font-semibold">
                                         {item.label}
                                     </h3>
 
@@ -520,12 +520,12 @@ const AddressManager = ({ token }) => {
                         </div>
 
 
-                        <div className="mt-4 flex flex-wrap gap-2">
+                        <div className="mt-4 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
 
                             <button
                                 type="button"
                                 onClick={() => openEdit(item)}
-                                className="flex items-center gap-1.5 rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-3 py-2 text-xs font-bold text-[var(--nova-text)] transition-all hover:border-[var(--nova-violet-light)] hover:bg-[var(--nova-lavender-soft)] hover:text-[var(--nova-primary)]"
+                                className="flex min-h-10 items-center justify-center gap-1.5 rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-3 py-2 text-xs font-bold text-[var(--nova-text)] transition-all hover:border-[var(--nova-violet-light)] hover:bg-[var(--nova-lavender-soft)] hover:text-[var(--nova-primary)]"
                             >
                                 <Pencil size={13} />
                                 Edit
@@ -535,7 +535,7 @@ const AddressManager = ({ token }) => {
                             <button
                                 type="button"
                                 onClick={() => handleDelete(item._id)}
-                                className="flex items-center gap-1.5 rounded-xl border border-[rgba(239,68,68,0.18)] bg-[var(--nova-surface)] px-3 py-2 text-xs font-bold text-[var(--nova-danger)] transition-all hover:bg-[rgba(239,68,68,0.08)]"
+                                className="flex min-h-10 items-center justify-center gap-1.5 rounded-xl border border-[rgba(239,68,68,0.18)] bg-[var(--nova-surface)] px-3 py-2 text-xs font-bold text-[var(--nova-danger)] transition-all hover:bg-[rgba(239,68,68,0.08)]"
                             >
                                 <Trash2 size={13} />
                                 Delete
@@ -552,7 +552,7 @@ const AddressManager = ({ token }) => {
 
             {addresses.length === 0 && !showForm && (
 
-                <div className="mt-6 rounded-3xl border border-dashed border-[var(--nova-border)] bg-[var(--nova-surface-soft)] p-8 text-center shadow-[var(--shadow-sm)]">
+                <div className="mt-5 rounded-2xl border border-dashed border-[var(--nova-border)] bg-[var(--nova-surface-soft)] p-6 text-center shadow-[var(--shadow-sm)] sm:mt-6 sm:rounded-3xl sm:p-8">
 
                     <MapPin
                         size={25}
