@@ -4,6 +4,7 @@ import { useContext, useMemo, useState } from 'react'
 import { DataContext } from '../../store/GlobalState'
 import { updateItem } from '../../store/Actions'
 import { postData, putData } from '@/lib/api-client'
+import { imageUpload } from '../../utils/imageUpload'
 
 import Container from '../../components/common/Container'
 import EmptyState from '../../components/common/EmptyState'
@@ -19,11 +20,15 @@ import {
   Search,
   Trash2,
 } from 'lucide-react'
+import { label } from 'framer-motion/client'
 
 const Categories = () => {
   const [name, setName] = useState('')
   const [id, setId] = useState('')
   const [search, setSearch] = useState('')
+
+  const [image, setImage] = useState('')
+  const [imagePreview, setImagePreview] = useState('')
 
   const [discountPercent, setDiscountPercent] = useState(0)
   const [discountActive, setDiscountActive] = useState(false)
@@ -131,6 +136,10 @@ const Categories = () => {
   ) => {
     setName('')
     setId('')
+    setImage('')
+    setImagePreview('')
+    setDiscountPercent(0)
+    setDiscountActive(false)
 
     if (!keepParent) {
       setParentCategory('')
@@ -138,115 +147,134 @@ const Categories = () => {
   }
 
   // ==========================================
-  // SAVE CATEGORY
+  // CATEGORY IMAGE
   // ==========================================
 
-  const saveCategory = async () => {
+  const handleImageChange = (e) => {
+
+    const file = e.target.files?.[0]
+
+    if (!file) return
+
+    if (file.size > 1024 * 1024) {
+      return dispatch({
+        type: 'NOTIFY',
+        payload: {
+          error: 'The largest image size is 1MB.'
+        }
+      })
+    }
+
     if (
-      !auth?.user ||
-      auth.user.role !== 'admin'
+      file.type !== 'image/jpeg' &&
+      file.type !== 'image/png'
     ) {
       return dispatch({
         type: 'NOTIFY',
         payload: {
-          error:
-            'Authentication is not valid.',
-        },
+          error: 'Image format is incorrect.'
+        }
       })
     }
 
-    if (!name.trim()) {
-      return dispatch({
-        type: 'NOTIFY',
-        payload: {
-          error:
-            'Name cannot be left blank.',
-        },
-      })
-    }
+    setImage(file)
 
-    dispatch({
+    setImagePreview(
+      URL.createObjectURL(file)
+    )
+  }
+
+  // ==========================================
+  // SAVE CATEGORY
+  // ==========================================
+
+const saveCategory = async () => {
+
+  if (
+    !auth?.user ||
+    auth.user.role !== 'admin'
+  ) {
+    return dispatch({
       type: 'NOTIFY',
       payload: {
-        loading: true,
-      },
+        error: 'Authentication is not valid.'
+      }
     })
+  }
 
-    try {
-      let res
+  if (!name.trim()) {
+    return dispatch({
+      type: 'NOTIFY',
+      payload: {
+        error: 'Name cannot be left blank.'
+      }
+    })
+  }
 
-      const editingId = id
+  dispatch({
+    type: 'NOTIFY',
+    payload: {
+      loading: true
+    }
+  })
 
-      const isCreatingSubcategory =
-        !editingId &&
-        Boolean(parentCategory)
+  try {
 
-      // ========================================
-      // UPDATE
-      // ========================================
+    const editingId = id
 
-      if (editingId) {
-        res = await putData(
-          `categories/${editingId}`,
-          {
-            name: name.trim(),
-          },
-          auth.token
-        )
+    const isCreatingSubcategory =
+      !editingId &&
+      Boolean(parentCategory)
 
-        if (res.err) {
-          return dispatch({
-            type: 'NOTIFY',
-            payload: {
-              error: res.err,
-            },
-          })
-        }
+    // ========================================
+    // UPLOAD IMAGE
+    // ========================================
 
-        dispatch(
-          updateItem(
-            categories,
-            editingId,
-            res.category,
-            'ADD_CATEGORIES'
-          )
-        )
+    let imageUrl
 
-        const updatedParent =
-          res.category?.parentCategory
+    if (image instanceof File) {
 
-        if (updatedParent) {
-          setParentCategory(
-            updatedParent.toString()
-          )
-        } else {
-          setParentCategory('')
-        }
+      const media = await imageUpload([
+        image
+      ])
 
-        setName('')
-        setId('')
-
+      if (
+        !media ||
+        !media[0] ||
+        !media[0].url
+      ) {
         return dispatch({
           type: 'NOTIFY',
           payload: {
-            success:
-              res.msg ||
-              'Category updated successfully.',
-          },
+            error: 'Category image upload failed.'
+          }
         })
       }
 
-      // ========================================
-      // CREATE
-      // ========================================
+      imageUrl = media[0].url
+    }
 
-      res = await postData(
-        'categories',
-        {
+    // ========================================
+    // UPDATE CATEGORY
+    // ========================================
+
+    if (editingId) {
+
+      const updatePayload = {
           name: name.trim(),
-          parentCategory:
-            parentCategory || null,
-        },
+          discountPercent: Number(discountPercent),
+          discountActive: Boolean(discountActive)
+      }
+
+      // Only send image when a new image
+      // has actually been selected.
+      if (imageUrl !== undefined) {
+        updatePayload.image = imageUrl
+      }
+
+      const res = await putData(
+        `categories/${editingId}`,
+        updatePayload,
         auth.token
       )
 
@@ -254,69 +282,141 @@ const Categories = () => {
         return dispatch({
           type: 'NOTIFY',
           payload: {
-            error: res.err,
-          },
+            error: res.err
+          }
         })
       }
 
-      if (res.newCategory) {
-        dispatch({
-          type: 'ADD_CATEGORIES',
-          payload: [
-            ...categories,
-            res.newCategory,
-          ],
-        })
-      }
-
-      // ========================================
-      // KEEP PARENT FOR SUBCATEGORY
-      // ========================================
-
-      if (isCreatingSubcategory) {
-        const selectedParent =
-          parentCategory
-
-        setName('')
-        setId('')
-
-        setParentCategory(
-          selectedParent
+      dispatch(
+        updateItem(
+          categories,
+          editingId,
+          res.category,
+          'ADD_CATEGORIES'
         )
+      )
 
-        setOpenCategories(
-          (previous) => ({
-            ...previous,
-            [selectedParent]: true,
-          })
+      const updatedParent =
+        res.category?.parentCategory
+
+      if (updatedParent) {
+        setParentCategory(
+          updatedParent.toString()
         )
       } else {
-        resetForm(false)
+        setParentCategory('')
       }
+
+      setName('')
+      setId('')
+      setImage('')
+      setImagePreview('')
 
       return dispatch({
         type: 'NOTIFY',
         payload: {
           success:
             res.msg ||
-            (
-              isCreatingSubcategory
-                ? 'Successfully created subcategory.'
-                : 'Successfully created category.'
-            ),
-        },
+            'Category updated successfully.'
+        }
       })
-    } catch (error) {
+    }
+
+    // ========================================
+    // CREATE CATEGORY
+    // ========================================
+
+    const createPayload = {
+        name: name.trim(),
+        parentCategory: parentCategory || null,
+        discountPercent: Number(discountPercent),
+        discountActive: Boolean(discountActive)
+    }
+
+    if (imageUrl !== undefined) {
+      createPayload.image = imageUrl
+    }
+
+    const res = await postData(
+      'categories',
+      createPayload,
+      auth.token
+    )
+
+    if (res.err) {
       return dispatch({
         type: 'NOTIFY',
         payload: {
-          error:
-            error.message ||
-            'Something went wrong.',
-        },
+          error: res.err
+        }
       })
     }
+
+    if (res.newCategory) {
+      dispatch({
+        type: 'ADD_CATEGORIES',
+        payload: [
+          ...categories,
+          res.newCategory
+        ]
+      })
+    }
+
+    // ========================================
+    // KEEP PARENT FOR SUBCATEGORY
+    // ========================================
+
+    if (isCreatingSubcategory) {
+
+      const selectedParent =
+        parentCategory
+
+      setName('')
+      setId('')
+      setImage('')
+      setImagePreview('')
+
+      setParentCategory(
+        selectedParent
+      )
+
+      setOpenCategories(
+        (previous) => ({
+          ...previous,
+          [selectedParent]: true
+        })
+      )
+
+    } else {
+
+      resetForm(false)
+    }
+
+    return dispatch({
+      type: 'NOTIFY',
+      payload: {
+        success:
+          res.msg ||
+          (
+            isCreatingSubcategory
+              ? 'Successfully created subcategory.'
+              : 'Successfully created category.'
+          )
+      }
+    })
+
+  } catch (error) {
+
+    return dispatch({
+      type: 'NOTIFY',
+      payload: {
+        error:
+          error.message ||
+          'Something went wrong.'
+      }
+    })
   }
+}
 
   // ==========================================
   // EDIT CATEGORY
@@ -331,6 +431,19 @@ const Categories = () => {
       typeof category.name === 'string'
         ? category.name
         : ''
+    )
+
+    setImage('')
+       setImagePreview(
+      category.image || ''
+    )
+
+    setDiscountPercent(
+        Number(category.discountPercent || 0)
+    )
+
+    setDiscountActive(
+        Boolean(category.discountActive)
     )
 
     if (category.parentCategory) {
@@ -504,7 +617,7 @@ const Categories = () => {
                     sm:px-5
                   "
                 >
-
+                
                   <div
                     className="
                       flex
@@ -1019,12 +1132,10 @@ const Categories = () => {
       <main
         className="
           min-h-screen
-
           bg-[var(--nova-bg)]
-
-          py-7
-          sm:py-9
-          lg:py-11
+          py-6
+          sm:py-8
+          lg:py-10
         "
       >
         <Container>
@@ -1036,23 +1147,18 @@ const Categories = () => {
           <div
             className="
               relative
-              mb-7
+              mb-6
               overflow-hidden
-
-              rounded-3xl
-
+              rounded-[28px]
               border
               border-[var(--nova-border)]
-
               bg-[var(--nova-surface)]
-
               px-5
-              py-7
-
+              py-6
               shadow-[var(--shadow-md)]
-
               sm:px-7
-              sm:py-8
+              sm:py-7
+              lg:px-8
             "
           >
 
@@ -1065,8 +1171,8 @@ const Categories = () => {
                 -right-24
                 -top-28
 
-                h-64
-                w-64
+                h-72
+                w-72
 
                 rounded-full
 
@@ -1152,10 +1258,11 @@ const Categories = () => {
                 className="
                   grid
                   grid-cols-1
-                  gap-4
+                  gap-5
 
                   sm:grid-cols-2
                   lg:grid-cols-3
+                  xl:grid-cols-4
                 "
               >
 
@@ -1175,7 +1282,7 @@ const Categories = () => {
                           relative
                           overflow-hidden
 
-                          rounded-2xl
+                          rounded-[22px]
 
                           border
                           border-[var(--nova-border)]
@@ -1184,14 +1291,14 @@ const Categories = () => {
 
                           p-5
 
-                          shadow-[var(--shadow-md)]
+                          shadow-[var(--shadow-sm)]
 
                           transition-all
                           duration-200
 
                           hover:-translate-y-1
                           hover:border-[var(--nova-violet-light)]
-                          hover:shadow-[0_16px_36px_rgba(124,58,237,0.13)]
+                          hover:shadow-[0_18px_40px_rgba(124,58,237,0.14)]
 
                           sm:p-6
                         "
@@ -1203,8 +1310,8 @@ const Categories = () => {
                           className="
                             mb-5
                             flex
-                            h-11
-                            w-11
+                            h-12
+                            w-12
                             items-center
                             justify-center
 
@@ -1299,7 +1406,7 @@ const Categories = () => {
                         <Link
                           href={`/products?category=${category._id}`}
                           className="
-                            mt-5
+                            mt-6
                             inline-flex
                             items-center
                             gap-1
@@ -1350,11 +1457,9 @@ const Categories = () => {
 
               <section
                 className="
-                  mb-7
-
+                  mb-6
                   overflow-hidden
-
-                  rounded-3xl
+                  rounded-[28px]
 
                   border
                   border-[var(--nova-border)]
@@ -1375,7 +1480,8 @@ const Categories = () => {
                     bg-[var(--nova-surface-soft)]
 
                     px-5
-                    py-4
+                    py-5
+                    sm:px-6
                   "
                 >
 
@@ -1457,7 +1563,7 @@ const Categories = () => {
 
                 {/* Form body */}
 
-                <div className="p-5">
+                <div className="p-5 sm:p-6">
 
                   {/* PARENT CATEGORY */}
 
@@ -1561,11 +1667,11 @@ const Categories = () => {
 
                   <div
                     className="
-                      flex
-                      flex-col
-                      gap-3
+                      grid
+                      grid-cols-1
+                      gap-4
 
-                      sm:flex-row
+                      sm:grid-cols-[minmax(0,1fr)_auto]
                       sm:items-end
                     "
                   >
@@ -1597,6 +1703,296 @@ const Categories = () => {
                       />
 
                     </div>
+
+                    {/* =================================
+                            CATEGORY IMAGE
+                        ================================= */}
+
+                        <div className="mt-5">
+
+                          <label
+                            htmlFor="category-image"
+                            className="
+                              mb-2
+                              block
+                              text-xs
+                              font-semibold
+                              text-[var(--nova-text)]
+                            "
+                          >
+                            Category image
+                          </label>
+
+                          <div
+                            className="
+                              rounded-2xl
+                              border
+                              border-[var(--nova-border)]
+                              bg-[var(--nova-surface-soft)]
+                              p-4
+                            "
+                          >
+
+                            {imagePreview ? (
+                              <div className="mb-4 flex items-center gap-4">
+
+                                <img
+                                  src={imagePreview}
+                                  alt="Category preview"
+                                  className="
+                                    h-20
+                                    w-20
+                                    rounded-xl
+                                    object-cover
+                                    border
+                                    border-[var(--nova-border)]
+                                  "
+                                />
+
+                                <div className="min-w-0">
+
+                                  <p
+                                    className="
+                                      text-sm
+                                      font-semibold
+                                      text-[var(--nova-text)]
+                                    "
+                                  >
+                                    {image instanceof File
+                                      ? 'New image selected'
+                                      : 'Current category image'}
+                                  </p>
+
+                                  <p
+                                    className="
+                                      mt-1
+                                      text-xs
+                                      text-[var(--nova-muted)]
+                                    "
+                                  >
+                                    JPG or PNG • Maximum 1MB
+                                  </p>
+
+                                </div>
+
+                              </div>
+                            ) : (
+                              <div
+                                className="
+                                  mb-5
+                                  flex
+                                  h-20
+                                  items-center
+                                  justify-center
+                                  rounded-xl
+                                  border
+                                  border-dashed
+                                  border-[var(--nova-border)]
+                                  text-xs
+                                  text-[var(--nova-muted)]
+                                "
+                              >
+                                No image selected
+                              </div>
+                            )}
+
+                            <input
+                              id="category-image"
+                              type="file"
+                              accept="image/jpeg,image/png"
+                              onChange={handleImageChange}
+                              className="
+                                block
+                                w-full
+                                text-sm
+                                text-[var(--nova-muted)]
+                                file:mr-4
+                                file:rounded-xl
+                                file:border-0
+                                file:bg-[var(--nova-primary)]
+                                file:px-4
+                                file:py-2
+                                file:text-xs
+                                file:font-semibold
+                                file:text-white
+                                hover:file:opacity-90
+                              "
+                            />
+
+                          </div>
+
+                        </div>
+
+
+                        {/* =================================
+                            CATEGORY DISCOUNT
+                        ================================= */}
+
+                        <div className="mt-5">
+
+                          <div
+                            className="
+                              flex
+                              items-center
+                              justify-between
+                              gap-4
+                              rounded-2xl
+                              border
+                              border-[var(--nova-border)]
+                              bg-[var(--nova-surface-soft)]
+                              p-4
+                            "
+                          >
+
+                            <div>
+
+                              <p
+                                className="
+                                  text-sm
+                                  font-semibold
+                                  text-[var(--nova-text)]
+                                "
+                              >
+                                Category discount
+                              </p>
+
+                              <p
+                                className="
+                                  mt-1
+                                  text-xs
+                                  text-[var(--nova-muted)]
+                                "
+                              >
+                                Apply a discount to products in this category.
+                              </p>
+
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setDiscountActive(
+                                  (previous) => !previous
+                                )
+                              }
+                              className={`
+                                relative
+                                h-6
+                                w-11
+                                shrink-0
+                                rounded-full
+                                transition-colors
+                                ${
+                                  discountActive
+                                    ? 'bg-[var(--nova-primary)]'
+                                    : 'bg-[var(--nova-border)]'
+                                }
+                              `}
+                              aria-label="Toggle category discount"
+                            >
+
+                              <span
+                                className={`
+                                  absolute
+                                  top-0.5
+                                  h-5
+                                  w-5
+                                  rounded-full
+                                  bg-white
+                                  shadow
+                                  transition-transform
+                                  ${
+                                    discountActive
+                                      ? 'translate-x-5'
+                                      : 'translate-x-0.5'
+                                  }
+                                `}
+                              />
+
+                            </button>
+
+                          </div>
+
+
+                          {discountActive && (
+
+                            <div className="mt-3">
+
+                              <label
+                                htmlFor="discount-percent"
+                                className="
+                                  mb-2
+                                  block
+                                  text-xs
+                                  font-semibold
+                                  text-[var(--nova-text)]
+                                "
+                              >
+                                Discount percentage
+                              </label>
+
+                              <div className="relative">
+
+                                <input
+                                  id="discount-percent"
+                                  type="number"
+                                  min="0"
+                                  max="100"
+                                  value={discountPercent}
+                                  onChange={(e) => {
+
+                                    const value =
+                                      Math.min(
+                                        100,
+                                        Math.max(
+                                          0,
+                                          Number(e.target.value)
+                                        )
+                                      )
+
+                                    setDiscountPercent(value)
+                                  }}
+                                  className="
+                                    w-full
+                                    rounded-xl
+                                    border
+                                    border-[var(--nova-border)]
+                                    bg-[var(--nova-surface)]
+                                    px-4
+                                    py-3
+                                    pr-10
+                                    text-sm
+                                    text-[var(--nova-text)]
+                                    outline-none
+                                    transition
+                                    focus:border-[var(--nova-primary)]
+                                    focus:ring-2
+                                    focus:ring-[rgba(139,92,246,0.12)]
+                                  "
+                                />
+
+                                <span
+                                  className="
+                                    pointer-events-none
+                                    absolute
+                                    right-4
+                                    top-1/2
+                                    -translate-y-1/2
+                                    text-sm
+                                    font-semibold
+                                    text-[var(--nova-muted)]
+                                  "
+                                >
+                                  %
+                                </span>
+
+                              </div>
+
+                            </div>
+
+                          )}
+
+                        </div>
 
                     <div
                       className="
@@ -1644,7 +2040,7 @@ const Categories = () => {
 
               <div
                 className="
-                  mb-4
+                  mb-5
 
                   flex
                   flex-col
@@ -1789,14 +2185,14 @@ const Categories = () => {
                 className="
                   overflow-hidden
 
-                  rounded-3xl
+                  rounded-[28px]
 
                   border
                   border-[var(--nova-border)]
 
                   bg-[var(--nova-surface)]
 
-                  shadow-[var(--shadow-md)]
+                  shadow-[var(--shadow-sm)]
                 "
               >
                 <AdminCategoryTree />

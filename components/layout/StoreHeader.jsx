@@ -122,6 +122,12 @@ const StoreHeader = () => {
 
   const handleLogout = async () => {
     try {
+
+      sessionStorage.setItem(
+          '__novacart_logout',
+          'true'
+      ) 
+
       await postData(
         'auth/logout',
         null,

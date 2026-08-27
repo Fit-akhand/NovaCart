@@ -15,6 +15,7 @@ export const DataContext = createContext()
 // ============================================================
 
 const GUEST_CART_KEY = '__novacart_guest_cart'
+const LOGOUT_KEY = '__novacart_logout'
 
 const getUserCartKey = (userId) =>
     `__novacart_cart_${userId}`
@@ -327,102 +328,118 @@ export const DataProvider = ({
         useRef(false)
 
 
-    // ========================================================
-    // RESTORE AUTH
-    // ========================================================
+useEffect(() => {
 
-    useEffect(() => {
+    if (
+        typeof window ===
+        'undefined'
+    ) {
+        return
+    }
+
+    let mounted = true
+
+    const restoreAuth = async () => {
 
         if (
-            typeof window ===
-            'undefined'
+            sessionStorage.getItem(
+                '__novacart_logout'
+            ) === 'true'
         ) {
             return
         }
 
+        try {
 
-        let mounted = true
-
-
-        const restoreAuth = async () => {
-            try {
-                const response = await fetch(
-                    '/api/auth/accessToken',
-                    {
-                        method: 'GET',
-                        credentials: 'include',
-                        cache: 'no-store',
-                    }
-                )
-
-                const data = await response
-                    .json()
-                    .catch(() => ({}))
-
-                const accessToken =
-                    data?.access_token || ''
-
-                const user =
-                    data?.user
-
-                // ================================================
-                // SUCCESS — REFRESH TOKEN IS VALID
-                // ================================================
-
-                if (
-                    response.ok &&
-                    accessToken &&
-                    user
-                ) {
-                    if (mounted) {
-                        dispatch({
-                            type: 'AUTH',
-                            payload: {
-                                user,
-                                token: accessToken,
-                            },
-                        })
-                    }
-
-                    return
+            const response = await fetch(
+                '/api/auth/accessToken',
+                {
+                    method: 'GET',
+                    credentials: 'include',
+                    cache: 'no-store',
                 }
+            )
 
-                // ================================================
-                // NO VALID SESSION
-                // ================================================
+            const data = await response
+                .json()
+                .catch(() => ({}))
 
-                if (mounted) {
-                    dispatch({
-                        type: 'AUTH',
-                        payload: {},
-                    })
-                }
+            // =================================================
+            // IMPORTANT
+            // COMPONENT MAY HAVE UNMOUNTED
+            // =================================================
 
-            } catch (error) {
-
-                console.error(
-                    'NovaCart auth restore failed:',
-                    error
-                )
-
-                if (mounted) {
-                    dispatch({
-                        type: 'AUTH',
-                        payload: {},
-                    })
-                }
+            if (!mounted) {
+                return
             }
+
+            const accessToken =
+                data?.access_token || ''
+
+            const user =
+                data?.user
+
+            // ================================================
+            // SUCCESS — REFRESH TOKEN IS VALID
+            // ================================================
+
+            if (
+                response.ok &&
+                accessToken &&
+                user
+            ) {
+
+                dispatch({
+                    type: 'AUTH',
+                    payload: {
+                        user,
+                        token: accessToken,
+                    },
+                })
+
+                return
+            }
+
+            // ================================================
+            // NO VALID SESSION
+            // ================================================
+
+            dispatch({
+                type: 'AUTH',
+                payload: {},
+            })
+
+        } catch (error) {
+
+            // ================================================
+            // IGNORE IF COMPONENT UNMOUNTED
+            // ================================================
+
+            if (!mounted) {
+                return
+            }
+
+            console.error(
+                'NovaCart auth restore failed:',
+                error
+            )
+
+            dispatch({
+                type: 'AUTH',
+                payload: {},
+            })
         }
+    }
 
+    restoreAuth()
 
-        restoreAuth()
+    return () => {
 
+        mounted = false
 
-        return () => {
-            mounted = false
-        }
+    }
 
-    }, [])
+}, [])
 
 
     // ========================================================

@@ -46,7 +46,10 @@ const updateCategory = async (req, res) => {
         const {
             name,
             parentCategory,
-            isActive
+            isActive,
+            image,
+            discountPercent,
+            discountActive
         } = req.body
 
         const category = await Categories.findById(id)
@@ -104,6 +107,35 @@ const updateCategory = async (req, res) => {
             category.isActive = Boolean(isActive)
         }
 
+        if (image !== undefined) {
+            category.image =
+                typeof image === 'string'
+                    ? image.trim()
+                    : ''
+        }
+
+        if (discountPercent !== undefined) {
+            const discount = Number(discountPercent)
+
+            if (
+                Number.isNaN(discount) ||
+                discount < 0 ||
+                discount > 100
+            ) {
+                return res.status(400).json({
+                    err: 'Discount must be between 0 and 100.'
+                })
+            }
+
+            category.discountPercent = discount
+        }
+
+        if (discountActive !== undefined) {
+            category.discountActive =
+                Boolean(discountActive)
+        }
+
+        
         await category.save()
 
         return res.json({
