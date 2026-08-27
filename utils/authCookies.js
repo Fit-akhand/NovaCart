@@ -1,6 +1,6 @@
 const REFRESH_COOKIE_NAME = 'refreshtoken'
 const REFRESH_COOKIE_PATH = '/'
-const REFRESH_MAX_AGE = 7 * 24 * 60 * 60
+const REFRESH_MAX_AGE = 60
 
 function buildCookieParts(value, maxAge) {
     const secure =
