@@ -234,40 +234,48 @@ useEffect(() => {
             ================================================= */}
 
             {heroes.length > 0 && (
-              <section className="py-5 sm:py-7 lg:py-8">
+              <section className="py-0 sm:py-7 lg:py-8">
 
-                <Container>
+                <Container className="px-0 sm:px-6 lg:px-8">
 
                   <div
                     className="
                       relative
                       overflow-hidden
 
-                      rounded-2xl
-                      sm:rounded-3xl
-
-                      border
-                      border-[var(--nova-border)]
+                      rounded-none
+                      border-0
 
                       bg-[var(--nova-surface)]
 
-                      shadow-[var(--shadow-lg)]
+                      shadow-none
+
+                      sm:rounded-3xl
+                      sm:border
+                      sm:border-[var(--nova-border)]
+                      sm:shadow-[var(--shadow-lg)]
                     "
                   >
 
-                    {/* HERO IMAGE */}
+                    {/* =================================================
+                        HERO IMAGE
+                        Mobile: full-screen visual treatment
+                        Tablet/Laptop: wide premium banner
+                        UI ONLY — functionality untouched
+                    ================================================= */}
 
                     <div
                       className="
                         relative
 
-                        aspect-[4/5]
-
-                        min-h-[430px]
+                        h-[560px]
+                        min-h-[560px]
+                        w-full
 
                         overflow-hidden
 
                         sm:aspect-[16/7]
+                        sm:h-auto
                         sm:min-h-[400px]
 
                         lg:min-h-[500px]
@@ -288,28 +296,65 @@ useEffect(() => {
                           w-full
 
                           object-cover
+                          object-center
+
+                          transition-transform
+                          duration-700
                         "
                       />
 
-                      {/* LEFT OVERLAY */}
+                      {/* =================================================
+                          BRAND COLOR OVERLAY
+
+                          Mobile:
+                          Strong lower violet atmosphere for readable text.
+
+                          Laptop:
+                          Left-to-right violet overlay keeps the image
+                          bright and visible while adding NovaCart color.
+                      ================================================= */}
 
                       <div
                         className="
+                          pointer-events-none
                           absolute
                           inset-0
 
-                          bg-gradient-to-r
-                          from-black/65
-                          via-black/25
+                          bg-gradient-to-t
+                          from-[#120b27]/95
+                          via-[#2d1950]/48
                           to-transparent
 
-                          sm:from-black/60
-                          sm:via-black/25
+                          sm:bg-gradient-to-r
+                          sm:from-[#17102f]/85
+                          sm:via-[#512b82]/38
                           sm:to-transparent
+
+                          lg:from-[#17102f]/78
+                          lg:via-[#6d3ab0]/28
+                          lg:to-transparent
                         "
                       />
 
-                      {/* HERO CONTENT */}
+                      {/* Soft violet atmosphere on larger screens */}
+
+                      <div
+                        className="
+                          pointer-events-none
+                          absolute
+                          inset-0
+
+                          hidden
+
+                          bg-[radial-gradient(circle_at_18%_35%,rgba(167,139,250,0.24),transparent_34%)]
+
+                          sm:block
+                        "
+                      />
+
+                      {/* =================================================
+                          HERO CONTENT
+                      ================================================= */}
 
                       <div
                         className="
@@ -323,36 +368,39 @@ useEffect(() => {
                           items-end
 
                           px-5
-                          pb-16
+                          pb-20
                           pt-10
 
-                          sm:inset-y-0
-                          sm:right-auto
                           sm:items-center
                           sm:px-10
                           sm:py-8
+
                           lg:px-14
                         "
                       >
 
-                        <div>
+                        <div className="w-full">
 
                           {heroes[heroIndex].title && (
                             <h1
                               className="
-                                max-w-[280px]
+                                max-w-[340px]
 
-                                text-2xl
-                                font-bold
-                                leading-tight
-                                tracking-tight
+                                text-[2.15rem]
+                                font-extrabold
+                                leading-[1.02]
+                                tracking-[-0.035em]
 
                                 text-white
 
-                                sm:max-w-xl
-                                sm:text-4xl
+                                drop-shadow-[0_3px_18px_rgba(0,0,0,0.28)]
 
-                                lg:text-5xl
+                                sm:max-w-xl
+                                sm:text-5xl
+
+                                lg:max-w-2xl
+                                lg:text-[3.75rem]
+                                lg:leading-[1.03]
                               "
                             >
                               {heroes[heroIndex].title}
@@ -362,19 +410,26 @@ useEffect(() => {
                           {heroes[heroIndex].subtitle && (
                             <p
                               className="
-                                mt-3
+                                mt-4
 
-                                max-w-[300px]
+                                max-w-[340px]
 
-                                text-xs
-                                leading-5
+                                text-sm
+                                font-medium
+                                leading-6
 
                                 text-white/90
 
-                                sm:mt-4
+                                drop-shadow-[0_2px_10px_rgba(0,0,0,0.22)]
+
                                 sm:max-w-lg
                                 sm:text-base
                                 sm:leading-7
+
+                                lg:mt-5
+                                lg:max-w-xl
+                                lg:text-lg
+                                lg:leading-7
                               "
                             >
                               {heroes[heroIndex].subtitle}
@@ -387,50 +442,49 @@ useEffect(() => {
                                 heroes[heroIndex].buttonLink
                               }
                               className="
-                                mt-4
+                                mt-5
 
                                 inline-flex
-
-                                min-h-10
-
-                                px-4
-                                py-2.5
-
-                                sm:mt-6
-                                sm:min-h-11
+                                min-h-11
 
                                 items-center
                                 justify-center
-
                                 gap-2
 
                                 rounded-xl
 
-                                bg-white
+                                bg-[var(--nova-primary)]
+
+                                px-5
+                                py-3
 
                                 text-sm
+                                font-bold
 
-                                sm:px-5
-                                sm:py-3
-                                font-semibold
+                                text-white
 
-                                text-[var(--nova-primary)]
-
-                                shadow-lg
+                                shadow-[0_10px_30px_rgba(124,58,237,0.35)]
 
                                 transition-all
                                 duration-200
 
                                 hover:-translate-y-0.5
-                                hover:bg-[var(--nova-surface-soft)]
+                                hover:bg-[var(--nova-primary-hover)]
+                                hover:shadow-[0_14px_34px_rgba(124,58,237,0.42)]
 
                                 active:scale-[0.98]
+
+                                sm:mt-6
+                                sm:px-6
+                                sm:py-3.5
+
+                                lg:text-base
                               "
                             >
                               {heroes[heroIndex].buttonText ||
                                 'Shop Now'}
 
-                              <ArrowRight size={16} />
+                              <ArrowRight size={17} />
                             </Link>
                           )}
 
@@ -438,7 +492,9 @@ useEffect(() => {
 
                       </div>
 
-                      {/* PREVIOUS */}
+                      {/* =================================================
+                          PREVIOUS
+                      ================================================= */}
 
                       {heroes.length > 1 && (
                         <button
@@ -454,17 +510,12 @@ useEffect(() => {
                           aria-label="Previous hero banner"
                           className="
                             absolute
-                            left-2.5
+                            left-3
                             top-1/2
 
                             flex
                             h-9
                             w-9
-
-                            sm:left-5
-                            sm:h-10
-                            sm:w-10
-
                             -translate-y-1/2
 
                             items-center
@@ -472,27 +523,36 @@ useEffect(() => {
 
                             rounded-full
 
-                            bg-white/90
+                            border
+                            border-white/20
 
-                            text-[var(--nova-text)]
+                            bg-black/25
 
-                            shadow-md
+                            text-lg
+                            font-medium
+                            text-white
 
-                            backdrop-blur
+                            shadow-lg
+
+                            backdrop-blur-md
 
                             transition-all
                             duration-200
 
-                            hover:bg-white
+                            hover:bg-black/40
 
                             sm:left-5
+                            sm:h-11
+                            sm:w-11
                           "
                         >
                           ←
                         </button>
                       )}
 
-                      {/* NEXT */}
+                      {/* =================================================
+                          NEXT
+                      ================================================= */}
 
                       {heroes.length > 1 && (
                         <button
@@ -507,17 +567,12 @@ useEffect(() => {
                           aria-label="Next hero banner"
                           className="
                             absolute
-                            right-2.5
+                            right-3
                             top-1/2
 
                             flex
                             h-9
                             w-9
-
-                            sm:right-5
-                            sm:h-10
-                            sm:w-10
-
                             -translate-y-1/2
 
                             items-center
@@ -525,43 +580,51 @@ useEffect(() => {
 
                             rounded-full
 
-                            bg-white/90
+                            border
+                            border-white/20
 
-                            text-[var(--nova-text)]
+                            bg-black/25
 
-                            shadow-md
+                            text-lg
+                            font-medium
+                            text-white
 
-                            backdrop-blur
+                            shadow-lg
+
+                            backdrop-blur-md
 
                             transition-all
                             duration-200
 
-                            hover:bg-white
+                            hover:bg-black/40
 
                             sm:right-5
+                            sm:h-11
+                            sm:w-11
                           "
                         >
                           →
                         </button>
                       )}
 
-                      {/* DOTS */}
+                      {/* =================================================
+                          DOTS
+                      ================================================= */}
 
                       {heroes.length > 1 && (
                         <div
                           className="
                             absolute
-                            bottom-3
+                            bottom-4
                             left-1/2
 
-                            sm:bottom-5
-
                             flex
-
                             -translate-x-1/2
 
                             items-center
                             gap-2
+
+                            sm:bottom-5
                           "
                         >
 
@@ -604,8 +667,8 @@ useEffect(() => {
 
               </section>
             )}
-        {/* =================================================
-                FEATURED CATEGORIES
+
+         {/*FEATURED CATEGORIES
             ================================================= */}
 
             {categories?.length > 0 && (
