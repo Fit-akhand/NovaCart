@@ -340,7 +340,7 @@ const ProductCard = ({ product, handleCheck }) => {
           className="
             mt-3
             grid
-            grid-cols-2
+            grid-cols-1
             gap-2
             sm:mt-4
           "
@@ -421,38 +421,6 @@ const ProductCard = ({ product, handleCheck }) => {
             </>
           ) : (
             <>
-              <Link
-                href={`/product/${product._id}`}
-                className="
-                  flex
-                  min-w-0
-                  min-h-10
-                  items-center
-                  justify-center
-                  rounded-xl
-                  border
-                  border-[var(--nova-border)]
-                  bg-[var(--nova-surface)]
-                  px-2
-                  py-2
-                  text-center
-                  text-xs
-                  font-semibold
-                  text-[var(--nova-text)]
-                  transition-all
-                  duration-200
-                  hover:border-[var(--nova-primary)]
-                  hover:bg-[var(--nova-lavender-soft)]
-                  hover:text-[var(--nova-primary)]
-                  active:scale-[0.98]
-                  sm:px-3
-                  sm:py-2.5
-                  sm:text-sm
-                "
-              >
-                View
-              </Link>
-
               {!isInCart ? (
                 <button
                   type="button"

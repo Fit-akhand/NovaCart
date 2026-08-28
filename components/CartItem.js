@@ -1,6 +1,10 @@
 import Link from 'next/link'
 import { decrease, increase } from '../store/Actions'
 import ProductPrice from './product/ProductPrice'
+import {
+  getProductDiscount,
+  getDiscountedPrice
+} from '../utils/getProductDiscount'
 
 const FALLBACK_IMAGE =
   'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160"><rect width="100%" height="100%" fill="%23e2e8f0"/></svg>'
@@ -111,13 +115,35 @@ const CartItem = ({ item, dispatch, cart }) => {
             text-[var(--nova-muted)]
           "
         >
+          <div className="flex items-center gap-2">
           <ProductPrice
-            price={item.price}
+            price={
+              item.discountedPrice !== undefined
+                ? item.discountedPrice
+                : item.price
+            }
             className="
               font-semibold
               text-[var(--nova-text)]
             "
           />
+
+          {Number(item.discountPercent) > 0 && (
+            <span
+              className="
+                rounded-full
+                bg-[var(--nova-lavender-soft)]
+                px-2
+                py-0.5
+                text-[10px]
+                font-bold
+                text-[var(--nova-primary)]
+              "
+            >
+              {item.discountPercent}% OFF
+            </span>
+          )}
+        </div>
 
           <span
             className={
@@ -256,13 +282,20 @@ const CartItem = ({ item, dispatch, cart }) => {
         "
       >
         <ProductPrice
-          price={item.quantity * item.price}
-          className="
-            text-base
-            font-bold
-            text-[var(--nova-text)]
-          "
-        />
+        price={
+          item.quantity *
+          (
+            item.discountedPrice !== undefined
+              ? item.discountedPrice
+              : item.price
+          )
+        }
+        className="
+          text-base
+          font-bold
+          text-[var(--nova-text)]
+        "
+      />
 
         <button
           type="button"

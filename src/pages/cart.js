@@ -12,7 +12,7 @@ import EmptyState from '../../components/common/EmptyState'
 import {
   Lock,
   MapPin,
-  Phone,
+  Phone,  
   User,
 } from 'lucide-react'
 import { formatPrice } from '@/lib/formatPrice'
@@ -40,6 +40,7 @@ const Cart = () => {
     cart,
     auth,
     orders,
+    categories,
   } = state
 
   const router = useRouter()
@@ -49,6 +50,69 @@ const Cart = () => {
 
   const [shippingAddress, setShippingAddress] =
     useState(EMPTY_SHIPPING_ADDRESS)
+
+    const getEffectiveDiscount = (
+  product
+) => {
+  if (!product) return 0
+
+  const subcategory = categories?.find(
+    category =>
+      String(category._id) ===
+      String(
+        product.subcategory?._id ||
+        product.subcategory
+      )
+  )
+
+  const category = categories?.find(
+    category =>
+      String(category._id) ===
+      String(
+        product.category?._id ||
+        product.category
+      )
+  )
+
+  // Subcategory discount overrides parent
+  if (
+    subcategory &&
+    subcategory.discountActive === true
+  ) {
+    return Number(
+      subcategory.discountPercent
+    ) || 0
+  }
+
+  // Otherwise use parent category discount
+  if (
+    category &&
+    category.discountActive === true
+  ) {
+    return Number(
+      category.discountPercent
+    ) || 0
+  }
+
+  return 0
+}
+
+const getDiscountedPrice = (
+  price,
+  discount
+) => {
+  const originalPrice =
+    Number(price) || 0
+
+  const discountPercent =
+    Number(discount) || 0
+
+  return Math.round(
+    originalPrice *
+      (1 - discountPercent / 100) *
+      100
+  ) / 100
+}
 
   // =========================================================
   // RESTORE CHECKOUT ADDRESS
@@ -123,23 +187,39 @@ const Cart = () => {
   // CALCULATE CART TOTAL
   // =========================================================
 
-  useEffect(() => {
-    if (!Array.isArray(cart)) {
-      setTotal(0)
-      return
-    }
+  // =========================================================
+  // CALCULATE CART TOTAL
+  // =========================================================
 
-    const cartTotal =
-      cart.reduce(
-        (sum, item) =>
+ useEffect(() => {
+  if (!Array.isArray(cart)) {
+    setTotal(0)
+    return
+  }
+
+  const cartTotal =
+    cart.reduce(
+      (sum, item) => {
+        const discount =
+          getEffectiveDiscount(item)
+
+        const discountedPrice =
+          getDiscountedPrice(
+            item.price,
+            discount
+          )
+
+        return (
           sum +
-          Number(item.price || 0) *
-            Number(item.quantity || 0),
-        0
-      )
+          discountedPrice *
+            Number(item.quantity || 0)
+        )
+      },
+      0
+    )
 
-    setTotal(cartTotal)
-  }, [cart])
+  setTotal(cartTotal)
+}, [cart, categories])
 
   // =========================================================
   // PREFILL USER INFORMATION
@@ -1028,6 +1108,23 @@ const Cart = () => {
       0
     )
 
+    const originalSubtotal =
+  Array.isArray(cart)
+    ? cart.reduce(
+        (sum, item) =>
+          sum +
+          Number(item.price || 0) *
+            Number(item.quantity || 0),
+        0
+      )
+    : 0
+
+const discountAmount =
+  Math.max(
+    0,
+    originalSubtotal - total
+  )
+
   // =========================================================
   // PAGE
   // =========================================================
@@ -1598,7 +1695,7 @@ const Cart = () => {
                   </span>
 
                   <span className="font-semibold text-[var(--nova-text)]">
-                    {formatPrice(total)}
+                    {formatPrice(originalSubtotal)}
                   </span>
 
                 </div>
@@ -1612,7 +1709,7 @@ const Cart = () => {
                   </span>
 
                   <span className="font-semibold text-[var(--nova-success)]">
-                    {formatPrice(0)}
+                    -{formatPrice(discountAmount)}
                   </span>
 
                 </div>

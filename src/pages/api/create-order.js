@@ -5,6 +5,57 @@ import auth from '../../../middleware/auth'
 
 connectDB()
 
+// ==========================================
+// DISCOUNT HELPERS
+// ==========================================
+
+const getEffectiveDiscount = (
+    category,
+    subcategory
+) => {
+
+    // Subcategory discount overrides parent
+    if (
+        subcategory &&
+        subcategory.discountActive === true
+    ) {
+        return Number(
+            subcategory.discountPercent
+        ) || 0
+    }
+
+    // Otherwise use parent category
+    if (
+        category &&
+        category.discountActive === true
+    ) {
+        return Number(
+            category.discountPercent
+        ) || 0
+    }
+
+    return 0
+}
+
+const getDiscountedPrice = (
+    price,
+    discount
+) => {
+
+    const originalPrice =
+        Number(price) || 0
+
+    const discountPercent =
+        Number(discount) || 0
+
+    return Math.round(
+        originalPrice *
+        (1 - discountPercent / 100) *
+        100
+    ) / 100
+}
+
+
 const razorpay = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,
     key_secret: process.env.RAZORPAY_KEY_SECRET
@@ -63,11 +114,13 @@ export default async function handler(req, res) {
         }
 
         const products =
-            await Products.find({
-                _id: {
-                    $in: productIds
-                }
-            })
+        await Products.find({
+            _id: {
+                $in: productIds
+            }
+        })
+            .populate('category')
+            .populate('subcategory')
 
         if (
             products.length !==
@@ -125,10 +178,25 @@ export default async function handler(req, res) {
              *
              * The price comes from MongoDB.
              */
+            const originalPrice =
+                Number(product.price) || 0
+
+            const discountPercent =
+                getEffectiveDiscount(
+                    product.category,
+                    product.subcategory
+                )
+
+            const discountedPrice =
+                getDiscountedPrice(
+                    originalPrice,
+                    discountPercent
+                )
+
             total +=
-                Number(product.price) *
+                discountedPrice *
                 quantity
-        }
+                    }
 
         // ==========================================
         // RUPEES → PAISE
