@@ -261,12 +261,13 @@ useEffect(() => {
                       className="
                         relative
 
-                        aspect-[16/7]
+                        aspect-[4/5]
 
-                        min-h-[330px]
+                        min-h-[430px]
 
                         overflow-hidden
 
+                        sm:aspect-[16/7]
                         sm:min-h-[400px]
 
                         lg:min-h-[500px]
@@ -298,9 +299,13 @@ useEffect(() => {
                           inset-0
 
                           bg-gradient-to-r
-                          from-black/60
+                          from-black/65
                           via-black/25
                           to-transparent
+
+                          sm:from-black/60
+                          sm:via-black/25
+                          sm:to-transparent
                         "
                       />
 
@@ -309,18 +314,21 @@ useEffect(() => {
                       <div
                         className="
                           absolute
-                          inset-y-0
-                          left-0
+                          inset-0
 
                           flex
                           w-full
                           max-w-2xl
 
-                          items-center
+                          items-end
 
                           px-5
-                          py-7
+                          pb-16
+                          pt-10
 
+                          sm:inset-y-0
+                          sm:right-auto
+                          sm:items-center
                           sm:px-10
                           sm:py-8
                           lg:px-14
@@ -332,15 +340,16 @@ useEffect(() => {
                           {heroes[heroIndex].title && (
                             <h1
                               className="
-                                max-w-xl
+                                max-w-[280px]
 
-                                text-3xl
+                                text-2xl
                                 font-bold
                                 leading-tight
                                 tracking-tight
 
                                 text-white
 
+                                sm:max-w-xl
                                 sm:text-4xl
 
                                 lg:text-5xl
@@ -353,15 +362,17 @@ useEffect(() => {
                           {heroes[heroIndex].subtitle && (
                             <p
                               className="
-                                mt-4
+                                mt-3
 
-                                max-w-lg
+                                max-w-[300px]
 
-                                text-sm
-                                leading-6
+                                text-xs
+                                leading-5
 
                                 text-white/90
 
+                                sm:mt-4
+                                sm:max-w-lg
                                 sm:text-base
                                 sm:leading-7
                               "
@@ -376,11 +387,17 @@ useEffect(() => {
                                 heroes[heroIndex].buttonLink
                               }
                               className="
-                                mt-6
+                                mt-4
 
                                 inline-flex
 
-                                min-h-11
+                                min-h-10
+
+                                px-4
+                                py-2.5
+
+                                sm:mt-6
+                                sm:min-h-11
 
                                 items-center
                                 justify-center
@@ -391,10 +408,10 @@ useEffect(() => {
 
                                 bg-white
 
-                                px-5
-                                py-3
-
                                 text-sm
+
+                                sm:px-5
+                                sm:py-3
                                 font-semibold
 
                                 text-[var(--nova-primary)]
@@ -437,12 +454,16 @@ useEffect(() => {
                           aria-label="Previous hero banner"
                           className="
                             absolute
-                            left-3
+                            left-2.5
                             top-1/2
 
                             flex
-                            h-10
-                            w-10
+                            h-9
+                            w-9
+
+                            sm:left-5
+                            sm:h-10
+                            sm:w-10
 
                             -translate-y-1/2
 
@@ -486,12 +507,16 @@ useEffect(() => {
                           aria-label="Next hero banner"
                           className="
                             absolute
-                            right-3
+                            right-2.5
                             top-1/2
 
                             flex
-                            h-10
-                            w-10
+                            h-9
+                            w-9
+
+                            sm:right-5
+                            sm:h-10
+                            sm:w-10
 
                             -translate-y-1/2
 
@@ -526,8 +551,10 @@ useEffect(() => {
                         <div
                           className="
                             absolute
-                            bottom-5
+                            bottom-3
                             left-1/2
+
+                            sm:bottom-5
 
                             flex
 
@@ -558,7 +585,7 @@ useEffect(() => {
 
                                   ${
                                     index === heroIndex
-                                      ? 'w-7 bg-white'
+                                      ? 'w-6 bg-white'
                                       : 'w-2 bg-white/60'
                                   }
                                 `}
