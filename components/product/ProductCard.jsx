@@ -92,15 +92,13 @@ const ProductCard = ({ product, handleCheck }) => {
     )
   }
 
-  const handleDecrease = () => {
-    if (!cartItem) return
+ const handleDecrease = () => {
+  if (!cartItem) return
 
-    if (cartQuantity <= 1) return
-
-    dispatch(
-      decrease(product, cart)
-    )
-  }
+  dispatch(
+    decrease(product, cart)
+  )
+}
 
   // =========================================================
   // PRICE
@@ -476,7 +474,6 @@ const ProductCard = ({ product, handleCheck }) => {
                   <button
                     type="button"
                     onClick={handleDecrease}
-                    disabled={cartQuantity <= 1}
                     aria-label={`Decrease ${product.title} quantity`}
                     className="
                       flex
@@ -491,11 +488,9 @@ const ProductCard = ({ product, handleCheck }) => {
                       transition-colors
                       duration-150
                       hover:bg-black/10
-                      disabled:cursor-not-allowed
-                      disabled:opacity-40
                     "
                   >
-                    −
+                    -
                   </button>
 
                   <span

@@ -181,35 +181,38 @@ const CartItem = ({ item, dispatch, cart }) => {
         "
       >
         <button
-          type="button"
-          className="
-            flex
-            h-10
-            w-10
-            items-center
-            justify-center
+  type="button"
+  className="
+    flex
+    h-10
+    w-10
+    items-center
+    justify-center
 
-            text-lg
-            font-medium
-            text-[var(--nova-text)]
+    text-lg
+    font-medium
+    text-[var(--nova-text)]
 
-            transition-colors
-            duration-150
+    transition-colors
+    duration-150
 
-            hover:bg-[var(--nova-lavender-soft)]
-            hover:text-[var(--nova-primary)]
+    hover:bg-[var(--nova-lavender-soft)]
+    hover:text-[var(--nova-primary)]
+  "
+  onClick={() => {
+    console.log(
+      'DECREASE CLICK',
+      item._id,
+      item.quantity,
+      cart
+    )
 
-            disabled:cursor-not-allowed
-            disabled:opacity-35
-          "
-          onClick={() =>
-            dispatch(decrease(item, cart))
-          }
-          disabled={item.quantity === 1}
-          aria-label="Decrease quantity"
-        >
-          −
-        </button>
+    dispatch(decrease(item, cart))
+  }}
+  aria-label="Decrease quantity"
+>
+  -
+</button>
 
         <span
           className="

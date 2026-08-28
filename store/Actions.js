@@ -90,31 +90,39 @@ export const increase = (product, cart = []) => {
 // DECREASE QUANTITY
 // ==========================================
 
-export const decrease = (product, cart = []) => {
+export const decrease = (
+    product,
+    cart = []
+) => {
 
-    const currentCart = Array.isArray(cart)
-        ? cart
-        : []
+    const currentCart =
+        Array.isArray(cart)
+            ? cart
+            : []
 
     const newCart = currentCart
         .map(item => {
 
             if (
-                String(item._id) ===
+                String(item._id) !==
                 String(product._id)
             ) {
-                return {
-                    ...item,
-                    quantity:
-                        Math.max(
-                            (Number(item.quantity) || 1) - 1,
-                            1
-                        )
-                }
+                return item
             }
 
-            return item
+            return {
+                ...item,
+                quantity:
+                    Math.max(
+                        Number(item.quantity || 1) - 1,
+                        0
+                    )
+            }
         })
+        .filter(
+            item =>
+                Number(item.quantity) > 0
+        )
 
     return {
         type: ACTIONS.ADD_CART,
