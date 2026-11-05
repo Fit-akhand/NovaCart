@@ -1,14 +1,4 @@
-import {
-  ChevronDown,
-  LogOut,
-  Menu,
-  Package,
-  Search,
-  ShoppingCart,
-  User,
-  LayoutDashboard,
-  ShoppingBag,
-} from 'lucide-react'
+import { ChevronDown, LogOut, Menu, Search, ShoppingCart } from 'lucide-react'
 import Link from 'next/link'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
@@ -19,17 +9,7 @@ import { postData } from '@/lib/api-client'
 import BrandLogo from '../common/BrandLogo'
 import ThemeToggle from '../common/ThemeToggle'
 import MobileNav from './MobileNav'
-
-const navLinkClass = `
-  rounded-xl
-  px-3 py-2
-  text-sm font-medium
-  text-[var(--nova-text)]
-  transition-all duration-200
-  hover:bg-[var(--nova-lavender-soft)]
-  hover:text-[var(--nova-primary)]
-  active:scale-[0.98]
-`
+import { getAccountLinks, getMainLinks } from './navConfig'
 
 const StoreHeader = () => {
   const { state, dispatch } = useContext(DataContext)
@@ -44,8 +24,9 @@ const StoreHeader = () => {
 
   const isLoggedIn = Boolean(auth?.token)
 
-  const isAdmin = auth?.user?.role === 'admin'
-  const isSeller = auth?.user?.role === 'seller'
+  const role = auth?.user?.role
+  const mainLinks = getMainLinks(role)
+  const accountLinks = getAccountLinks(role)
 
   const cartCount =
     cart?.reduce(
@@ -185,742 +166,151 @@ const StoreHeader = () => {
     }
   }
 
+  const iconButton =
+    'relative flex h-10 w-10 items-center justify-center rounded-xl border border-transparent text-[var(--nova-text)] transition-all duration-200 hover:border-[var(--nova-border)] hover:bg-[var(--nova-lavender-soft)] hover:text-[var(--nova-primary)] active:scale-95'
+
+  const isActive = (href) =>
+    href === '/'
+      ? router.pathname === '/'
+      : router.pathname.startsWith(href.split('#')[0])
+
+  const initial = (auth?.user?.name || 'U').charAt(0).toUpperCase()
+
   return (
     <>
-      {/* =========================================
-          HEADER
-      ========================================= */}
-
       <header
-        className="
-          sticky top-0 z-[1000] w-full
-          border-b border-[var(--nova-border)]
-          bg-[color-mix(in_srgb,var(--nova-surface)_88%,transparent)]
-          text-[var(--nova-text)]
-          backdrop-blur-xl
-          transition-colors duration-200
-        "
-        style={{
-          height: 'var(--navbar-height)',
-        }}
+        className="sticky top-0 z-[1000] w-full border-b border-[var(--nova-border)] bg-[color-mix(in_srgb,var(--nova-surface)_88%,transparent)] text-[var(--nova-text)] backdrop-blur-xl"
+        style={{ height: 'var(--navbar-height)' }}
       >
-        <div
-          className="
-            mx-auto flex h-full w-full max-w-[1440px]
-            items-center gap-2
-            px-3
-            sm:px-5
-            lg:gap-4
-            lg:px-8
-          "
-        >
-
-          {/* =====================================
-              MOBILE MENU
-          ===================================== */}
-
+        <div className="mx-auto flex h-full w-full max-w-[1440px] items-center gap-2 px-3 sm:px-5 lg:gap-4 lg:px-8">
           <button
             type="button"
             onClick={() => setMenuOpen(true)}
             aria-label="Open navigation menu"
-            className="
-              flex h-10 w-10 shrink-0
-              items-center justify-center
-              rounded-xl
-              border border-transparent
-              text-[var(--nova-text)]
-              transition-all duration-200
-              hover:border-[var(--nova-border)]
-              hover:bg-[var(--nova-surface-soft)]
-              hover:text-[var(--nova-primary)]
-              active:scale-95
-              lg:hidden
-            "
+            className={`${iconButton} shrink-0 lg:hidden`}
           >
-            <Menu size={21} strokeWidth={2} />
+            <Menu size={21} />
           </button>
 
-          {/* =====================================
-              LOGO
-          ===================================== */}
+          <BrandLogo />
 
-          <div className="min-w-0 shrink-0">
-            <BrandLogo />
-          </div>
-
-          {/* =====================================
-              DESKTOP NAVIGATION
-          ===================================== */}
-
-          <nav
-            className="
-              hidden
-              items-center
-              gap-1
-              lg:flex
-            "
-            aria-label="Primary"
-          >
-
-            {/* HOME */}
-
-            <Link
-              href="/"
-              className={navLinkClass}
-            >
-              Home
-            </Link>
-
-            {/* PRODUCTS */}
-
-            <Link
-              href="/products"
-              className={navLinkClass}
-            >
-              Products
-            </Link>
-
-            {/* CATEGORIES */}
-
-            <Link
-              href="/categories"
-              className={navLinkClass}
-            >
-              Categories
-            </Link>
-
-            {/* DEALS */}
-
-            <Link
-              href="/deals"
-              className={navLinkClass}
-            >
-              Deals
-            </Link>
-
-            {/* =================================
-                LOGGED-IN USER
-            ================================= */}
-
-            {isLoggedIn && (
-              <>
-                {/* CREATE PRODUCT */}
-
-                <Link
-                  href="/create"
-                  className={navLinkClass}
-                >
-                  Create
-                </Link>
-
-                {/* ADMIN */}
-
-                {isAdmin && (
-                  <Link
-                    href="/users"
-                    className={navLinkClass}
-                  >
-                    Users
-                  </Link>
-                )}
-              </>
-            )}
-
-            {/* =================================
-                SELLER NAVIGATION
-            ================================= */}
-
-            {isSeller && (
-              <>
-                <span
-                  className="
-                    mx-1
-                    h-5 w-px
-                    bg-[var(--nova-border)]
-                  "
-                  aria-hidden="true"
-                />
-
-                {/* SELLER DASHBOARD */}
-
-                <Link
-                  href="/seller"
-                  className={navLinkClass}
-                >
-                  Seller Dashboard
-                </Link>
-
-                {/* MY PRODUCTS */}
-
-                <Link
-                  href="/seller/products"
-                  className={navLinkClass}
-                >
-                  My Products
-                </Link>
-
-                {/* MY ORDERS */}
-
-                <Link
-                  href="/seller/orders"
-                  className={navLinkClass}
-                >
-                  My Orders
-                </Link>
-              </>
-            )}
-
+          <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
+            {mainLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                aria-current={isActive(link.href) ? 'page' : undefined}
+                className={`rounded-xl px-3 py-2 text-sm font-medium transition-all duration-200 hover:bg-[var(--nova-lavender-soft)] hover:text-[var(--nova-primary)] ${
+                  isActive(link.href)
+                    ? 'bg-[var(--nova-lavender-soft)] text-[var(--nova-primary)]'
+                    : 'text-[var(--nova-text)]'
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
           </nav>
-
-          {/* =====================================
-              SEARCH
-          ===================================== */}
 
           <form
             onSubmit={handleSearch}
-            className="
-              ml-auto
-              hidden
-              min-w-0
-              max-w-xl
-              flex-1
-              md:flex
-            "
+            role="search"
+            className="ml-auto hidden min-w-0 max-w-xl flex-1 md:flex"
           >
             <div className="relative w-full">
-
               <Search
                 size={18}
-                strokeWidth={2}
-                className="
-                  pointer-events-none
-                  absolute
-                  left-3.5
-                  top-1/2
-                  -translate-y-1/2
-                  text-[var(--nova-muted)]
-                "
+                className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--nova-muted)]"
               />
-
               <input
                 type="search"
                 value={search}
-                onChange={(event) =>
-                  setSearch(event.target.value)
-                }
-                placeholder="Search products, brands and more..."
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search products..."
                 aria-label="Search products"
-                className="
-                  h-10
-                  w-full
-                  rounded-xl
-                  border
-                  border-[var(--nova-border)]
-                  bg-[var(--nova-surface-soft)]
-                  pl-10
-                  pr-4
-                  text-sm
-                  text-[var(--nova-text)]
-                  outline-none
-
-                  placeholder:text-[var(--nova-muted)]
-
-                  transition-all duration-200
-
-                  hover:border-[var(--nova-violet-light)]
-
-                  focus:border-[var(--nova-primary)]
-                  focus:bg-[var(--nova-surface)]
-                  focus:ring-2
-                  focus:ring-[rgba(139,92,246,0.12)]
-                   shadow-[var(--shadow-sm)]
-                "
+                className="h-10 w-full rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface-soft)] pl-10 pr-4 text-sm text-[var(--nova-text)] outline-none placeholder:text-[var(--nova-muted)] transition-all duration-200 hover:border-[var(--nova-violet-light)] focus:border-[var(--nova-primary)] focus:bg-[var(--nova-surface)] focus:ring-2 focus:ring-[rgba(139,92,246,0.12)]"
               />
-
             </div>
           </form>
 
-          {/* =====================================
-              RIGHT SIDE
-          ===================================== */}
-
-          <div
-            className="
-              ml-auto
-              flex
-              shrink-0
-              items-center
-              gap-1
-              md:ml-2
-            "
-          >
-
-            {/* CART */}
-
+          <div className="ml-auto flex shrink-0 items-center gap-1 md:ml-2">
             <Link
               href="/cart"
-              aria-label={`Cart${
-                cartCount
-                  ? `, ${cartCount} items`
-                  : ''
-              }`}
-              className="
-                relative
-                flex
-                h-10
-                w-10
-                items-center
-                justify-center
-                rounded-xl
-                border
-                border-transparent
-                text-[var(--nova-text)]
-                transition-all duration-200
-
-                hover:border-[var(--nova-border)]
-                hover:bg-[var(--nova-lavender-soft)]
-                hover:text-[var(--nova-primary)]
-
-                active:scale-95
-              "
+              aria-label={`Cart${cartCount ? `, ${cartCount} items` : ''}`}
+              className={iconButton}
             >
-              <ShoppingCart
-                size={19}
-                strokeWidth={2}
-              />
-
+              <ShoppingCart size={19} />
               {cartCount > 0 && (
-                <span
-                  className="
-                    absolute
-                    right-0.5
-                    top-0.5
-
-                    flex
-                    h-[17px]
-                    min-w-[17px]
-                    items-center
-                    justify-center
-
-                    rounded-full
-
-                    bg-[var(--nova-primary)]
-                    px-1
-
-                    text-[9px]
-                    font-bold
-                    leading-none
-                    text-white
-
-                    shadow-[0_4px_12px_rgba(124,58,237,0.32)]
-                  "
-                >
-                  {cartCount > 99
-                    ? '99+'
-                    : cartCount}
+                <span className="absolute right-0.5 top-0.5 flex h-[17px] min-w-[17px] items-center justify-center rounded-full bg-[var(--nova-primary)] px-1 text-[9px] font-bold leading-none text-white">
+                  {cartCount > 99 ? '99+' : cartCount}
                 </span>
               )}
             </Link>
 
-            {/* THEME */}
-
             <ThemeToggle />
 
-            {/* =================================
-                PROFILE
-            ================================= */}
-
             {isLoggedIn ? (
-              <div
-                className="
-                  relative
-                  hidden
-                  lg:block
-                "
-                ref={profileRef}
-              >
-
-                {/* PROFILE BUTTON */}
-
+              <div className="relative hidden lg:block" ref={profileRef}>
                 <button
                   type="button"
-                  onClick={() =>
-                    setProfileOpen(
-                      (open) => !open
-                    )
-                  }
+                  onClick={() => setProfileOpen((open) => !open)}
                   aria-expanded={profileOpen}
                   aria-haspopup="menu"
-                  className="
-                    flex
-                    h-10
-                    items-center
-                    gap-2
-                    rounded-xl
-                    border
-                    border-transparent
-                    px-2.5
-
-                    text-sm
-                    font-semibold
-
-                    transition-all duration-200
-
-                    hover:border-[var(--nova-border)]
-                    hover:bg-[var(--nova-surface-soft)]
-                    hover:text-[var(--nova-primary)]
-
-                    active:scale-[0.98]
-                    hover:shadow-[0_6px_18px_rgba(124,58,237,0.08)]
-                  "
+                  className="flex h-10 items-center gap-2 rounded-xl border border-transparent px-2.5 text-sm font-semibold transition-all duration-200 hover:border-[var(--nova-border)] hover:bg-[var(--nova-surface-soft)]"
                 >
-
-                  {/* AVATAR */}
-
-                  <span
-                    className="
-                      flex
-                      h-8
-                      w-8
-                      shrink-0
-                      items-center
-                      justify-center
-                      overflow-hidden
-                      rounded-full
-
-                      border
-                      border-[var(--nova-violet-light)]
-
-                      bg-[var(--nova-lavender-soft)]
-
-                      text-[var(--nova-primary)]
-
-                      shadow-[0_4px_14px_rgba(124,58,237,0.12)]
-                    "
-                  >
-                    {auth?.user?.avatar ? (
-                      <img
-                        src={auth.user.avatar}
-                        alt=""
-                        className="
-                          h-full
-                          w-full
-                          object-cover
-                        "
-                      />
-                    ) : (
-                      <User
-                        size={15}
-                        strokeWidth={2}
-                      />
-                    )}
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--nova-primary)] text-xs font-bold text-white">
+                    {initial}
                   </span>
-
-                  {/* NAME */}
-
-                  <span className="max-w-[110px] truncate">
-                    {isAdmin
-                      ? 'Admin'
-                      : auth?.user?.name ||
-                        'Profile'}
-                  </span>
-
                   <ChevronDown
-                    size={14}
-                    className={`
-                      transition-transform duration-200
-                      ${
-                        profileOpen
-                          ? 'rotate-180 text-[var(--nova-primary)]'
-                          : ''
-                      }
-                    `}
+                    size={15}
+                    className={`transition-transform ${profileOpen ? 'rotate-180' : ''}`}
                   />
-
                 </button>
-
-                {/* =================================
-                    PROFILE DROPDOWN
-                ================================= */}
 
                 {profileOpen && (
                   <div
                     role="menu"
-                    className="
-                      absolute
-                      right-0
-                      mt-2
-                      w-60
-                      overflow-hidden
-
-                      rounded-2xl
-                      border
-                      border-[var(--nova-border)]
-
-                      bg-[var(--nova-surface)]
-
-                      py-1.5
-
-                      shadow-[0_18px_45px_rgba(15,23,42,0.14)]
-
-                      ring-1
-                      ring-[rgba(139,92,246,0.05)]
-                    "
+                    className="absolute right-0 mt-2 w-56 overflow-hidden rounded-2xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-1.5 shadow-[var(--shadow-md)]"
                   >
+                    <p className="truncate px-3 py-2 text-xs text-[var(--nova-muted)]">
+                      {auth?.user?.email}
+                    </p>
 
-                    {/* SELLER LINKS */}
-
-                    {isSeller && (
-                      <>
-                        {/* SELLER DASHBOARD */}
-
-                        <Link
-                          href="/seller"
-                          role="menuitem"
-                          onClick={() =>
-                            setProfileOpen(false)
-                          }
-                          className="
-                            flex
-                            items-center
-                            gap-3
-                            px-4
-                            py-2.5
-
-                            text-sm
-
-                            text-[var(--nova-text)]
-
-                            transition-colors duration-150
-
-                            hover:bg-[var(--nova-surface-soft)]
-                            hover:text-[var(--nova-primary)]
-                          "
-                        >
-                          <LayoutDashboard
-                            size={16}
-                          />
-
-                          Seller Dashboard
-                        </Link>
-
-                        {/* MY PRODUCTS */}
-
-                        <Link
-                          href="/seller/products"
-                          role="menuitem"
-                          onClick={() =>
-                            setProfileOpen(false)
-                          }
-                          className="
-                            flex
-                            items-center
-                            gap-3
-                            px-4
-                            py-2.5
-
-                            text-sm
-
-                            text-[var(--nova-text)]
-
-                            transition-colors duration-150
-
-                            hover:bg-[var(--nova-surface-soft)]
-                            hover:text-[var(--nova-primary)]
-                          "
-                        >
-                          <Package size={16} />
-
-                          My Products
-                        </Link>
-
-                        {/* MY ORDERS */}
-
-                        <Link
-                          href="/seller/orders"
-                          role="menuitem"
-                          onClick={() =>
-                            setProfileOpen(false)
-                          }
-                          className="
-                            flex
-                            items-center
-                            gap-3
-                            px-4
-                            py-2.5
-
-                            text-sm
-
-                            text-[var(--nova-text)]
-
-                            transition-colors duration-150
-
-                            hover:bg-[var(--nova-surface-soft)]
-                            hover:text-[var(--nova-primary)]
-                          "
-                        >
-                          <ShoppingBag
-                            size={16}
-                          />
-
-                          My Orders
-                        </Link>
-
-                        <div
-                          className="
-                            my-1.5
-                            border-t
-                            border-[var(--nova-border)]
-                          "
-                        />
-                      </>
-                    )}
-
-                    {/* PROFILE */}
-
-                    <Link
-                      href="/profile"
-                      role="menuitem"
-                      onClick={() =>
-                        setProfileOpen(false)
-                      }
-                      className="
-                        flex
-                        items-center
-                        gap-3
-                        px-4
-                        py-2.5
-
-                        text-sm
-
-                        text-[var(--nova-text)]
-
-                        transition-colors duration-150
-
-                        hover:bg-[var(--nova-surface-soft)]
-                        hover:text-[var(--nova-primary)]
-                      "
-                    >
-                      <User size={16} />
-
-                      Profile
-                    </Link>
-
-                    {/* CUSTOMER ORDERS */}
-
-                    {!isSeller && (
+                    {accountLinks.map(({ href, label, icon: Icon }) => (
                       <Link
-                        href="/profile#orders"
+                        key={href}
+                        href={href}
                         role="menuitem"
-                        onClick={() =>
-                          setProfileOpen(false)
-                        }
-                        className="
-                          flex
-                          items-center
-                          gap-3
-                          px-4
-                          py-2.5
-
-                          text-sm
-
-                          text-[var(--nova-text)]
-
-                          transition-colors duration-150
-
-                          hover:bg-[var(--nova-surface-soft)]
-                          hover:text-[var(--nova-primary)]
-                        "
+                        onClick={() => setProfileOpen(false)}
+                        className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-[var(--nova-text)] hover:bg-[var(--nova-lavender-soft)] hover:text-[var(--nova-primary)]"
                       >
-                        <Package size={16} />
-
-                        Orders
+                        <Icon size={16} />
+                        {label}
                       </Link>
-                    )}
-
-                    {/* LOGOUT */}
+                    ))}
 
                     <button
                       type="button"
                       role="menuitem"
                       onClick={handleLogout}
-                      className="
-                        flex
-                        w-full
-                        items-center
-                        gap-3
-                        px-4
-                        py-2.5
-
-                        text-left
-                        text-sm
-                        font-medium
-
-                        text-[var(--nova-danger)]
-
-                        transition-colors duration-150
-
-                        hover:bg-[var(--nova-surface-soft)]
-                      "
+                      className="mt-1 flex w-full items-center gap-3 rounded-xl border-t border-[var(--nova-border)] px-3 py-2.5 text-sm font-medium text-[var(--nova-danger)] hover:bg-[var(--nova-surface-soft)]"
                     >
                       <LogOut size={16} />
-
                       Sign out
                     </button>
-
                   </div>
                 )}
-
               </div>
             ) : (
-
-              /* =================================
-                 SIGN IN
-              ================================= */
-
               <Link
                 href="/signin"
-                className="
-                  hidden
-                  rounded-xl
-
-                  border
-                  border-[var(--nova-primary)]
-
-                  bg-[var(--nova-primary)]
-
-                  px-4
-                  py-2.5
-
-                  text-sm
-                  font-semibold
-                  text-white
-
-                  shadow-[0_6px_18px_rgba(124,58,237,0.16)]
-
-                  transition-all duration-200
-
-                  hover:bg-[var(--nova-primary-dark)]
-                  hover:shadow-[0_8px_24px_rgba(124,58,237,0.24)]
-
-                  active:scale-[0.98]
-
-                  lg:block
-                "
+                className="ml-1 hidden rounded-xl bg-[var(--nova-primary)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--nova-primary-hover)] lg:block"
               >
                 Sign in
               </Link>
-
             )}
-
           </div>
-
         </div>
       </header>
-
-      {/* =========================================
-          MOBILE NAVIGATION
-      ========================================= */}
 
       <MobileNav
         open={menuOpen}
@@ -929,7 +319,7 @@ const StoreHeader = () => {
         setSearch={setSearch}
         onSearch={handleSearch}
         isLoggedIn={isLoggedIn}
-        isAdmin={isAdmin}
+        user={auth?.user}
         cartCount={cartCount}
         onLogout={handleLogout}
       />

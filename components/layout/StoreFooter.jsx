@@ -1,259 +1,72 @@
 import Link from 'next/link'
+import { useContext } from 'react'
+
+import { DataContext } from '../../store/GlobalState'
 import BrandLogo from '../common/BrandLogo'
 import Container from '../common/Container'
 
+const heading = 'mb-3 text-sm font-bold text-[var(--nova-text)]'
+const item =
+  'block py-1.5 text-sm text-[var(--nova-muted)] transition-colors hover:text-[var(--nova-primary)]'
+
 const StoreFooter = () => {
-  const year = new Date().getFullYear()
-
-  const heading = `
-    mb-4
-    text-sm
-    font-bold
-    tracking-wide
-    text-[var(--nova-text)]
-  `
-
-  const item = `
-    block
-    py-1.5
-    text-sm
-    text-[var(--nova-muted)]
-    transition-all
-    duration-200
-    hover:translate-x-0.5
-    hover:text-[var(--nova-primary)]
-  `
+  const { state } = useContext(DataContext)
+  const isLoggedIn = Boolean(state?.auth?.token)
 
   return (
-    <footer
-      className="
-        mt-auto
-        border-t
-        border-[var(--nova-border)]
-        bg-[var(--nova-surface)]
-        text-[var(--nova-text)]
-      "
-    >
-      {/* =========================================
-          MAIN FOOTER
-      ========================================= */}
-
-      <Container
-        className="
-          grid
-          grid-cols-2
-          gap-x-8
-          gap-y-10
-          py-12
-
-          sm:grid-cols-3
-
-          lg:grid-cols-5
-          lg:gap-10
-          lg:py-16
-        "
-      >
-
-        {/* =====================================
-            BRAND
-        ===================================== */}
-
-        <div
-          className="
-            col-span-2
-            sm:col-span-3
-            lg:col-span-2
-          "
-        >
+    <footer className="mt-auto border-t border-[var(--nova-border)] bg-[var(--nova-surface)]">
+      <Container className="grid grid-cols-2 gap-8 py-10 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="col-span-2 sm:col-span-3 lg:col-span-2">
           <BrandLogo />
-
-          <p
-            className="
-              mt-4
-              max-w-sm
-              text-sm
-              leading-7
-              text-[var(--nova-muted)]
-            "
-          >
-            NovaCart is an online store for everyday
-            products, secure checkout, and order
-            tracking.
+          <p className="mt-4 max-w-sm text-sm leading-7 text-[var(--nova-muted)]">
+            NovaCart is an online store for everyday products, secure checkout
+            and order tracking.
           </p>
-
-          {/* Brand accent */}
-
-          <div
-            className="
-              mt-6
-              h-1
-              w-12
-              rounded-full
-              bg-[var(--nova-primary)]
-              shadow-[0_4px_12px_rgba(124,58,237,0.25)]
-            "
-          />
-
-          {/* Small trust message */}
-
-          <div
-            className="
-              mt-6
-              inline-flex
-              items-center
-              rounded-full
-              border
-              border-[var(--nova-border)]
-              bg-[var(--nova-lavender-soft)]
-              px-3
-              py-1.5
-              text-xs
-              font-medium
-              text-[var(--nova-primary)]
-            "
-          >
-            Secure shopping experience
-          </div>
         </div>
 
-        {/* =====================================
-            SHOP
-        ===================================== */}
-
-        <div>
-          <p className={heading}>
-            Shop
-          </p>
-
-          <Link
-            href="/products"
-            className={item}
-          >
-            Products
+        <nav aria-label="Shop">
+          <p className={heading}>Shop</p>
+          <Link href="/products" className={item}>
+            All products
           </Link>
-
-          <Link
-            href="/categories"
-            className={item}
-          >
-            Categories
-          </Link>
-
-          <Link
-            href="/products?sort=-sold"
-            className={item}
-          >
+          <Link href="/products?sort=-sold" className={item}>
             Best sellers
           </Link>
-        </div>
-
-        {/* =====================================
-            ACCOUNT
-        ===================================== */}
-
-        <div>
-          <p className={heading}>
-            Account
-          </p>
-
-          <Link
-            href="/signin"
-            className={item}
-          >
-            Sign in
+          <Link href="/deals" className={item}>
+            Deals
           </Link>
+        </nav>
 
-          <Link
-            href="/register"
-            className={item}
-          >
-            Create account
-          </Link>
-
-          <Link
-            href="/profile"
-            className={item}
-          >
-            Profile
-          </Link>
-
-          <Link
-            href="/cart"
-            className={item}
-          >
+        <nav aria-label="Account">
+          <p className={heading}>Account</p>
+          {isLoggedIn ? (
+            <>
+              <Link href="/profile" className={item}>
+                Profile
+              </Link>
+              <Link href="/profile#orders" className={item}>
+                Order status
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link href="/signin" className={item}>
+                Sign in
+              </Link>
+              <Link href="/register" className={item}>
+                Create account
+              </Link>
+            </>
+          )}
+          <Link href="/cart" className={item}>
             Cart
           </Link>
-        </div>
-
-        {/* =====================================
-            SUPPORT
-        ===================================== */}
-
-        <div>
-          <p className={heading}>
-            Support
-          </p>
-
-          <Link
-            href="/profile#orders"
-            className={item}
-          >
-            Order status
-          </Link>
-
-          <p
-            className="
-              py-1.5
-              text-sm
-              text-[var(--nova-muted)]
-            "
-          >
-            Secure checkout
-          </p>
-        </div>
-
+        </nav>
       </Container>
 
-      {/* =========================================
-          BOTTOM BAR
-      ========================================= */}
-
-      <div
-        className="
-          border-t
-          border-[var(--nova-border)]
-          bg-[var(--nova-surface-soft)]
-        "
-      >
-        <Container
-          className="
-            flex
-            flex-col
-            gap-3
-            py-5
-
-            text-xs
-            text-[var(--nova-muted)]
-
-            sm:flex-row
-            sm:items-center
-            sm:justify-between
-          "
-        >
-
-          <p>
-            © {year} NovaCart. All rights reserved.
-          </p>
-
-          <p
-            className="
-              font-semibold
-              text-[var(--nova-violet-light)]
-            "
-          >
-            Shop smarter. Live better.
-          </p>
-
+      <div className="border-t border-[var(--nova-border)] bg-[var(--nova-surface-soft)]">
+        <Container className="py-5 text-xs text-[var(--nova-muted)]">
+          © {new Date().getFullYear()} NovaCart. All rights reserved.
         </Container>
       </div>
     </footer>

@@ -12,7 +12,7 @@ Target customer flow: Home -> Browse/Search -> Product -> Cart -> Delivery -> Pa
 2. **Shared foundation** (done: Field/Input/Textarea/Select/Card/PageHeader, dead files removed; legacy CSS in `styles/` still to retire as pages migrate): one set of form fields (Input, Textarea, Select), page header,
    card, badge, empty/error/loading states; delete duplicates (`components/Modal.js`,
    `components/Loading.js`, legacy CSS in `styles/`).
-3. **Navigation + layout**: simplify StoreHeader (939 lines) and MobileNav (663):
+3. **Navigation + layout** (done: role-based `navConfig.js`, header 939->330 lines, mobile drawer 663->164, footer 262->76): simplify StoreHeader (939 lines) and MobileNav (663):
    logo, search, cart, account. Role-aware account menu. Footer trimmed.
 4. **Browse flow**: home (1.6k lines) into section components, products page filters,
    product card, product detail page, deals.
