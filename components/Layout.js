@@ -46,18 +46,11 @@ function Layout({ children }) {
     )
   }
 
-  // Hard-loading an admin URL: auth is not known yet. Show a neutral
-  // screen instead of flashing the storefront header and footer.
-  if (isAdminRoute && !role) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-[var(--nova-bg)] text-sm text-[var(--nova-muted)]">
-        <Notify />
-        Loading admin...
-      </div>
-    )
-  }
+  // While auth is still loading on an admin URL, show the admin shell
+  // with a spinner instead of the storefront or a blank white page.
+  const adminLoading = isAdminRoute && !role
 
-  if (isAdmin && isAdminRoute) {
+  if ((isAdmin || adminLoading) && isAdminRoute) {
     return (
       <div className="flex min-h-screen min-w-0 w-full flex-col bg-[var(--nova-bg)] text-[var(--nova-text)]">
 
@@ -80,8 +73,17 @@ function Layout({ children }) {
           />
 
           <main className="min-w-0 flex-1">
-            <AdminPageBar />
-            {children}
+            {adminLoading ? (
+              <div className="flex min-h-[60vh] items-center justify-center gap-3 text-sm text-[var(--nova-muted)]">
+                <span className="h-5 w-5 animate-spin rounded-full border-2 border-[var(--nova-border)] border-t-[var(--nova-primary)]" />
+                Loading...
+              </div>
+            ) : (
+              <>
+                <AdminPageBar />
+                {children}
+              </>
+            )}
           </main>
 
         </div>
