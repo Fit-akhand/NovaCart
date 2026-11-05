@@ -9,7 +9,7 @@ Target customer flow: Home -> Browse/Search -> Product -> Cart -> Delivery -> Pa
 ## Phases
 1. **Checkout flow** (done): Cart -> Delivery -> Payment stepper, always-visible
    order summary, shared Input/Button. `components/checkout/*`, `src/pages/cart.js` (1.7k -> ~450 lines).
-2. **Shared foundation**: one set of form fields (Input, Textarea, Select), page header,
+2. **Shared foundation** (done: Field/Input/Textarea/Select/Card/PageHeader, dead files removed; legacy CSS in `styles/` still to retire as pages migrate): one set of form fields (Input, Textarea, Select), page header,
    card, badge, empty/error/loading states; delete duplicates (`components/Modal.js`,
    `components/Loading.js`, legacy CSS in `styles/`).
 3. **Navigation + layout**: simplify StoreHeader (939 lines) and MobileNav (663):

@@ -1,4 +1,7 @@
 import { useEffect, useState } from 'react'
+import Input from '../common/Input'
+import Select from '../common/Select'
+import Textarea from '../common/Textarea'
 import {
     MapPin,
     Plus,
@@ -284,138 +287,72 @@ const AddressManager = ({ token }) => {
 
                     <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
 
-                        <div>
+                        <Select
+                            id="address-label"
+                            name="label"
+                            label="Address type"
+                            value={form.label}
+                            onChange={handleChange}
+                            options={['Home', 'Office', 'Other']}
+                        />
 
-                            <label className="mb-2 block text-sm font-semibold text-[var(--nova-text)]">
-                                Address type
-                            </label>
+                        <Input
+                            id="address-fullName"
+                            name="fullName"
+                            label="Full name"
+                            placeholder="Full name"
+                            value={form.fullName}
+                            onChange={handleChange}
+                        />
 
-                            <select
-                                name="label"
-                                value={form.label}
-                                onChange={handleChange}
-                                className="h-11 w-full rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-3 text-sm text-[var(--nova-text)] outline-none transition-all placeholder:text-[var(--nova-muted)] hover:border-[var(--nova-violet-light)] focus:border-[var(--nova-primary)] focus:ring-2 focus:ring-[rgba(139,92,246,0.12)]"
-                            >
-                                <option value="Home">
-                                    Home
-                                </option>
+                        <Input
+                            id="address-phone"
+                            name="phone"
+                            label="Phone"
+                            placeholder="10-digit phone"
+                            inputMode="numeric"
+                            value={form.phone}
+                            onChange={handleChange}
+                        />
 
-                                <option value="Office">
-                                    Office
-                                </option>
-
-                                <option value="Other">
-                                    Other
-                                </option>
-
-                            </select>
-
-                        </div>
-
-
-                        <div>
-
-                            <label className="mb-2 block text-sm font-semibold text-[var(--nova-text)]">
-                                Full name
-                            </label>
-
-                            <input
-                                name="fullName"
-                                value={form.fullName}
-                                onChange={handleChange}
-                                placeholder="Full name"
-                                className="h-11 w-full rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-3 text-sm text-[var(--nova-text)] outline-none transition-all placeholder:text-[var(--nova-muted)] hover:border-[var(--nova-violet-light)] focus:border-[var(--nova-primary)] focus:ring-2 focus:ring-[rgba(139,92,246,0.12)]"
-                            />
-
-                        </div>
-
-
-                        <div>
-
-                            <label className="mb-2 block text-sm font-semibold text-[var(--nova-text)]">
-                                Phone
-                            </label>
-
-                            <input
-                                name="phone"
-                                value={form.phone}
-                                onChange={handleChange}
-                                placeholder="10-digit phone"
-                                inputMode="numeric"
-                                className="h-11 w-full rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-3 text-sm text-[var(--nova-text)] outline-none transition-all placeholder:text-[var(--nova-muted)] hover:border-[var(--nova-violet-light)] focus:border-[var(--nova-primary)] focus:ring-2 focus:ring-[rgba(139,92,246,0.12)]"
-                            />
-
-                        </div>
-
-
-                        <div>
-
-                            <label className="mb-2 block text-sm font-semibold text-[var(--nova-text)]">
-                                Pincode
-                            </label>
-
-                            <input
-                                name="pincode"
-                                value={form.pincode}
-                                onChange={handleChange}
-                                placeholder="6-digit pincode"
-                                inputMode="numeric"
-                                className="h-11 w-full rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-3 text-sm text-[var(--nova-text)] outline-none transition-all placeholder:text-[var(--nova-muted)] hover:border-[var(--nova-violet-light)] focus:border-[var(--nova-primary)] focus:ring-2 focus:ring-[rgba(139,92,246,0.12)]"
-                            />
-
-                        </div>
-
+                        <Input
+                            id="address-pincode"
+                            name="pincode"
+                            label="Pincode"
+                            placeholder="6-digit pincode"
+                            inputMode="numeric"
+                            value={form.pincode}
+                            onChange={handleChange}
+                        />
 
                         <div className="sm:col-span-2">
-
-                            <label className="mb-2 block text-sm font-semibold text-[var(--nova-text)]">
-                                Address
-                            </label>
-
-                            <textarea
+                            <Textarea
+                                id="address-address"
                                 name="address"
+                                label="Address"
+                                placeholder="House number, street, locality"
                                 value={form.address}
                                 onChange={handleChange}
-                                rows={3}
-                                placeholder="House number, street, locality"
-                                className="w-full resize-none rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-3 py-3 text-sm text-[var(--nova-text)] outline-none transition-all placeholder:text-[var(--nova-muted)] hover:border-[var(--nova-violet-light)] focus:border-[var(--nova-primary)] focus:ring-2 focus:ring-[rgba(139,92,246,0.12)]"
                             />
-
                         </div>
 
+                        <Input
+                            id="address-city"
+                            name="city"
+                            label="City"
+                            placeholder="City"
+                            value={form.city}
+                            onChange={handleChange}
+                        />
 
-                        <div>
-
-                            <label className="mb-2 block text-sm font-semibold text-[var(--nova-text)]">
-                                City
-                            </label>
-
-                            <input
-                                name="city"
-                                value={form.city}
-                                onChange={handleChange}
-                                placeholder="City"
-                                className="h-11 w-full rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-3 text-sm text-[var(--nova-text)] outline-none transition-all placeholder:text-[var(--nova-muted)] hover:border-[var(--nova-violet-light)] focus:border-[var(--nova-primary)] focus:ring-2 focus:ring-[rgba(139,92,246,0.12)]"
-                            />
-
-                        </div>
-
-
-                        <div>
-
-                            <label className="mb-2 block text-sm font-semibold text-[var(--nova-text)]">
-                                State
-                            </label>
-
-                            <input
-                                name="state"
-                                value={form.state}
-                                onChange={handleChange}
-                                placeholder="State"
-                                className="h-11 w-full rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-3 text-sm text-[var(--nova-text)] outline-none transition-all placeholder:text-[var(--nova-muted)] hover:border-[var(--nova-violet-light)] focus:border-[var(--nova-primary)] focus:ring-2 focus:ring-[rgba(139,92,246,0.12)]"
-                            />
-
-                        </div>
+                        <Input
+                            id="address-state"
+                            name="state"
+                            label="State"
+                            placeholder="State"
+                            value={form.state}
+                            onChange={handleChange}
+                        />
 
                     </div>
 

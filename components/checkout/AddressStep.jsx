@@ -1,3 +1,4 @@
+import Card from '../common/Card'
 import Input from '../common/Input'
 
 const AddressCard = ({ item, selected, onSelect }) => (
@@ -43,16 +44,14 @@ const AddressStep = ({
   saveNew,
   onSaveNewChange,
 }) => (
-  <section className="rounded-2xl border border-[var(--nova-border)] bg-[var(--nova-surface)] p-5 shadow-[var(--shadow-sm)] sm:p-6">
-    <h2 className="text-lg font-bold tracking-tight text-[var(--nova-text)]">
-      Delivery address
-    </h2>
-    <p className="mt-1 text-sm text-[var(--nova-muted)]">
-      {savedAddresses.length > 0
+  <Card
+    title="Delivery address"
+    description={
+      savedAddresses.length > 0
         ? 'Choose where to deliver, or add a new address.'
-        : 'Where should we deliver your order?'}
-    </p>
-
+        : 'Where should we deliver your order?'
+    }
+  >
     {savedAddresses.length > 0 && (
       <div className="mt-5 space-y-3">
         {savedAddresses.map((item) => (
@@ -157,7 +156,7 @@ const AddressStep = ({
         </label>
       </div>
     )}
-  </section>
+  </Card>
 )
 
 export default AddressStep
