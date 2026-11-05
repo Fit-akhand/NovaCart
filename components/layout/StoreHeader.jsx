@@ -4,7 +4,7 @@ import { useContext, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import { DataContext } from '../../store/GlobalState'
-import { postData } from '@/lib/api-client'
+import useLogout from '@/hooks/useLogout'
 
 import BrandLogo from '../common/BrandLogo'
 import ThemeToggle from '../common/ThemeToggle'
@@ -101,70 +101,10 @@ const StoreHeader = () => {
      Logout
   ----------------------------------------- */
 
-  const handleLogout = async () => {
-    try {
-
-      sessionStorage.setItem(
-          '__novacart_logout',
-          'true'
-      ) 
-
-      await postData(
-        'auth/logout',
-        null,
-        auth?.token
-      )
-
-      // ================================================
-      // IMPORTANT
-      // DO NOT clear cart here.
-      //
-      // GlobalState knows that this is a logout
-      // transition and prevents the account cart
-      // from becoming the guest cart.
-      // ================================================
-
-      if (
-        typeof window !== 'undefined'
-      ) {
-        localStorage.removeItem(
-          'firstLogin'
-        )
-      }
-
-      dispatch({
-        type: 'AUTH',
-        payload: {},
-      })
-
-      dispatch({
-        type: 'ADD_ORDERS',
-        payload: [],
-      })
-
-      dispatch({
-        type: 'ADD_USERS',
-        payload: [],
-      })
-
-      setMenuOpen(false)
-      setProfileOpen(false)
-
-      // Give GlobalState time to process the
-      // account -> guest transition.
-      window.location.href = '/'
-
-    } catch (error) {
-      dispatch({
-        type: 'NOTIFY',
-        payload: {
-          error:
-            error?.message ||
-            'Logout failed.',
-        },
-      })
-    }
-  }
+  const handleLogout = useLogout(() => {
+    setMenuOpen(false)
+    setProfileOpen(false)
+  })
 
   const iconButton =
     'relative flex h-10 w-10 items-center justify-center rounded-xl border border-transparent text-[var(--nova-text)] transition-all duration-200 hover:border-[var(--nova-border)] hover:bg-[var(--nova-lavender-soft)] hover:text-[var(--nova-primary)] active:scale-95'

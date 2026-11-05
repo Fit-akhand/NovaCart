@@ -20,3 +20,6 @@ Target customer flow: Home -> Browse/Search -> Product -> Cart -> Delivery -> Pa
    profile (1.1k), address manager, order list and order detail with a status timeline.
 6. **Seller + admin**: one dashboard layout, shared data table and form components;
    split categories (2.2k), heroes (1.8k), create product (1.3k), users (0.9k).
+
+## Admin shell (done)
+AdminPageBar (back + breadcrumbs) on every admin page, grouped sidebar with correct active state, header with View store / Sign out, shared `useLogout`, no storefront flash while auth loads. Config in `components/layout/adminNav.js`.

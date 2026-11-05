@@ -1,52 +1,7 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import {
-  FolderTree,
-  LayoutDashboard,
-  Package,
-  ShoppingBag,
-  Users,
-  Store,
-  Images,
-  X,
-} from 'lucide-react'
-
-const links = [
-    {
-        href: '/admin',
-        label: 'Dashboard',
-        icon: LayoutDashboard
-    },
-
-    {
-        href: '/users',
-        label: 'Sellers & Customers',
-        icon: Users
-    },
-
-    {
-        href: '/create',
-        label: 'Products',
-        icon: Package
-    },
-
-    {
-        href: '/categories',
-        label: 'Categories',
-        icon: FolderTree
-    },
-     {
-        href: '/admin/heroes',
-        label: 'Hero Banners',
-        icon: Images
-    },
-
-    {
-        href: '/profile#orders',
-        label: 'Orders',
-        icon: ShoppingBag
-    }
-]
+import { X } from 'lucide-react'
+import { ADMIN_NAV, isNavActive } from './adminNav'
 
 const AdminSidebar = ({ open, onClose }) => {
   const router = useRouter()
@@ -65,25 +20,36 @@ const AdminSidebar = ({ open, onClose }) => {
         </button>
       </div>
 
-      {links.map(({ href, label, icon: Icon }) => {
-        const active =
-          href !== '/' && router.pathname.startsWith(href.split('#')[0])
-        return (
-          <Link
-            key={href}
-            href={href}
-            onClick={onClose}
-            className={`mb-1 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium ${
-              active
-                ? 'bg-[var(--nova-surface-soft)] text-[var(--nova-blue)]'
-                : 'hover:bg-[var(--nova-surface-soft)]'
-            }`}
-          >
-            <Icon size={17} />
-            {label}
-          </Link>
-        )
-      })}
+      <div className="space-y-5">
+        {ADMIN_NAV.map(({ group, items }) => (
+          <div key={group}>
+            <p className="mb-1.5 px-3 text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--nova-muted)]">
+              {group}
+            </p>
+
+            {items.map((item) => {
+              const Icon = item.icon
+              const active = isNavActive(item, router.pathname)
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={onClose}
+                  aria-current={active ? 'page' : undefined}
+                  className={`mb-1 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                    active
+                      ? 'bg-[var(--nova-lavender-soft)] text-[var(--nova-primary)]'
+                      : 'text-[var(--nova-text)] hover:bg-[var(--nova-surface-soft)]'
+                  }`}
+                >
+                  <Icon size={17} />
+                  {item.label}
+                </Link>
+              )
+            })}
+          </div>
+        ))}
+      </div>
 
       <p className="mt-auto px-3 pt-6 text-xs text-[var(--nova-muted)]">
         Platform administration

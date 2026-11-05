@@ -154,17 +154,7 @@ const EditUser = () => {
 
           <div className="mb-8">
 
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className="mb-6 inline-flex items-center gap-2 rounded-xl border border-[var(--nova-border)] bg-[var(--nova-surface)] px-4 py-2.5 text-xs font-semibold text-[var(--nova-muted)] shadow-sm transition hover:border-gray-300 hover:bg-[var(--nova-surface-soft)] hover:text-[var(--nova-text)]"
-            >
 
-              <ArrowLeft size={15} />
-
-              Back to Users
-
-            </button>
 
 
             <div className="flex items-center gap-3">

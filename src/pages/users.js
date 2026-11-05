@@ -268,11 +268,11 @@ const Users = () => {
 
             ) : (
 
-              <div className="grid grid-cols-4 overflow-hidden rounded-2xl border border-[var(--nova-border)] bg-[var(--nova-surface)] shadow-[var(--shadow-sm)]">
+              <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-[var(--nova-border)] bg-[var(--nova-border)] shadow-[var(--shadow-sm)] sm:grid-cols-4">
 
                 {/* TOTAL */}
 
-                <div className="px-5 py-4">
+                <div className="bg-[var(--nova-surface)] px-4 py-4 sm:px-5">
 
                   <p className="text-[11px] font-medium uppercase tracking-wider text-[var(--nova-muted)]">
                     Total
@@ -286,7 +286,7 @@ const Users = () => {
 
                 {/* CUSTOMERS */}
 
-                <div className="border-l border-[var(--nova-border)] px-5 py-4">
+                <div className="bg-[var(--nova-surface)] px-4 py-4 sm:px-5">
 
                   <p className="text-[11px] font-medium uppercase tracking-wider text-[var(--nova-muted)]">
                     Customers
@@ -300,7 +300,7 @@ const Users = () => {
 
                 {/* SELLERS */}
 
-                <div className="border-l border-[var(--nova-border)] px-5 py-4">
+                <div className="bg-[var(--nova-surface)] px-4 py-4 sm:px-5">
 
                   <p className="text-[11px] font-medium uppercase tracking-wider text-[var(--nova-muted)]">
                     Sellers
@@ -314,7 +314,7 @@ const Users = () => {
 
                 {/* ADMINS */}
 
-                <div className="border-l border-[var(--nova-border)] px-5 py-4">
+                <div className="bg-[var(--nova-surface)] px-4 py-4 sm:px-5">
 
                   <p className="text-[11px] font-medium uppercase tracking-wider text-[var(--nova-muted)]">
                     Admins

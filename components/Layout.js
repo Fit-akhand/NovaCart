@@ -7,6 +7,7 @@ import StoreHeader from './layout/StoreHeader'
 import StoreFooter from './layout/StoreFooter'
 import AdminHeader from './layout/AdminHeader'
 import AdminSidebar from './layout/AdminSidebar'
+import AdminPageBar from './layout/AdminPageBar'
 
 const ADMIN_PREFIXES = [
   '/admin',
@@ -45,6 +46,17 @@ function Layout({ children }) {
     )
   }
 
+  // Hard-loading an admin URL: auth is not known yet. Show a neutral
+  // screen instead of flashing the storefront header and footer.
+  if (isAdminRoute && !role) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[var(--nova-bg)] text-sm text-[var(--nova-muted)]">
+        <Notify />
+        Loading admin...
+      </div>
+    )
+  }
+
   if (isAdmin && isAdminRoute) {
     return (
       <div className="flex min-h-screen min-w-0 w-full flex-col bg-[var(--nova-bg)] text-[var(--nova-text)]">
@@ -68,6 +80,7 @@ function Layout({ children }) {
           />
 
           <main className="min-w-0 flex-1">
+            <AdminPageBar />
             {children}
           </main>
 

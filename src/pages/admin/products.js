@@ -340,7 +340,7 @@ const AdminProducts = () => {
             <Head>
 
                 <title>
-                    My Products | NovaCart
+                    Products | NovaCart Admin
                 </title>
 
             </Head>
@@ -359,18 +359,7 @@ const AdminProducts = () => {
 
                         <div>
 
-                            <Link
-                                href="/admin"
-                                className="mb-4 inline-flex items-center gap-2 text-sm font-medium text-[var(--nova-muted)] hover:text-[var(--nova-blue)]"
-                            >
 
-                                <ArrowLeft
-                                    size={15}
-                                />
-
-                                Back to Admin Dashboard
-
-                            </Link>
 
 
                             <div className="flex items-center gap-3">
@@ -388,7 +377,7 @@ const AdminProducts = () => {
 
                                     <h1 className="text-3xl font-semibold">
 
-                                        My Products
+                                        Products
 
                                     </h1>
 
