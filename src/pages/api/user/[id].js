@@ -21,8 +21,13 @@ const updateRole = async (req, res) => {
     try {
        const result = await auth(req, res)
        if (!result) return
-       if(result.role !== 'admin' || !result.root) 
-       return res.status(400).json({err: "Authentication is not valid"})
+
+       // Only the Super Admin (root) may change roles.
+       // Unauthenticated users are rejected with 401 by
+       // auth(); authenticated non-root-admins get 403.
+       if (result.role !== 'admin' || !result.root) {
+           return res.status(403).json({err: "You are not allowed to update user roles."})
+       }
 
        const {id} = req.query
        const {role} = req.body
@@ -43,8 +48,11 @@ const deleteUser = async (req, res) => {
     try {
        const result = await auth(req, res)
        if (!result) return
-       if(result.role !== 'admin' || !result.root) 
-       return res.status(400).json({err: "Authentication is not valid"})
+
+       // Only the Super Admin (root) may delete users.
+       if (result.role !== 'admin' || !result.root) {
+           return res.status(403).json({err: "You are not allowed to delete users."})
+       }
 
        const {id} = req.query
 

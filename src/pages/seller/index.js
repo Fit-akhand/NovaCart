@@ -278,7 +278,7 @@ const SellerDashboard = () => {
                                     </p>
 
                                     <p className="mt-1 text-xl font-semibold">
-                                        {stats.totalStock}
+                                        {stats.inventory}
                                     </p>
 
                                 </div>
@@ -305,7 +305,7 @@ const SellerDashboard = () => {
                                     </p>
 
                                     <p className="mt-1 text-xl font-semibold">
-                                        {stats.totalSold}
+                                        {stats.unitsSold}
                                     </p>
 
                                 </div>
@@ -812,7 +812,7 @@ const DashboardLink = ({
 const SellerDashboardPage = () => {
     return (
         <AuthGuard roles={['seller']}>
-            <DashboardLink />
+            <SellerDashboard />
         </AuthGuard>
     )
 }

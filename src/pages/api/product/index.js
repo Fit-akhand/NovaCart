@@ -204,41 +204,118 @@ class APIfeatures {
 
 const getProducts = async (req, res) => {
     try {
+        // ====================================================
+        // DEALS FILTER
+        //
+        // Discounts are stored on the category and
+        // subcategory documents, so we first resolve
+        // the IDs of every category with an active
+        // discount, then filter products by those IDs.
+        //
+        // This runs BEFORE pagination. Filtering the
+        // already-paginated results would return fewer
+        // than `limit` items and hide most deals.
+        // ====================================================
+
+        const dealsOnly =
+            req.query.deals === 'true'
+
+        let discountedCategoryIds = null
+
+        if (dealsOnly) {
+            discountedCategoryIds =
+                await Categories.find({
+                    discountActive: true,
+
+                    discountPercent: {
+                        $gt: 0
+                    }
+                }).select('_id')
+
+            discountedCategoryIds =
+                discountedCategoryIds.map(
+                    category =>
+                        category._id
+                )
+        }
+
+        const baseQuery =
+            Products.find()
+
         const features =
             new APIfeatures(
-                Products.find(),
+                baseQuery,
                 req.query
             )
                 .filtering()
-                .sorting()
-                .paginating()
+
+        // ====================================================
+        // APPLY DEALS TO THE FILTERED QUERY
+        // ====================================================
+
+        if (
+            dealsOnly &&
+            discountedCategoryIds
+        ) {
+            if (discountedCategoryIds.length === 0) {
+                return res.json({
+                    status: 'success',
+
+                    result: 0,
+
+                    products: []
+                })
+            }
+
+            features.query.find({
+                $or: [
+                    {
+                        category: {
+                            $in:
+                                discountedCategoryIds
+                        }
+                    },
+                    {
+                        subcategory: {
+                            $in:
+                                discountedCategoryIds
+                        }
+                    }
+                ]
+            })
+        }
+
+        // ====================================================
+        // TOTAL COUNT
+        //
+        // The count is taken from the same filtered
+        // query (category/title/seller/deals),
+        // BEFORE pagination is applied, so it
+        // reflects every matching document — not just
+        // the current page.
+        // ====================================================
+
+        const totalCount =
+            await Products.countDocuments(
+                features.query.getFilter()
+            )
+
+        features
+            .sorting()
+            .paginating()
 
         const products = await features.query
             .populate('category')
             .populate('subcategory')
 
-        let formattedProducts =
+        const formattedProducts =
             products.map(formatProduct)
-
-        // ====================================================
-        // DEALS FILTER
-        // ====================================================
-
-        if (
-            req.query.deals === 'true'
-        ) {
-            formattedProducts =
-                formattedProducts.filter(
-                    (product) =>
-                        product.discountPercent > 0
-                )
-        }
 
         return res.json({
             status: 'success',
 
             result:
-                formattedProducts.length,
+                totalCount,
 
             products:
                 formattedProducts
@@ -452,15 +529,13 @@ const createProduct = async (req, res) => {
 
         // ====================================================
         // SELLER OWNERSHIP
+        //
+        // The product document stores ownership directly via
+        // the `seller` field below (null for Super Admins)
+        // plus `ownerType`. There is no separate
+        // createdBy field in the product model.
         // ====================================================
 
-        const sellerId =
-            isSeller(result)
-                ? result.id
-                : null
-
-        const createdBy =
-            result.id
         // ====================================================
         // CREATE PRODUCT
         // ====================================================
@@ -478,7 +553,7 @@ const createProduct = async (req, res) => {
 
             category: parentCategory._id,
 
-            subcategory: subcategoryId,
+            subcategory: finalSubcategory,
 
             seller: isSeller(result)
                 ? result.id

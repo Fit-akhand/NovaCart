@@ -1,7 +1,8 @@
 import connectDB from '../../../../utils/connectDB'
 import Users from '../../../../models/userModel'
 import jwt from 'jsonwebtoken'
-import { createAccessToken } from '../../../../utils/generateToken'
+import { createAccessToken, createRefreshToken } from '../../../../utils/generateToken'
+import { setRefreshTokenCookie } from '../../../../utils/authCookies'
 import { toSafeUser } from '../../../../utils/safeUser'
 
 connectDB()
@@ -62,12 +63,44 @@ const refreshAccessToken = async (req, res) => {
 
         // =====================================================
         // CREATE NEW ACCESS TOKEN
+        //
+        // The access token remains minimal: { id } only.
         // =====================================================
 
         const accessToken =
             createAccessToken({
                 id: user._id
             })
+
+        // =====================================================
+        // ROTATE REFRESH TOKEN
+        //
+        // Re-issue the refresh token so sessions created
+        // before page-level protection existed (tokens
+        // without role/root claims) are upgraded
+        // transparently — no manual logout/login required.
+        //
+        // The claims come from the CURRENT database user
+        // record, so a role change takes effect on the next
+        // silent refresh. The token is delivered ONLY via
+        // the HttpOnly cookie (same settings, same 7-day
+        // lifetime). It is never included in the JSON
+        // response.
+        // =====================================================
+
+        const newRefreshToken =
+            createRefreshToken({
+                id: user._id,
+
+                role: user.role,
+
+                root: Boolean(user.root)
+            })
+
+        setRefreshTokenCookie(
+            res,
+            newRefreshToken
+        )
 
         // =====================================================
         // RESPONSE

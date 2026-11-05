@@ -860,7 +860,7 @@ const handleLogout = async () => {
 
                   {/* Seller */}
                   {isSeller && (
-                    <Link href="/create">
+                    <Link href="/seller">
                       <Button variant="secondary">
                         Seller dashboard
                       </Button>

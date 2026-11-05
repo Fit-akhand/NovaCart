@@ -81,9 +81,16 @@ const login = async (req, res) => {
                 id: user._id
             })
 
+        // The refresh token carries the minimum
+        // claims middleware needs for page-level
+        // authorization (id, role, root).
         const refresh_token =
             createRefreshToken({
-                id: user._id
+                id: user._id,
+
+                role: user.role,
+
+                root: Boolean(user.root)
             })
 
         // Refresh token goes ONLY into
