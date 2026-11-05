@@ -20,6 +20,7 @@
   --nova-primary: #8b5cf6;
   --nova-primary-hover: #7c3aed;
   --nova-primary-active: #6d28d9;
+  --nova-primary-dark: #6d28d9;
 
   /* ---------- Lavender ---------- */
   --nova-lavender: #ede9fe;
@@ -83,6 +84,7 @@
   --nova-primary: #8b5cf6;
   --nova-primary-hover: #7c3aed;
   --nova-primary-active: #6d28d9;
+  --nova-primary-dark: #6d28d9;
 
   --nova-lavender: #c4b5fd;
   --nova-lavender-soft: #241d38;

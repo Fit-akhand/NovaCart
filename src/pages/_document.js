@@ -9,10 +9,6 @@ class MyDocument extends Document{
                     <link rel="icon" href="/icon.svg" type="image/svg+xml"/>
                     <link rel="icon" href="/favicon.ico" sizes="any"/>
                     <meta name="theme-color" content="#7c3aed"/>
-                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
-                    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-                    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
-                    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
                 </Head>
                 <body>
                     <Main />
