@@ -32,6 +32,7 @@ const CHECKOUT_ADDRESS_KEY =
 
 const Cart = () => {
   const [razorpayLoaded, setRazorpayLoaded] = useState(false)
+  const [paying, setPaying] = useState(false)
 
   const { state, dispatch } =
     useContext(DataContext)
@@ -393,6 +394,17 @@ const getDiscountedPrice = (
   // =========================================================
 
   const handlePayment = async () => {
+    if (paying) return
+    setPaying(true)
+
+    try {
+      await startPayment()
+    } finally {
+      setPaying(false)
+    }
+  }
+
+  const startPayment = async () => {
     const {
       fullName,
       phone,
@@ -537,103 +549,23 @@ const getDiscountedPrice = (
     }
 
     // =========================================================
-    // VERIFY CART AGAINST DATABASE
+    // CART PAYLOAD
+    //
+    // Only ids and quantities matter: the server re-reads
+    // prices, discounts and stock from the database.
     // =========================================================
 
-    const verifiedCart = []
-
-    for (const item of cart) {
-      const response =
-        await getData(
-          `product/${item._id}`
-        )
-
-      if (!response?.product) {
-        return dispatch({
-          type: 'NOTIFY',
-          payload: {
-            error:
-              `Unable to verify ${item.title}. Please try again.`,
-          },
-        })
-      }
-
-      const currentProduct =
-        response.product
-
-      // =====================================================
-      // STOCK VALIDATION
-      // =====================================================
-
-      if (
-        Number(
-          currentProduct.inStock
-        ) <
-        Number(item.quantity)
-      ) {
-        return dispatch({
-          type: 'NOTIFY',
-          payload: {
-            error:
-              `${item.title} does not have enough stock.`,
-          },
-        })
-      }
-
-      // =====================================================
-      // USE SERVER PRICE
-      // =====================================================
-
-      const price =
-        Number(
-          currentProduct.price
-        )
-
-      if (
-        !Number.isFinite(price) ||
-        price < 0
-      ) {
-        return dispatch({
-          type: 'NOTIFY',
-          payload: {
-            error:
-              `Invalid price for ${item.title}.`,
-          },
-        })
-      }
-
-      verifiedCart.push({
-        ...item,
-
-        price,
-
-        inStock:
-          Number(
-            currentProduct.inStock
-          ),
-
-        sold:
-          Number(
-            currentProduct.sold
-          ) || 0,
-
-        quantity:
-          Number(item.quantity),
-      })
-    }
+    const verifiedCart = cart.map((item) => ({
+      _id: item._id,
+      title: item.title,
+      quantity: Number(item.quantity),
+    }))
 
     // =========================================================
     // SERVER-VERIFIED TOTAL
     // =========================================================
 
-    const finalTotal =
-      verifiedCart.reduce(
-        (sum, item) =>
-          sum +
-          Number(item.price) *
-            Number(item.quantity),
-        0
-      )
+    const finalTotal = total
 
     if (
       !Number.isFinite(finalTotal) ||
@@ -642,8 +574,7 @@ const getDiscountedPrice = (
       return dispatch({
         type: 'NOTIFY',
         payload: {
-          error:
-            'Invalid order amount.',
+          error: 'Invalid order amount.',
         },
       })
     }
@@ -949,7 +880,7 @@ const getDiscountedPrice = (
               type: 'NOTIFY',
               payload: {
                 error:
-                  'Payment was completed, but we could not complete your order. Please contact support with your payment ID.',
+                  'Your payment went through, but we could not show your order yet. It will be confirmed automatically in a minute: check My Orders in your profile.',
               },
             })
           }
@@ -1001,6 +932,9 @@ const getDiscountedPrice = (
           })
         }
       )
+
+      // Remove the loading overlay so the checkout is usable
+      dispatch({ type: 'NOTIFY', payload: {} })
 
       razorpay.open()
     } catch (error) {
@@ -1721,13 +1655,15 @@ const discountAmount =
 
                 <button
                   type="button"
-                  disabled={!razorpayLoaded}
+                  disabled={!razorpayLoaded || paying}
                   onClick={handlePayment}
                   className="w-full min-h-12 rounded-xl bg-[var(--nova-primary)] px-4 py-3 text-sm font-bold text-white shadow-[0_8px_20px_rgba(124,58,237,0.18)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(124,58,237,0.24)] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
                 >
                   {!razorpayLoaded
                     ? 'Loading payment...'
-                    : 'Proceed to payment'}
+                    : paying
+                    ? 'Opening payment...'
+                    : `Pay ${formatPrice(total)}`}
                 </button>
 
               ) : (

@@ -90,6 +90,18 @@ orderSchema.index(
     }
 )
 
+// Abandoned checkouts (never paid) are removed after 24h.
+orderSchema.index(
+    { createdAt: 1 },
+    {
+        expireAfterSeconds: 24 * 60 * 60,
+        partialFilterExpression: {
+            paid: false,
+            razorpayOrderId: { $type: 'string' }
+        }
+    }
+)
+
 const Dataset =
     mongoose.models.order ||
     mongoose.model('order', orderSchema)

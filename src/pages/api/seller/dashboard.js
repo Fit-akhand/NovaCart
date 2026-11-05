@@ -1,4 +1,5 @@
 import connectDB from '../../../../utils/connectDB'
+import { CONFIRMED_ORDERS } from '../../../../utils/orderFilters'
 import Products from '../../../../models/productModel'
 import Orders from '../../../../models/orderModel'
 import auth from '../../../../middleware/auth'
@@ -68,7 +69,7 @@ export default async function handler(req, res) {
         // GET ORDERS
         // ==========================================
 
-        const allOrders = await Orders.find()
+        const allOrders = await Orders.find(CONFIRMED_ORDERS)
             .populate('user', '-password')
             .sort('-createdAt')
 

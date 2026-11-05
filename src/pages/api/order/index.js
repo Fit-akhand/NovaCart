@@ -1,4 +1,5 @@
 import connectDB from '../../../../utils/connectDB'
+import { CONFIRMED_ORDERS } from '../../../../utils/orderFilters'
 import Orders from '../../../../models/orderModel'
 import Products from '../../../../models/productModel'
 import auth from '../../../../middleware/auth'
@@ -56,7 +57,8 @@ const getOrders = async (req, res) => {
 
             const orders =
                 await Orders.find({
-                    user: result.id
+                    user: result.id,
+                    ...CONFIRMED_ORDERS
                 })
                 .populate(
                     'user',
@@ -93,7 +95,7 @@ const getOrders = async (req, res) => {
 
 
             const allOrders =
-                await Orders.find()
+                await Orders.find(CONFIRMED_ORDERS)
                     .populate(
                         'user',
                         '-password'
@@ -161,7 +163,7 @@ const getOrders = async (req, res) => {
         if (result.role === 'admin') {
 
             const orders =
-                await Orders.find()
+                await Orders.find(CONFIRMED_ORDERS)
                     .populate(
                         'user',
                         '-password'

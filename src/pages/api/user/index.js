@@ -1,4 +1,5 @@
 import connectDB from '../../../../utils/connectDB'
+import { CONFIRMED_ORDERS } from '../../../../utils/orderFilters'
 import Users from '../../../../models/userModel'
 import Products from '../../../../models/productModel'
 import Orders from '../../../../models/orderModel'
@@ -51,6 +52,7 @@ const getUsers = async (req, res) => {
             }
 
             const orders = await Orders.find({
+                ...CONFIRMED_ORDERS,
                 'cart._id': {
                     $in: productIds
                 }

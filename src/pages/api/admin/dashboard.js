@@ -1,4 +1,5 @@
 import connectDB from '../../../../utils/connectDB'
+import { CONFIRMED_ORDERS } from '../../../../utils/orderFilters'
 import Users from '../../../../models/userModel'
 import Products from '../../../../models/productModel'
 import Orders from '../../../../models/orderModel'
@@ -61,7 +62,7 @@ export default async function handler(req, res) {
         // ORDERS
         // ==========================================
 
-        const orderCount = await Orders.countDocuments()
+        const orderCount = await Orders.countDocuments(CONFIRMED_ORDERS)
 
         // ==========================================
         // REVENUE
@@ -81,7 +82,7 @@ export default async function handler(req, res) {
         // RECENT ORDERS
         // ==========================================
 
-        const recentOrders = await Orders.find()
+        const recentOrders = await Orders.find(CONFIRMED_ORDERS)
             .populate('user', '-password')
             .sort('-createdAt')
             .limit(8)
