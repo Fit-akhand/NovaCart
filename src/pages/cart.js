@@ -695,6 +695,8 @@ const getDiscountedPrice = (
           'create-order',
           {
             cart: verifiedCart,
+            shippingAddress:
+              finalShippingAddress,
           },
           auth.token
         )
@@ -861,56 +863,13 @@ const getDiscountedPrice = (
             // PAYMENT VERIFIED
             // ---------------------------------------------
             //
-            // Only NOW create the NovaCart order.
-            //
-            // Your existing /api/order endpoint will then
-            // perform the existing stock deduction logic.
+            // The server has already marked the order paid
+            // and deducted stock. Nothing the browser sends
+            // can create or mark an order as paid.
             // ---------------------------------------------
 
-            const orderResponse =
-              await postData(
-                'order',
-                {
-                  shippingAddress:
-                    finalShippingAddress,
-
-                  cart:
-                    verifiedCart,
-
-                  total:
-                    finalTotal,
-
-                  // Razorpay information
-                  razorpayOrderId:
-                    paymentResponse.razorpay_order_id,
-
-                  razorpayPaymentId:
-                    paymentResponse.razorpay_payment_id,
-
-                  razorpaySignature:
-                    paymentResponse.razorpay_signature,
-
-                  paymentMethod:
-                    'razorpay',
-
-                  paid:
-                    true,
-                },
-                auth.token
-              )
-
-            if (
-              orderResponse?.err
-            ) {
-              dispatch({
-                type: 'NOTIFY',
-                payload: {
-                  error:
-                    `Payment succeeded, but order creation failed. Payment ID: ${paymentResponse.razorpay_payment_id}`,
-                },
-              })
-
-              return
+            const orderResponse = {
+              newOrder: verification.order,
             }
 
             // ---------------------------------------------

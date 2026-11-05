@@ -26,20 +26,30 @@ const orderSchema = new mongoose.Schema({
     method: String,
 
     razorpayOrderId: {
-        type: String,
-        default: null,
-        index: true
+        type: String
     },
 
     razorpayPaymentId: {
-        type: String,
-        default: null,
-        index: true
+        type: String
     },
 
     razorpaySignature: {
-        type: String,
-        default: null
+        type: String
+    },
+
+    // Set once stock has been deducted for a paid order.
+    // Guards against double deduction when the browser
+    // callback and the webhook both finalize the same order.
+    stockDeducted: {
+        type: Boolean,
+        default: false
+    },
+
+    // Paid, but stock could not be fully deducted
+    // (e.g. item sold out in between). Needs manual review.
+    needsReview: {
+        type: Boolean,
+        default: false
     },
 
     paymentStatus: {
@@ -67,6 +77,18 @@ const orderSchema = new mongoose.Schema({
 }, {
     timestamps: true
 })
+
+// One DB order per Razorpay order. A partial index is used so
+// legacy documents that stored null do not collide.
+orderSchema.index(
+    { razorpayOrderId: 1 },
+    {
+        unique: true,
+        partialFilterExpression: {
+            razorpayOrderId: { $type: 'string' }
+        }
+    }
+)
 
 const Dataset =
     mongoose.models.order ||

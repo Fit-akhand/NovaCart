@@ -1,60 +1,14 @@
 import Razorpay from 'razorpay'
 import connectDB from '../../../utils/connectDB'
 import Products from '../../../models/productModel'
+import Orders from '../../../models/orderModel'
 import auth from '../../../middleware/auth'
+import {
+    getProductDiscount,
+    getDiscountedPrice
+} from '../../../utils/getProductDiscount'
 
 connectDB()
-
-// ==========================================
-// DISCOUNT HELPERS
-// ==========================================
-
-const getEffectiveDiscount = (
-    category,
-    subcategory
-) => {
-
-    // Subcategory discount overrides parent
-    if (
-        subcategory &&
-        subcategory.discountActive === true
-    ) {
-        return Number(
-            subcategory.discountPercent
-        ) || 0
-    }
-
-    // Otherwise use parent category
-    if (
-        category &&
-        category.discountActive === true
-    ) {
-        return Number(
-            category.discountPercent
-        ) || 0
-    }
-
-    return 0
-}
-
-const getDiscountedPrice = (
-    price,
-    discount
-) => {
-
-    const originalPrice =
-        Number(price) || 0
-
-    const discountPercent =
-        Number(discount) || 0
-
-    return Math.round(
-        originalPrice *
-        (1 - discountPercent / 100) *
-        100
-    ) / 100
-}
-
 
 const razorpay = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,
@@ -88,7 +42,33 @@ export default async function handler(req, res) {
         // REQUEST
         // ==========================================
 
-        const { cart } = req.body
+        const { cart, shippingAddress } = req.body
+
+        if (
+            !shippingAddress ||
+            !shippingAddress.fullName ||
+            !shippingAddress.phone ||
+            !shippingAddress.address ||
+            !shippingAddress.city ||
+            !shippingAddress.state ||
+            !shippingAddress.pincode
+        ) {
+            return res.status(400).json({
+                err: 'Please provide complete delivery information.'
+            })
+        }
+
+        if (!/^[6-9]\d{9}$/.test(String(shippingAddress.phone).trim())) {
+            return res.status(400).json({
+                err: 'Please provide a valid mobile number.'
+            })
+        }
+
+        if (!/^\d{6}$/.test(String(shippingAddress.pincode).trim())) {
+            return res.status(400).json({
+                err: 'Please provide a valid PIN code.'
+            })
+        }
 
         if (
             !Array.isArray(cart) ||
@@ -133,6 +113,7 @@ export default async function handler(req, res) {
         }
 
         let total = 0
+        const verifiedCart = []
 
         for (const cartItem of cart) {
             const product =
@@ -181,22 +162,24 @@ export default async function handler(req, res) {
             const originalPrice =
                 Number(product.price) || 0
 
-            const discountPercent =
-                getEffectiveDiscount(
-                    product.category,
-                    product.subcategory
-                )
-
             const discountedPrice =
                 getDiscountedPrice(
                     originalPrice,
-                    discountPercent
+                    getProductDiscount(product)
                 )
 
-            total +=
-                discountedPrice *
+            total += discountedPrice * quantity
+
+            verifiedCart.push({
+                _id: product._id,
+                title: product.title,
+                price: discountedPrice,
+                images: product.images,
+                inStock: Number(product.inStock),
+                sold: Number(product.sold) || 0,
                 quantity
-                    }
+            })
+        }
 
         // ==========================================
         // RUPEES → PAISE
@@ -232,8 +215,39 @@ export default async function handler(req, res) {
                 }
             })
 
+        // ==========================================
+        // PENDING DB ORDER
+        //
+        // Cart, address and total are stored now, from
+        // server-verified data, so verify-payment and the
+        // webhook can finalize it without trusting the browser.
+        // Stock is deducted only once payment is confirmed.
+        // ==========================================
+
+        const str = v => String(v).trim()
+
+        const pendingOrder = await Orders.create({
+            user: result.id,
+            shippingAddress: {
+                fullName: str(shippingAddress.fullName),
+                phone: str(shippingAddress.phone),
+                address: str(shippingAddress.address),
+                city: str(shippingAddress.city),
+                state: str(shippingAddress.state),
+                pincode: str(shippingAddress.pincode)
+            },
+            cart: verifiedCart,
+            total,
+            method: 'razorpay',
+            razorpayOrderId: razorpayOrder.id,
+            paid: false,
+            paymentStatus: 'pending'
+        })
+
         return res.status(200).json({
             status: 'success',
+
+            orderId: pendingOrder._id,
 
             order_id:
                 razorpayOrder.id,
